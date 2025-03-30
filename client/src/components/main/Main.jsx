@@ -64,7 +64,7 @@ function Main({ user_relations }) {
   return (
     <div className={maincss.main}>
       <>
-        {server_id === "@me" || server_id == undefined ? (
+        {server_id === "@me" || server_id === undefined ? (
           <Main_dashboard user_relations={user_relations}></Main_dashboard>
         ) : (
           <Main_chat></Main_chat>

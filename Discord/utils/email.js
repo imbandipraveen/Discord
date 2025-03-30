@@ -15,7 +15,7 @@ exports.sendVerificationEmail = async (otp, email, username) => {
     subject: 'Email for Verification',
     text: `Hello ${username}
     You registered an account on Discord Clone, Here is your otp for verification - ${otp}
-    Kind Regards, Samyak`
+    Kind Regards, Team Discord clone`
   };
 
   try {

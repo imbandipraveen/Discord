@@ -20,7 +20,7 @@ import { useDispatch } from 'react-redux';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { setServerRole } from '../../store/slices/currentPageSlice';
-import uploadFileToBlob from '../azure-storage-blob';
+import {uploadFileToBlob} from '../azure-storage-blob';
 
 function Navbar({ new_req_recieved, user_cred }) {
     const dispatch = useDispatch();

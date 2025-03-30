@@ -51,15 +51,15 @@ function Main_dashboard({ user_relations }) {
   const url = process.env.REACT_APP_URL;
 
   useEffect(() => {
-    if (option_check == 2) {
+    if (option_check === 2) {
       setoption_data(pending_reqs);
-    } else if (option_check == 1) {
+    } else if (option_check=== 1) {
       setoption_data(friends);
     }
   }, [user_relations, option_check]);
 
   const button_clicked = async (message, friend_data) => {
-    const res = await fetch(`${url}/process_req`, {
+    const res = await fetch(`${url}/users/add-friend`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -72,9 +72,9 @@ function Main_dashboard({ user_relations }) {
     });
     const data = await res.json();
 
-    if (data.status == 200 || data.status == 404) {
+    if (data.status === 200 || data.status === 404) {
       dispatch(update_options());
-      if (data.status == 200) {
+      if (data.status === 200) {
         socket.emit("req_accepted", id, friend_data.id, username, profile_pic);
       }
       // this is to update props and send the value back to parent element to update some states
@@ -122,14 +122,14 @@ function Main_dashboard({ user_relations }) {
       setalert({ style: "flex", message: data.message });
     }
 
-    if (data.status == 201 || data.status == 203) {
+    if (data.status === 201 || data.status === 203) {
       dispatch(update_options());
-      if (data.status == 203) {
+      if (data.status === 203) {
         socket.emit("send_req", data.receiver_id, id, profile_pic, username);
       }
 
       // this is to update props and send the value back to parent element to update some states
-    } else if (data.status == 400) {
+    } else if (data.status === 400) {
       setalert({ style: "flex", message: data.message });
     }
   };
@@ -154,18 +154,18 @@ function Main_dashboard({ user_relations }) {
     let input_size = input.length;
     // if(/[0-9]/.test(e.nativeEvent.data)==true && e.nativeEvent.data!=null){
     if (
-      input[input_size - 1] == "#" &&
-      /[0-9]/.test(current_key) == false &&
+      input[input_size - 1] === "#" &&
+      /[0-9]/.test(current_key) === false &&
       current_key != null
     ) {
       // i had to add this null condition because for some reason whenever i try to press backspace with only the regex and specifically the regex for lowercase letters , the conidition was getting true for even backspace
       setinput(input);
     } else if (
-      (input[input_size - 5] == "#" &&
-        /[a-zA-z0-9]/.test(current_key) == true &&
+      (input[input_size - 5] === "#" &&
+        /[a-zA-z0-9]/.test(current_key) === true &&
         current_key != null) ||
-      (input[input_size - 5] == "#" &&
-        /[^a-zA-z0-9]/.test(current_key) == true &&
+      (input[input_size - 5] === "#" &&
+        /[^a-zA-z0-9]/.test(current_key) === true &&
         current_key != null)
     ) {
       setinput(input);
@@ -183,9 +183,9 @@ function Main_dashboard({ user_relations }) {
   );
   return (
     <>
-      {option_status == false ? (
+      {option_status === false ? (
         <>
-          {option_check == 4 ? (
+          {option_check === 4 ? (
             <>
               <div className={main_dashboardcss.add_friend_wrap}>
                 <div className={main_dashboardcss.add_friend}>
@@ -305,9 +305,9 @@ function Main_dashboard({ user_relations }) {
                     className={main_dashboardcss.online_comps}
                     id={main_dashboardcss.item_3}
                   >
-                    {option_check == 2 ? (
+                    {option_check === 2 ? (
                       <>
-                        {elem.status == "incoming" ? (
+                        {elem.status === "incoming" ? (
                           <>
                             {buttons("Accept", DoneIcon, elem)}
                             {buttons("Ignore", CloseIcon, elem)}
@@ -318,7 +318,7 @@ function Main_dashboard({ user_relations }) {
                       </>
                     ) : (
                       <>
-                        {option_check == 3 ? (
+                        {option_check === 3 ? (
                           <>{buttons("Unblock", PersonRemoveIcon, elem)}</>
                         ) : (
                           <>
