@@ -20,7 +20,7 @@ const s3Client = new S3Client({
 
 // Check if S3 is configured
 export const isStorageConfigured = () => {
-  return !bucketName || !accessKeyId || !secretAccessKey ? false : true;
+  return bucketName && accessKeyId && secretAccessKey ? true : false;
 };
 
 // Upload file to S3
@@ -30,15 +30,18 @@ const uploadFileToS3 = async (file) => {
   const uniqueId = v4().replace("-", "");
   const fileName = `${uniqueId}-${Date.now()}-${file.name}`;
 
+  // Convert file to Buffer
+  const fileBuffer = await file.arrayBuffer(); // Converts File to ArrayBuffer
+  console.log(fileBuffer, "fileBuffer");
   const params = {
     Bucket: bucketName,
     Key: fileName,
-    Body: file,
+    Body: fileBuffer, // Using buffer instead of raw file
     ContentType: file.type,
-    ACL: "public-read", // Make the file publicly accessible
   };
 
   try {
+    console.log("Uploading file to S3...");
     await s3Client.send(new PutObjectCommand(params));
     return `https://${bucketName}.s3.${region}.amazonaws.com/${fileName}`;
   } catch (error) {
