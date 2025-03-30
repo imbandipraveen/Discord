@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     profile_pic: {
       type: String,
-      default: "",
+      default: "https://ibb.co/21BkhFVt",
     },
     authorized: {
       type: Boolean,

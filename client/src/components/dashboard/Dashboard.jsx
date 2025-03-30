@@ -29,6 +29,7 @@ function Dashboard() {
 
   let token1 = localStorage.getItem("token");
   let user_creds = jwt(token1);
+  console.log(user_creds, "user_creds");
   const { username, tag, profile_pic, id } = user_creds;
   const [user_data, setuser_data] = useState({
     incoming_reqs: "",
