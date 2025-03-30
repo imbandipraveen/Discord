@@ -1,16 +1,17 @@
-const Server = require("../models/Server");
+// const Server = require("../models/Server");
 const User = require("../models/User");
 const Chat = require("../models/Chat");
 const mongoose = require("mongoose");
+const Server = require("../models/Server");
 
 exports.createServer = async (req, res) => {
   try {
-    console.log("Hello");
+    console.log(req.user, "Req.body");
 
-    const { name, type, key, role } = req.body;
+    const { name, type, key, role } = req.body.server_details;
     const userId = req.user.id;
     console.log(name, userId);
-    const server = new Server({
+    const savedServer = await Server.create({
       server_name: name,
       server_pic: req.body.server_image,
       users: [
@@ -25,8 +26,8 @@ exports.createServer = async (req, res) => {
       // Add categories based on template...
     });
 
-    const savedServer = await server.save();
-
+    // const savedServer = await server.save();
+    console.log(savedServer, "Server");
     // Create chat collection for server
     await Chat.create({
       server_id: savedServer._id,

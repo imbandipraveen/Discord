@@ -79,12 +79,12 @@ function Navbar({ new_req_recieved, user_cred }) {
 
   const create_server = async () => {
     let image_url = "";
-    if (new_server_image != "") {
+    if (new_server_image !== "") {
       const file_url = await uploadFileToS3(new_server_image);
       image_url = file_url;
     }
 
-    const res = await fetch(`${url}/create_server`, {
+    const res = await fetch(`${url}/servers/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

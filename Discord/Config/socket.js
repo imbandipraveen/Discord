@@ -4,7 +4,7 @@ const setupSocket = (server) => {
   const io = new Server(server, {
     pingTimeout: 20000,
     cors: {
-      origin: "http://localhost:3080",
+      origin: "http://localhost:3000",
     },
   });
 
