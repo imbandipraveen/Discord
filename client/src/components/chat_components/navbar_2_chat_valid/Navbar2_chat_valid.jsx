@@ -93,7 +93,7 @@ function Navbar2_chat_valid() {
 
   const delete_server = async () => {
     console.log(server_id);
-    const res = await fetch(`${url}/delete_server`, {
+    const res = await fetch(`${url}/servers/delete`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -104,7 +104,7 @@ function Navbar2_chat_valid() {
       }),
     });
     const data = await res.json();
-    if (data.status == 200) {
+    if (data.status === 200) {
       dispatch(update_options());
       Navigate("/channels/@me");
       console.log("server deleted");
@@ -113,7 +113,7 @@ function Navbar2_chat_valid() {
 
   const leave_server = async () => {
     console.log(server_id);
-    const res = await fetch(`${url}/leave_server`, {
+    const res = await fetch(`${url}/servers/leave`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

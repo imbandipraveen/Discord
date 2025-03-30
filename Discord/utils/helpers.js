@@ -1,9 +1,9 @@
-const shortid = require('shortid');
-const Username = require('../models/Username');
+const shortid = require("shortid");
+const Username = require("../models/Username");
 
 exports.generateOTP = () => {
-  const digits = '0123456789';
-  let otp = '';
+  const digits = "0123456789";
+  let otp = "";
   for (let i = 0; i < 4; i++) {
     otp += digits[Math.floor(Math.random() * 10)];
   }
@@ -11,7 +11,7 @@ exports.generateOTP = () => {
 };
 
 exports.generateTag = (count) => {
-  const defaultValue = '0000';
+  const defaultValue = "0000";
   const countStr = count.toString();
   const countLength = countStr.length;
   return defaultValue.slice(0, defaultValue.length - countLength) + countStr;
@@ -27,27 +27,26 @@ exports.generateUserTag = async (username) => {
       // Create new username entry
       usernameDoc = new Username({
         name: username,
-        count: 1
+        count: 1,
       });
       await usernameDoc.save();
       count = 1;
     } else {
       // Increment existing username count
       count = usernameDoc.count + 1;
-      await Username.updateOne(
-        { name: username },
-        { $set: { count } }
-      );
+      await Username.updateOne({ name: username }, { $set: { count } });
     }
 
     // Generate tag using the count
     return this.generateTag(count);
   } catch (error) {
-    console.error('Generate user tag error:', error);
+    console.error("Generate user tag error:", error);
     throw error;
   }
 };
 
 exports.generateInviteCode = () => {
-  return shortid.generate();
-}; 
+  let id = shortid.generate();
+  console.log(id, "it's a id");
+  return id;
+};
