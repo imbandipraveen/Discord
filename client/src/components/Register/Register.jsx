@@ -64,7 +64,7 @@ function Register() {
 
             const {email,password,username} = user_values;
 
-            const res = await fetch(`${url}/signup`,{
+            const res = await fetch(`${url}/auth/signup`,{
                 method:'POST',
                 headers:{
                     'Content-Type' : 'application/json',
@@ -132,7 +132,7 @@ function Register() {
     const verify_req = async(e) =>{
         e.preventDefault()
 
-        const res = await fetch(`${url}/verify`,{
+        const res = await fetch(`${url}/auth/verify`,{
             method:'POST',
             headers:{
                 'Content-Type' : 'application/json',

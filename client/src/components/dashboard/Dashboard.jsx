@@ -96,7 +96,7 @@ function Dashboard() {
     });
 
     const data = await res.json();
-    console.log(data, "userRequests");
+    console.log(data, "userRequests 2");
     const { incoming_reqs, outgoing_reqs, friends, servers } = data;
     let pending = incoming_reqs.length + outgoing_reqs.length;
     let status_2 = {

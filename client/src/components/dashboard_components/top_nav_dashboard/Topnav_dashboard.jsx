@@ -25,7 +25,7 @@ function Topnav_dashboard({button_status}) {
   function buttons(message,Icon){
     return(
       <div className={topnav_dashboardcss.right_part_icons} onClick={()=>{
-        if(message=='Logout'){
+        if(message==='Logout'){
           localStorage.clear();     
           window.location.reload();
         }
