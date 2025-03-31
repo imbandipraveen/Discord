@@ -41,70 +41,32 @@ function Navbar_2_dashboard() {
     setLoading(true);
     try {
       console.log("Fetching friends...");
+      const url = process.env.REACT_APP_URL;
 
-      // First check if friends are directly in the userInfo object
-      if (userInfo && userInfo.friends && userInfo.friends.length > 0) {
-        console.log("Using friends from userInfo:", userInfo.friends);
-        setFriends(userInfo.friends);
-        setLoading(false);
-        return;
-      }
-
-      // Then check if they're in relations
-      if (
-        userInfo &&
-        userInfo.relations &&
-        userInfo.relations.friends &&
-        userInfo.relations.friends.length > 0
-      ) {
-        console.log(
-          "Using friends from userInfo.relations:",
-          userInfo.relations.friends
-        );
-        setFriends(userInfo.relations.friends);
-        setLoading(false);
-        return;
-      }
-
-      // If not available in Redux, fetch from API
-      if (!userId || !token) {
-        console.log("Missing userId or token, can't fetch friends");
-        setLoading(false);
-        return;
-      }
-
-      console.log("Fetching friends from API...");
-      const API_URL = process.env.REACT_APP_API_URL || "";
-      console.log("API URL:", API_URL);
-
-      const response = await axios.get(`${API_URL}/api/users/relations`, {
+      // Fetch user relations from the API
+      const response = await fetch(`${url}/users/relations`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          "x-auth-token": localStorage.getItem("token"),
         },
       });
 
-      console.log("API response:", response.data);
+      const data = await response.json();
+      console.log("User relations response:", data);
 
-      if (response.data && response.data.friends) {
-        console.log("Setting friends from API:", response.data.friends);
-        setFriends(response.data.friends);
+      if (data && data.friends) {
+        console.log("Setting friends from API:", data.friends);
+        setFriends(data.friends);
+      } else {
+        console.log("No friends found in response");
+        setFriends([]);
       }
     } catch (error) {
       console.error("Error fetching friends:", error);
+      setFriends([]);
     } finally {
       setLoading(false);
     }
   };
-
-  // For testing/debugging - create a hardcoded friend entry matching your database structure
-  const hardcodedFriends = [
-    {
-      id: "67e93a3b10e7efbb3469e03c",
-      username: "lalith_chads",
-      profile_pic: "https://ibb.co/21BkhFVt",
-      tag: "0001",
-    },
-  ];
 
   const renderTooltip = (props) => (
     <Tooltip id="button-tooltip" {...props}>
@@ -178,7 +140,6 @@ function Navbar_2_dashboard() {
                   Loading friends...
                 </div>
               ) : friends && friends.length > 0 ? (
-                // Show actual friends when available
                 friends.map((friend) => (
                   <div
                     key={friend.id}
@@ -206,33 +167,12 @@ function Navbar_2_dashboard() {
                   </div>
                 ))
               ) : (
-                // Fallback to hardcoded friends if no friends are found in API or Redux
-                hardcodedFriends.map((friend) => (
-                  <div
-                    key={friend.id}
-                    className={navbar_chat_css.friend_details}
-                    onClick={() => startDM(friend.id)}
-                  >
-                    <div
-                      className={navbar_chat_css.friend_details_comps}
-                      id={navbar_chat_css.profile_wrap}
-                    >
-                      <div className={navbar_chat_css.profile_pic}>
-                        <img src={friend.profile_pic || profile_pic} alt="" />
-                        <div className={navbar_chat_css.online_status}>
-                          <img
-                            src={offline_icon}
-                            className={navbar_chat_css.offline_icon}
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className={navbar_chat_css.name}>
-                      {friend.username}
-                    </div>
-                  </div>
-                ))
+                <div
+                  className={navbar_chat_css.name}
+                  style={{ textAlign: "center", padding: "20px" }}
+                >
+                  No friends found
+                </div>
               )}
             </div>
           </div>

@@ -369,7 +369,7 @@ function Register() {
               Verification for Email
             </div>
             <p className={registercss.modal_message}>
-              We’ve sent a verification code to your email.
+              We've sent a verification code to your email.
             </p>
             <input
               type="text"
