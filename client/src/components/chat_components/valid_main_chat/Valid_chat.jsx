@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import valid_chat_css from "../valid_main_chat/valid_chat_css.module.css";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -9,9 +9,8 @@ import { useParams } from "react-router-dom";
 function Valid_chat() {
   const url = process.env.REACT_APP_URL;
   const { server_id } = useParams();
-  console.log(server_id, "server_id");
+  const chatEndRef = useRef(null); // 🔹 Create a ref for the chat end
 
-  // Redux state selectors
   const channel_id = useSelector((state) => state.current_page.page_id);
   const channel_name = useSelector((state) => state.current_page.page_name);
   const username = useSelector((state) => state.user_info.username);
@@ -19,7 +18,6 @@ function Valid_chat() {
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
   const id = useSelector((state) => state.user_info.id);
 
-  // Component state
   const [chat_message, setchat_message] = useState("");
   const [all_messages, setall_messages] = useState([]);
   const [latest_message, setlatest_message] = useState(null);
@@ -155,6 +153,11 @@ function Valid_chat() {
     };
   }, []);
 
+  // 🔹 Scroll to bottom when messages update
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [all_messages]);
+
   return (
     <div className={valid_chat_css.mainchat}>
       <div id={valid_chat_css.top}>
@@ -220,6 +223,9 @@ function Valid_chat() {
                 </div>
               );
             })}
+
+          {/* 🔹 Invisible div to track the end of messages */}
+          <div ref={chatEndRef} />
         </div>
       </div>
 
