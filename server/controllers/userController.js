@@ -9,14 +9,20 @@ exports.getUserRelations = async (req, res) => {
       return res.status(404).json({ message: "User not found", status: 404 });
     }
 
-    const { incoming_reqs, outgoing_reqs, friends, servers } = user;
+    console.log("Found user:", user);
+    console.log("User blocked array:", user.blocked);
+
+    const { incoming_reqs, outgoing_reqs, friends, servers, blocked } = user;
+
     res.status(200).json({
       incoming_reqs,
       outgoing_reqs,
       friends,
       servers,
+      blocked_users: blocked || [],
     });
   } catch (error) {
+    console.error("Get user relations error:", error);
     res.status(500).json({ message: "Server error", status: 500 });
   }
 };
@@ -140,6 +146,136 @@ exports.addFriend = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error", status: 500 });
+  }
+};
+
+exports.removeFriend = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { friend_id } = req.body;
+
+    // Remove friend from both users
+    await User.updateOne(
+      { _id: userId },
+      { $pull: { friends: { id: friend_id } } }
+    );
+    await User.updateOne(
+      { _id: friend_id },
+      { $pull: { friends: { id: userId } } }
+    );
+
+    res
+      .status(200)
+      .json({ message: "Friend removed successfully", status: 200 });
+  } catch (error) {
+    console.error("Remove friend error:", error);
+    res.status(500).json({ message: "Server error", status: 500 });
+  }
+};
+
+exports.blockUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { friend_id } = req.body;
+
+    console.log("Blocking user - userId:", userId, "friend_id:", friend_id);
+
+    // Get the friend's details
+    const friend = await User.findById(friend_id);
+    if (!friend) {
+      return res.status(404).json({ message: "User not found", status: 404 });
+    }
+
+    console.log("Found friend:", friend);
+
+    // First remove from friends if they are friends
+    const updateResult = await User.updateOne(
+      { _id: userId },
+      {
+        $pull: { friends: { id: friend_id } },
+        $addToSet: {
+          blocked: {
+            id: friend._id,
+            username: friend.username,
+            tag: friend.tag,
+            profile_pic: friend.profile_pic,
+          },
+        },
+      }
+    );
+
+    console.log("Update result:", updateResult);
+
+    // Also remove any pending requests
+    await User.updateOne(
+      { _id: userId },
+      {
+        $pull: {
+          incoming_reqs: { id: friend_id },
+          outgoing_reqs: { id: friend_id },
+        },
+      }
+    );
+
+    // Verify the blocked user was added
+    const updatedUser = await User.findById(userId);
+    console.log("Updated user blocked array:", updatedUser.blocked);
+
+    res.status(200).json({ message: "User blocked successfully", status: 200 });
+  } catch (error) {
+    console.error("Block user error:", error);
+    res.status(500).json({ message: "Server error", status: 500 });
+  }
+};
+
+exports.unblockUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { friend_id } = req.body;
+
+    // Get the friend's details
+    const friend = await User.findById(friend_id);
+    if (!friend) {
+      return res.status(404).json({ message: "User not found", status: 404 });
+    }
+
+    // Remove user from blocked list and add back to friends
+    await User.updateOne(
+      { _id: userId },
+      {
+        $pull: { blocked: { id: friend_id } },
+        $addToSet: {
+          friends: {
+            id: friend._id,
+            username: friend.username,
+            profile_pic: friend.profile_pic,
+            tag: friend.tag,
+          },
+        },
+      }
+    );
+
+    // Also add the current user to the friend's friends list
+    await User.updateOne(
+      { _id: friend_id },
+      {
+        $addToSet: {
+          friends: {
+            id: userId,
+            username: req.user.username,
+            profile_pic: req.user.profile_pic,
+            tag: req.user.tag,
+          },
+        },
+      }
+    );
+
+    res
+      .status(200)
+      .json({ message: "User unblocked successfully", status: 200 });
+  } catch (error) {
+    console.error("Unblock user error:", error);
+    res.status(500).json({ message: "Server error", status: 500 });
   }
 };
 

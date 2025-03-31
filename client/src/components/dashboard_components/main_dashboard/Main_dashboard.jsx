@@ -17,6 +17,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
 import { update_options } from "../../../Redux/options_slice";
 import socket from "../../Socket/Socket";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import BlockIcon from "@mui/icons-material/Block";
+import PersonOffIcon from "@mui/icons-material/PersonOff";
 
 function Main_dashboard({ user_relations }) {
   const dispatch = useDispatch();
@@ -35,9 +41,7 @@ function Main_dashboard({ user_relations }) {
   const id = useSelector((state) => state.user_info.id);
 
   const [button_state, setbutton_state] = useState(true);
-  const [option_data, setoption_data] = useState([
-    { username: "", tag: "", profile_pic: "", status: "" },
-  ]);
+  const [option_data, setoption_data] = useState([]);
   const [input, setinput] = useState("");
   let images_arr = [
     online_wumpus,
@@ -49,20 +53,47 @@ function Main_dashboard({ user_relations }) {
   const [image, setimage] = useState(images_arr[0]);
   const [alert, setalert] = useState({ style: "none", message: "none" });
 
-  const { incoming_reqs, outgoing_reqs, friends } = user_relations;
+  // Menu state
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const open = Boolean(anchorEl);
+
+  // Destructure user_relations properly
+  const incoming_reqs = user_relations?.incoming_reqs || [];
+  const outgoing_reqs = user_relations?.outgoing_reqs || [];
+  const friends = user_relations?.friends || [];
+  const blocked_users = user_relations?.blocked_users || [];
   let pending_reqs = [...incoming_reqs, ...outgoing_reqs];
   const url = process.env.REACT_APP_URL;
 
   useEffect(() => {
+    console.log("User relations received:", user_relations);
     if (option_check === 2) {
-      console.log(pending_reqs, "pending reqs");
       setoption_data(pending_reqs);
     } else if (option_check === 1) {
       setoption_data(friends);
+    } else if (option_check === 3) {
+      console.log("Setting blocked users:", blocked_users);
+      setoption_data(blocked_users);
+    } else if (option_check === 4) {
+      setoption_data([]); // For add friend section
+    } else {
+      setoption_data([]); // For online section
     }
   }, [user_relations, option_check]);
 
+  useEffect(() => {
+    setimage(images_arr[option_check]);
+  }, [option_check]);
+
   const button_clicked = async (message, friend_data) => {
+    // Don't make API call for More button
+    if (message === "More") {
+      // TODO: Implement More button functionality (e.g., show menu with options)
+      console.log("More button clicked for user:", friend_data);
+      return;
+    }
+
     const res = await fetch(`${url}/users/add-friend`, {
       method: "POST",
       headers: {
@@ -81,11 +112,81 @@ function Main_dashboard({ user_relations }) {
       if (data.status === 200) {
         socket.emit("req_accepted", id, friend_data.id, username, profile_pic);
       }
-      // this is to update props and send the value back to parent element to update some states
+    }
+  };
+
+  // Menu handlers
+  const handleMoreClick = (event, user) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedUser(user);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedUser(null);
+  };
+
+  const handleMenuAction = async (action) => {
+    if (!selectedUser) return;
+
+    try {
+      console.log("Menu action:", action, "for user:", selectedUser);
+      const res = await fetch(`${url}/users/${action}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          friend_id: selectedUser.id,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.status === 200) {
+        console.log("Action successful:", action);
+        dispatch(update_options());
+        handleMenuClose();
+      }
+    } catch (error) {
+      console.error(`Error performing ${action}:`, error);
     }
   };
 
   function buttons(message, Icon, friend_data) {
+    if (message === "More") {
+      return (
+        <div
+          className={main_dashboardcss.item_3_comps_wrap}
+          onClick={(e) => handleMoreClick(e, friend_data)}
+        >
+          <div className={main_dashboardcss.item_3_comps}>
+            <OverlayTrigger placement="top" overlay={tooltips(message)}>
+              {<Icon />}
+            </OverlayTrigger>
+          </div>
+        </div>
+      );
+    }
+
+    if (message === "Unblock") {
+      return (
+        <div
+          className={main_dashboardcss.item_3_comps_wrap}
+          onClick={() => {
+            setSelectedUser(friend_data);
+            handleMenuAction("unblock-user");
+          }}
+        >
+          <div className={main_dashboardcss.item_3_comps}>
+            <OverlayTrigger placement="top" overlay={tooltips(message)}>
+              {<Icon />}
+            </OverlayTrigger>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div
         className={main_dashboardcss.item_3_comps_wrap}
@@ -176,10 +277,6 @@ function Main_dashboard({ user_relations }) {
     }
   }
 
-  useEffect(() => {
-    setimage(images_arr[option_check]);
-  }, [option_check]);
-
   const tooltips = (value, props) => (
     <Tooltip id="button-tooltip" {...props}>
       {value}
@@ -224,7 +321,6 @@ function Main_dashboard({ user_relations }) {
                       Send Friend Request
                     </button>
                   </div>
-                  {/* this will work when i put display flex instead of display none for this */}
                   <div
                     id={main_dashboardcss.friend_req_response}
                     style={{ display: alert.style }}
@@ -251,7 +347,6 @@ function Main_dashboard({ user_relations }) {
         </>
       ) : (
         <>
-          {/* search bar */}
           <div id={main_dashboardcss.search_wrap}>
             <div id={main_dashboardcss.search}>
               <input type="text" placeholder="Search" />
@@ -266,77 +361,115 @@ function Main_dashboard({ user_relations }) {
               {option_name_check}-{option_data.length}
             </div>
           </div>
-          {option_data.map((elem) => {
-            return (
-              <div id={main_dashboardcss.online_users_wrap}>
-                <div className={main_dashboardcss.online_users}>
-                  <div
-                    className={main_dashboardcss.online_comps}
-                    id={main_dashboardcss.item_1_wrap}
-                  >
-                    <div id={main_dashboardcss.item_1}>
-                      <img src={elem.profile_pic} alt="" />
-                    </div>
-                  </div>
-                  <div className={main_dashboardcss.item_2_main}>
+          {option_data && option_data.length > 0 ? (
+            option_data.map((elem) => {
+              return (
+                <div key={elem.id} id={main_dashboardcss.online_users_wrap}>
+                  <div className={main_dashboardcss.online_users}>
                     <div
                       className={main_dashboardcss.online_comps}
-                      id={main_dashboardcss.item_2}
+                      id={main_dashboardcss.item_1_wrap}
                     >
-                      <div className={main_dashboardcss.item_2_comps}>
-                        {elem.username}
+                      <div id={main_dashboardcss.item_1}>
+                        <img src={elem.profile_pic || profile_pic} alt="" />
+                      </div>
+                    </div>
+                    <div className={main_dashboardcss.item_2_main}>
+                      <div
+                        className={main_dashboardcss.online_comps}
+                        id={main_dashboardcss.item_2}
+                      >
+                        <div className={main_dashboardcss.item_2_comps}>
+                          {elem.username}
+                        </div>
+                        <div
+                          className={main_dashboardcss.item_2_comps}
+                          id={main_dashboardcss.item_2_2}
+                        >
+                          {option_check === 3 ? "Blocked" : "Online"}
+                        </div>
                       </div>
                       <div
-                        className={main_dashboardcss.item_2_comps}
-                        id={main_dashboardcss.item_2_2}
+                        className={main_dashboardcss.online_comps}
+                        id={main_dashboardcss.item_2_3}
                       >
-                        Online
+                        <div
+                          className={main_dashboardcss.item_2_comps}
+                          id={main_dashboardcss.item_2_3_1}
+                        >
+                          #{elem.tag}
+                        </div>
                       </div>
                     </div>
                     <div
                       className={main_dashboardcss.online_comps}
-                      id={main_dashboardcss.item_2_3}
+                      id={main_dashboardcss.item_3}
                     >
-                      <div
-                        className={main_dashboardcss.item_2_comps}
-                        id={main_dashboardcss.item_2_3_1}
-                      >
-                        #{elem.tag}
-                      </div>
+                      {option_check === 2 ? (
+                        <>
+                          {elem.status === "incoming" ? (
+                            <>
+                              {buttons("Accept", DoneIcon, elem)}
+                              {buttons("Ignore", CloseIcon, elem)}
+                            </>
+                          ) : (
+                            <>{buttons("Cancel", CloseIcon, elem)}</>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {option_check === 3 ? (
+                            <>{buttons("Unblock", PersonRemoveIcon, elem)}</>
+                          ) : (
+                            <>
+                              {buttons("Message", ChatBubbleIcon, elem)}
+                              {buttons("More", MoreVertIcon, elem)}
+                            </>
+                          )}
+                        </>
+                      )}
                     </div>
-                  </div>
-                  <div
-                    className={main_dashboardcss.online_comps}
-                    id={main_dashboardcss.item_3}
-                  >
-                    {option_check == 2 ? (
-                      <>
-                        {elem.status === "incoming" ? (
-                          <>
-                            {buttons("Accept", DoneIcon, elem)}
-                            {buttons("Ignore", CloseIcon, elem)}
-                          </>
-                        ) : (
-                          <>{buttons("Cancel", CloseIcon, elem)}</>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {option_check === 3 ? (
-                          <>{buttons("Unblock", PersonRemoveIcon, elem)}</>
-                        ) : (
-                          <>
-                            {buttons("Message", ChatBubbleIcon, elem)}
-                            {buttons("More", MoreVertIcon, elem)}
-                          </>
-                        )}
-                      </>
-                    )}
                   </div>
                 </div>
+              );
+            })
+          ) : (
+            <div className={main_dashboardcss.main} style={{ display: "flex" }}>
+              <div className={main_dashboardcss.offline_image}>
+                <img src={image} alt="" />
+                {option_text}
               </div>
-            );
-          })}
+            </div>
+          )}
+
+          {/* More Menu */}
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            PaperProps={{
+              sx: {
+                backgroundColor: "#36393f",
+                color: "#fff",
+                "& .MuiMenuItem-root:hover": {
+                  backgroundColor: "#202225",
+                },
+              },
+            }}
+          >
+            <MenuItem onClick={() => handleMenuAction("remove-friend")}>
+              <ListItemIcon>
+                <PersonRemoveIcon sx={{ color: "#fff" }} />
+              </ListItemIcon>
+              <ListItemText>Remove Friend</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => handleMenuAction("block-user")}>
+              <ListItemIcon>
+                <BlockIcon sx={{ color: "#fff" }} />
+              </ListItemIcon>
+              <ListItemText>Block User</ListItemText>
+            </MenuItem>
+          </Menu>
         </>
       )}
     </>

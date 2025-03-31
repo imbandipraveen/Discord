@@ -98,7 +98,8 @@ function Dashboard() {
 
     const data = await res.json();
     console.log(data, "userRequests 2");
-    const { incoming_reqs, outgoing_reqs, friends, servers } = data;
+    const { incoming_reqs, outgoing_reqs, friends, servers, blocked_users } =
+      data;
     let pending = incoming_reqs.length + outgoing_reqs.length;
     let status_2 = {
       pending_status: false,
@@ -126,6 +127,7 @@ function Dashboard() {
       outgoing_reqs: outgoing_reqs,
       friends: friends,
       servers: servers,
+      blocked_users: blocked_users,
     });
   };
 
@@ -154,6 +156,7 @@ function Dashboard() {
               incoming_reqs: user_data.incoming_reqs,
               outgoing_reqs: user_data.outgoing_reqs,
               friends: user_data.friends,
+              blocked_users: user_data.blocked_users,
             }}
           />
         </div>
@@ -180,6 +183,7 @@ function Dashboard() {
                 incoming_reqs: user_data.incoming_reqs,
                 outgoing_reqs: user_data.outgoing_reqs,
                 friends: user_data.friends,
+                blocked_users: user_data.blocked_users,
               }}
             />
           </div>
