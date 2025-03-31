@@ -1,155 +1,330 @@
-.search_wrap{
-    height: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom: 2px solid #202225;
-    box-sizing: content-box;
+.search_wrap {
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 2px solid #202225;
+  box-sizing: content-box;
 }
 
-.search{
-    display: flex;
-    justify-content: flex-start;
-    text-indent: 10px;
-    align-items: center;
-    width: 90%;
-    height: 65%;
-    background-color: #202225;
-    color: #A3A6AA;
-    border-radius: 5px;
-    font-size: .9rem;
-    cursor: pointer;
+.search {
+  display: flex;
+  justify-content: flex-start;
+  text-indent: 10px;
+  align-items: center;
+  width: 100%;
+  height: 85%;
+  background-color: #202225;
+  color: #a3a6aa;
+  border-radius: 5px;
+  font-size: 0.8rem;
+  cursor: pointer;
 }
 
-.friends_wrap{
-    height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.friends_wrap {
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.friends{
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    /* color: #96989D; */
-    font-size: medium;
-    width: 95%;
-    height: 45px;
-    border-radius: 5px;
-    background-color: #4b4d50;
-    color: white;
+.friends {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* color: #96989D; */
+  font-size: medium;
+  width: 95%;
+  height: 45px;
+  border-radius: 5px;
+  background-color: #4b4d50;
+  color: white;
 }
 
 .friends_icon {
-    margin-left: 1rem;
+  margin-left: 1rem;
 }
 
-.friends img{
-    height: 50%;
-    width: fit-content;
+.friends img {
+  height: 50%;
+  width: fit-content;
 }
 
-
-.heading{
-    display: grid;
-    grid-template-columns: 85% 15%;
-    color: #B9BBBE;
-    font-size: .8rem;
-    margin-bottom: 1rem;
+.heading {
+  display: grid;
+  grid-template-columns: 85% 15%;
+  color: #b9bbbe;
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
 }
 
-#plus{
-    display: flex;
-    color: white;
-    cursor: pointer;
+#plus {
+  display: flex;
+  color: white;
+  cursor: pointer;
 }
 
-
-#text{
-    display: flex;
-    align-items: center;
-    margin-left: 1.5rem;
-    cursor: pointer;
+#text {
+  display: flex;
+  align-items: center;
+  margin-left: 1.5rem;
+  cursor: pointer;
 }
 
-#text:hover{
-    color: white;
+#text:hover {
+  color: white;
 }
 
-.friend_details_wrap{
-    margin-bottom: .2rem;
+.friend_details_wrap {
+  margin-bottom: 0.2rem;
 }
 
-.friends_area{
-    border: 2px solid white;
-    height: 400px;
+.friends_area {
+  border: 2px solid white;
+  height: 400px;
 }
 
-.friend_details{
-    height: 48px;
-    display: flex;
-    cursor: pointer;
-    margin: 0 1rem 0 1rem ;
+.friend_details {
+  height: 48px;
+  display: flex;
+  cursor: pointer;
+  margin: 0 1rem 0 1rem;
 }
 
-.friend_details:hover{
-    background-color: #4b4d50;
-    border-radius: 5px;
+.friend_details:hover {
+  background-color: #4b4d50;
+  border-radius: 5px;
 }
 
-#profile_wrap{
-    width: 20%;
-    margin-left: 3%;
-    display: flex;
-    align-items: center;
+#profile_wrap {
+  width: 20%;
+  margin-left: 3%;
+  display: flex;
+  align-items: center;
 }
 
-.profile_pic{
-    height: 35px;
-    width: 35px;
-    position: relative;
+.profile_pic {
+  height: 35px;
+  width: 35px;
+  position: relative;
 }
 
-.online_status{
-    background-color: #2F3136;
-    height: 15px;
-    width: 15px;
-    border-radius: 50%;
-    margin-left: 60%;
-    position: relative;
-    z-index: 1;
-    padding: .1rem;
-    bottom: 30%;
+.online_status {
+  background-color: #2f3136;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  margin-left: 60%;
+  position: relative;
+  z-index: 1;
+  padding: 0.1rem;
+  bottom: 30%;
 }
 
 /* this is here to affect the child element when parent element is hovered */
-.friend_details:hover .online_status{
-    background-color: #4b4d50;
+.friend_details:hover .online_status {
+  background-color: #4b4d50;
 }
 
-
-.offline_icon{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    color: #747F8D;
-    font-weight: 900;
+.offline_icon {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  color: #747f8d;
+  font-weight: 900;
 }
 
-
-
-.profile_pic img{
-    height: 100%;
-    width: 100%;
-    border-radius: 50%;
+.profile_pic img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
 }
 
-.name{
-    display: flex;
-    align-items: center;
-    width: 80%;
-    color: #DCDDD9;
-    font-weight: 500;
-    font-size: .9rem;
+.name {
+  display: flex;
+  align-items: center;
+  width: 80%;
+  color: #dcddd9;
+  font-weight: 500;
+  font-size: 0.9rem;
 }
+
+.new_server_wrap {
+  background-color: #36393f;
+  border-radius: 5px;
+  width: 440px;
+  height: 400px;
+  position: relative;
+  margin: 0 auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.new_server {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.server_close_button {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.components {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+#server_sub_heading {
+  color: #b9bbbe;
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.friend_details_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 300px;
+  margin-top: 10px;
+}
+
+.friend_details {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin: 0;
+}
+
+.friend_details:hover {
+  background-color: #2f3136;
+}
+
+.friend_details_comps {
+  display: flex;
+  align-items: center;
+}
+
+#profile_wrap {
+  margin-right: 12px;
+}
+
+.profile_pic {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile_pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.online_status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #36393f;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.offline_icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.name {
+  color: #dcddde;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Scrollbar styling */
+.friend_details_wrap::-webkit-scrollbar {
+  width: 8px;
+}
+
+.friend_details_wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.friend_details_wrap::-webkit-scrollbar-thumb {
+  background: #202225;
+  border-radius: 4px;
+}
+
+.friend_details_wrap::-webkit-scrollbar-thumb:hover {
+  background: #2f3136;
+}
+
+/* Modal specific styles - refined for better appearance */
+:global(.modal-dialog) {
+  max-width: 440px !important;
+  margin: 1.75rem auto !important;
+}
+
+:global(.modal-content) {
+  background-color: #36393f !important;
+  border: none !important;
+  border-radius: 5px !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+:global(.modal-body) {
+  padding: 0 !important;
+}
+
+:global(.modal-backdrop) {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Modal content styles */
+.new_server {
+  padding: 24px;
+  position: relative;
+}
+
+.server_close_button {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+#server_heading {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+#server_sub_heading {
+  color: #b9bbbe;
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+/* Keep existing styles for new_server and others */

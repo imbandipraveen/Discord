@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import main_dashboardcss from "../main_dashboard/main_dashboard.module.css";

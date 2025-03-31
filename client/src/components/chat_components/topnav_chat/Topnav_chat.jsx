@@ -20,10 +20,10 @@ function Topnav_chat({ setHideMembers }) {
       <div
         className={topnav_chatcss.right_comps}
         onClick={() => {
-          if (message === "Logout") {
+          if (message == "Logout") {
             localStorage.clear();
             window.location.reload();
-          } else if (message === "Hide Member List") {
+          } else if (message == "Hide Member List") {
             setHideMembers(true);
           }
         }}
