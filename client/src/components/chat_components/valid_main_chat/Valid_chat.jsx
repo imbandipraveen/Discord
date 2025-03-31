@@ -191,7 +191,7 @@ function Valid_chat() {
                     <div className={valid_chat_css.user_image_wrap}>
                       <img
                         id={valid_chat_css.user_image}
-                        src={elem?.sender_pic || "https://ibb.co/21BkhFVt"}
+                        src={elem?.sender_pic}
                         alt="User"
                       />
                     </div>

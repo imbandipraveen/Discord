@@ -223,7 +223,8 @@
   width: fit-content;
   cursor: pointer;
   border: none;
-  background-color: white;
+  background-color: transparent;
+  color: white;
 }
 
 .question {
@@ -233,7 +234,8 @@
 }
 
 .question_link {
-  color: blue;
+  /* color: blue; */
+  color: green;
   cursor: pointer;
 }
 
@@ -257,7 +259,7 @@
 #server_name_heading {
   font-size: 0.8rem;
   font-weight: 650;
-  color: #4f5660;
+  color: white;
   margin-bottom: 0.5rem;
 }
 
@@ -266,6 +268,7 @@
   background-color: #e3e5e8;
   border: none;
   text-indent: 1rem;
+  color: white;
 }
 
 #server_name input:focus {
@@ -274,6 +277,11 @@
 
 #server_name_input {
   width: 100%;
+  background-color: #373a3f;
+  color: white;
+  border: 1px solid gray;
+  padding: 2px;
+  padding-left: 5px;
 }
 
 .buttons_wrap {

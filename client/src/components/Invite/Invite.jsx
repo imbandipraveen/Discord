@@ -53,7 +53,7 @@ function Invite() {
       }),
     });
     const data = await res.json();
-    if (data.status == 200) {
+    if (data.status === 200) {
       setinvite_details(data);
       setinvalid_invite_link(false);
     } else {

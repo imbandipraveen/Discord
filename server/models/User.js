@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     profile_pic: {
       type: String,
-      default: "https://ibb.co/21BkhFVt",
+      default: "https://cdn.discordapp.com/embed/avatars/0.png",
     },
     authorized: {
       type: Boolean,
