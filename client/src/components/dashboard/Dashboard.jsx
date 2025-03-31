@@ -17,6 +17,7 @@ import {
 import { server_existence } from "../../Redux/current_page";
 
 function Dashboard() {
+  const [hideMembers, setHideMembers] = useState(false);
   const dispatch = useDispatch();
   const { server_id } = useParams();
   const option_state = useSelector(
@@ -167,6 +168,7 @@ function Dashboard() {
                 pending: status.pending_status,
                 all_friends: status.all_friends_status,
               }}
+              setHideMembers={() => setHideMembers(!hideMembers)}
             />
           </div>
           <div
@@ -185,7 +187,11 @@ function Dashboard() {
             className={dashboardcss.components}
             id={dashboardcss.component_5}
           >
-            <Right_nav />
+            {!hideMembers ? (
+              <Right_nav />
+            ) : (
+              <div style={{ backgroundColor: "#36393f", height: "100%" }}></div>
+            )}
           </div>
         </>
       )}

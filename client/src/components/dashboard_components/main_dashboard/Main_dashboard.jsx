@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import main_dashboardcss from "../main_dashboard/main_dashboard.module.css";
@@ -53,7 +54,7 @@ function Main_dashboard({ user_relations }) {
   useEffect(() => {
     if (option_check === 2) {
       setoption_data(pending_reqs);
-    } else if (option_check=== 1) {
+    } else if (option_check === 1) {
       setoption_data(friends);
     }
   }, [user_relations, option_check]);

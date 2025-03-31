@@ -148,3 +148,183 @@
   font-weight: 500;
   font-size: 0.9rem;
 }
+
+.new_server_wrap {
+  background-color: #36393f;
+  border-radius: 5px;
+  width: 440px;
+  height: 400px;
+  position: relative;
+  margin: 0 auto;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.new_server {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.server_close_button {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.components {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+#server_sub_heading {
+  color: #b9bbbe;
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.friend_details_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 300px;
+  margin-top: 10px;
+}
+
+.friend_details {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin: 0;
+}
+
+.friend_details:hover {
+  background-color: #2f3136;
+}
+
+.friend_details_comps {
+  display: flex;
+  align-items: center;
+}
+
+#profile_wrap {
+  margin-right: 12px;
+}
+
+.profile_pic {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile_pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.online_status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  background-color: #36393f;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.offline_icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.name {
+  color: #dcddde;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Scrollbar styling */
+.friend_details_wrap::-webkit-scrollbar {
+  width: 8px;
+}
+
+.friend_details_wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.friend_details_wrap::-webkit-scrollbar-thumb {
+  background: #202225;
+  border-radius: 4px;
+}
+
+.friend_details_wrap::-webkit-scrollbar-thumb:hover {
+  background: #2f3136;
+}
+
+/* Modal specific styles - refined for better appearance */
+:global(.modal-dialog) {
+  max-width: 440px !important;
+  margin: 1.75rem auto !important;
+}
+
+:global(.modal-content) {
+  background-color: #36393f !important;
+  border: none !important;
+  border-radius: 5px !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+:global(.modal-body) {
+  padding: 0 !important;
+}
+
+:global(.modal-backdrop) {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Modal content styles */
+.new_server {
+  padding: 24px;
+  position: relative;
+}
+
+.server_close_button {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+#server_heading {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+#server_sub_heading {
+  color: #b9bbbe;
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+/* Keep existing styles for new_server and others */
