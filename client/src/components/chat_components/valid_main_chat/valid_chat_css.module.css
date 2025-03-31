@@ -95,8 +95,9 @@
 }
 
 #user_image {
-  height: 80%;
-  width: auto;
+  height: 45px;
+  width: 45px;
+  /* width: auto; */
   border-radius: 50%;
   position: absolute;
 }

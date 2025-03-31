@@ -45,7 +45,6 @@ function Valid_chat() {
         sender_pic: profile_pic,
         timestamp,
       };
-      console.log("New Message:", newMessage);
 
       setall_messages((prev) => [...prev, newMessage]);
 
