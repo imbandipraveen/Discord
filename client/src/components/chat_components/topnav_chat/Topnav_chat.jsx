@@ -15,16 +15,33 @@ function Topnav_chat({ setHideMembers }) {
   const channel_name = useSelector((state) => state.current_page.page_name);
 
   function buttons(message, Icon) {
-    console.log("Clicked");
     return (
       <div
+        key={message}
         className={topnav_chatcss.right_comps}
         onClick={() => {
-          if (message == "Logout") {
-            localStorage.clear();
-            window.location.reload();
-          } else if (message == "Hide Member List") {
-            setHideMembers(true);
+          switch (message) {
+            case "Logout":
+              localStorage.clear();
+              window.location.reload();
+              break;
+            case "Hide Member List":
+              setHideMembers(true);
+              break;
+            case "Notification Settings":
+              // TODO: Implement notification settings
+              console.log("Notification settings clicked");
+              break;
+            case "Pinned Messages":
+              // TODO: Implement pinned messages
+              console.log("Pinned messages clicked");
+              break;
+            case "Inbox":
+              // TODO: Implement inbox
+              console.log("Inbox clicked");
+              break;
+            default:
+              console.log(`${message} clicked`);
           }
         }}
       >

@@ -1,7 +1,7 @@
 import React from "react";
 import navbarcss from "../navbar/navbar.module.css";
-import discord_logo from "../../images/discord_logo_2.svg";
-import discord_logo_2 from "../../images/discord_logo_3.png";
+// import discord_logo from "../../images/discord_logo_2.svg";
+import discord_logo from "../../images/discord_logo_3.png";
 import AddIcon from "@mui/icons-material/Add";
 import Modal from "react-bootstrap/Modal";
 import CloseIcon from "@mui/icons-material/Close";
