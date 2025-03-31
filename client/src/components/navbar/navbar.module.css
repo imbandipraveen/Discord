@@ -163,6 +163,7 @@
   flex-direction: column;
   align-items: center;
   transition: scaleX(1) 1s ease-in;
+  color: white;
 }
 
 #server_heading {
@@ -201,6 +202,7 @@
 
 .server_template:hover {
   background-color: #e5eaec;
+  color: #202225;
   cursor: pointer;
 }
 

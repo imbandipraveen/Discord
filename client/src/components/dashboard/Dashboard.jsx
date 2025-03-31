@@ -45,7 +45,6 @@ function Dashboard() {
     blocked_staus: false,
   });
   const [new_req, setnew_req] = useState(1);
-  const [hideMembers, setHideMembers] = useState(false);
 
   const new_req_recieved = (new_req_value) => {
     setnew_req(new_req + new_req_value);
