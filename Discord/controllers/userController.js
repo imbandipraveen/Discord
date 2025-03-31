@@ -23,20 +23,22 @@ exports.getUserRelations = async (req, res) => {
 
 exports.addFriend = async (req, res) => {
   try {
-    const { friend } = req.body;
+    const friend = req.body.friend_data;
+
     const userId = req.user.id; // Assuming authentication middleware sets req.user
 
-    // Validate friend input format
-    const hashIndex = friend.indexOf("#");
-    if (hashIndex === -1) {
+    if (!friend) {
       return res.status(400).json({ message: "Invalid Input", status: 400 });
     }
 
-    const name = friend.slice(0, hashIndex);
-    const userTag = friend.slice(hashIndex + 1);
+    // const name = friend.slice(0, hashIndex);
+    // const userTag = friend.slice(hashIndex + 1);
 
     // Find the friend user in the database
-    const friendUser = await User.findOne({ username: name, tag: userTag });
+    const friendUser = await User.findOne({
+      username: friend.username,
+      tag: friend.tag,
+    });
     if (!friendUser) {
       return res.status(404).json({ message: "User Not Found", status: 404 });
     }
@@ -53,7 +55,9 @@ exports.addFriend = async (req, res) => {
     }
 
     // Check if the friend request has already been sent
+    // console.log(user.outgoing_reqs, "=>outgoing_reqs", friendUser);
     if (check_req(user.outgoing_reqs, friendUser._id)) {
+      // console.log("inside the friend request", user, friendUser);
       return res
         .status(400)
         .json({ message: "Friend request already sent", status: 400 });
@@ -62,20 +66,41 @@ exports.addFriend = async (req, res) => {
     // Check if the friend request was received
     if (check_req(friendUser.incoming_reqs, user._id)) {
       // If a friend request was already received, directly add both as friends
+      // console.log("inside the friend request", user, friendUser);
       await add_friend(user, friendUser);
       return res
         .status(200)
         .json({ message: "Friend added successfully", status: 200 });
     }
 
-    // Otherwise, send a friend request
     await User.updateOne(
       { _id: userId },
-      { $push: { outgoing_reqs: { id: friendUser._id } } }
+      {
+        $push: {
+          outgoing_reqs: {
+            id: friendUser._id,
+            username: friendUser.username,
+            profile_pic: friendUser.profile_pic,
+            tag: friendUser.tag,
+            status: "outgoing",
+          },
+        },
+      }
     );
+
     await User.updateOne(
       { _id: friendUser._id },
-      { $push: { incoming_reqs: { id: user._id } } }
+      {
+        $push: {
+          incoming_reqs: {
+            id: user._id,
+            username: user.username,
+            profile_pic: user.profile_pic,
+            tag: user.tag,
+            status: "incoming",
+          },
+        },
+      }
     );
 
     return res
@@ -89,7 +114,9 @@ exports.addFriend = async (req, res) => {
 
 // Function to check if a request exists in an array
 function check_req(list, user_id) {
-  return list.some((item) => item.id.toString() === user_id.toString());
+  return list.some((item) => {
+    return item.id.toString() === user_id.toString();
+  });
 }
 
 // Function to add a friend

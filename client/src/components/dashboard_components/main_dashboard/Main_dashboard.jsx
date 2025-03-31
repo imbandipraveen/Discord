@@ -20,12 +20,14 @@ import socket from "../../Socket/Socket";
 function Main_dashboard({ user_relations }) {
   const dispatch = useDispatch();
   const option_check = useSelector((state) => state.selected_option.value);
+  //   console.log(option_check, "friend request options");
   const option_name_check = useSelector(
     (state) => state.selected_option.option_name
   );
   const option_status = useSelector((state) => state.selected_option.status);
-  const option_text = useSelector((state) => state.selected_option.text);
 
+  const option_text = useSelector((state) => state.selected_option.text);
+  console.log(option_text, "option text");
   // user details from redux
   const username = useSelector((state) => state.user_info.username);
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
@@ -52,8 +54,9 @@ function Main_dashboard({ user_relations }) {
 
   useEffect(() => {
     if (option_check === 2) {
+      console.log(pending_reqs, "pending reqs");
       setoption_data(pending_reqs);
-    } else if (option_check=== 1) {
+    } else if (option_check === 1) {
       setoption_data(friends);
     }
   }, [user_relations, option_check]);
@@ -305,7 +308,7 @@ function Main_dashboard({ user_relations }) {
                     className={main_dashboardcss.online_comps}
                     id={main_dashboardcss.item_3}
                   >
-                    {option_check === 2 ? (
+                    {option_check == 2 ? (
                       <>
                         {elem.status === "incoming" ? (
                           <>
