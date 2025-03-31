@@ -131,9 +131,8 @@ function Navbar({ new_req_recieved, user_cred }) {
           <div id={navbarcss.server_template_wrap}>
             {template.map((elem, index) => {
               return (
-                <div>
+                <div key={index}>
                   <div
-                    key={index}
                     className={navbarcss.server_template}
                     onClick={() => {
                       setserver_details({
@@ -191,9 +190,8 @@ function Navbar({ new_req_recieved, user_cred }) {
               .slice(template.length - 2, template.length)
               .map((elem, index) => {
                 return (
-                  <div>
+                  <div key={index}>
                     <div
-                      key={index}
                       className={navbarcss.server_template}
                       onClick={() => {
                         setcurrent_modal(3);
@@ -365,6 +363,7 @@ function Navbar({ new_req_recieved, user_cred }) {
             servers.map((elem, key) => {
               return (
                 <OverlayTrigger
+                  key={key}
                   placement="right"
                   overlay={
                     <Tooltip id={navbarcss.button_tooltip_2}>

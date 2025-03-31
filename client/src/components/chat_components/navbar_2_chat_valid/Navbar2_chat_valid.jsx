@@ -247,12 +247,12 @@ function Navbar2_chat_valid() {
         <div className={`${valid_css.category_info} ${valid_css.nav_2_parts}`}>
           {server_details.categories.map((elem, key) => {
             return (
-              <>
+              <div key={key}>
                 <Server_details
                   new_req_recieved={new_req_recieved}
                   elem={elem}
                 ></Server_details>
-              </>
+              </div>
             );
           })}
         </div>

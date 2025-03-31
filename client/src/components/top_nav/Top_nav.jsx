@@ -4,10 +4,37 @@ import Topnav_chat from "../chat_components/topnav_chat/Topnav_chat";
 import Topnav_dashboard from "../dashboard_components/top_nav_dashboard/Topnav_dashboard";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { OverlayTrigger } from "react-bootstrap";
+import { Tooltip } from "react-bootstrap";
 
 function Top_nav({ button_status, setHideMembers }) {
   const page_check = useSelector((state) => state.current_page.is_dashboard);
   const { server_id } = useParams();
+
+  const tooltips = (value, props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      {value}
+    </Tooltip>
+  );
+
+  function buttons(message, Icon) {
+    return (
+      <div
+        key={message}
+        className={topnavcss.right_part_icons}
+        onClick={() => {
+          if (message === "Logout") {
+            localStorage.clear();
+            window.location.reload();
+          }
+        }}
+      >
+        <OverlayTrigger placement="bottom" overlay={tooltips(message)}>
+          {<Icon />}
+        </OverlayTrigger>
+      </div>
+    );
+  }
 
   return (
     <div id={topnavcss.main}>
