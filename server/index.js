@@ -32,26 +32,22 @@ io.on("connection", (socket) => {
   socket.on(
     "send_req",
     (receiver_id, sender_id, sender_profile_pic, sender_name) => {
-      socket
-        .to(receiver_id)
-        .emit("recieve_req", {
-          sender_name: sender_name,
-          sender_profile_pic: sender_profile_pic,
-          sender_id,
-        });
+      socket.to(receiver_id).emit("recieve_req", {
+        sender_name: sender_name,
+        sender_profile_pic: sender_profile_pic,
+        sender_id,
+      });
     }
   );
 
   socket.on(
     "req_accepted",
     (sender_id, friend_id, friend_name, friend_profile_pic) => {
-      socket
-        .to(friend_id)
-        .emit("req_accepted_notif", {
-          sender_id,
-          friend_name: friend_name,
-          friend_profile_pic: friend_profile_pic,
-        });
+      socket.to(friend_id).emit("req_accepted_notif", {
+        sender_id,
+        friend_name: friend_name,
+        friend_profile_pic: friend_profile_pic,
+      });
     }
   );
 
@@ -62,17 +58,15 @@ io.on("connection", (socket) => {
   socket.on(
     "send_message",
     (channel_id, message, timestamp, sender_name, sender_tag, sender_pic) => {
-      socket
-        .to(channel_id)
-        .emit("recieve_message", {
-          message_data: {
-            message,
-            timestamp,
-            sender_name,
-            sender_tag,
-            sender_pic,
-          },
-        });
+      socket.to(channel_id).emit("recieve_message", {
+        message_data: {
+          message,
+          timestamp,
+          sender_name,
+          sender_tag,
+          sender_pic,
+        },
+      });
     }
   );
 });
@@ -244,7 +238,7 @@ function send_mail(otp, mail_value, name_value) {
     subject: "Email for Verification",
     text: `Hello ${name_value}
     You registered an account on Discord Clone, Here is your otp for verification - ${otp}
-    Kind Regards, Samyak`,
+    Kind Regards, Riscol`,
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
@@ -1004,12 +998,10 @@ app.post("/verify", function (req, res) {
           user.updateOne({ email: email }, new_val, function (err, result) {
             if (err) throw err;
             else {
-              res
-                .status(201)
-                .json({
-                  message: "Congrats you are verified now",
-                  status: 201,
-                });
+              res.status(201).json({
+                message: "Congrats you are verified now",
+                status: 201,
+              });
             }
           });
         }
@@ -1147,12 +1139,10 @@ app.post("/add_friend", async function (req, res) {
 
       if (friend_list == true) {
         console.log("already friends");
-        res
-          .status(201)
-          .json({
-            message: "You are already friends with this user",
-            status: 201,
-          });
+        res.status(201).json({
+          message: "You are already friends with this user",
+          status: 201,
+        });
       } else {
         const outgoing_list = check_req(outgoing_reqs, id);
         if (outgoing_list == true) {
@@ -1221,13 +1211,11 @@ app.post("/add_friend", async function (req, res) {
                 }
               );
             }
-            res
-              .status(203)
-              .json({
-                message: "Request sent successfully",
-                status: 203,
-                receiver_id: friend_id,
-              });
+            res.status(203).json({
+              message: "Request sent successfully",
+              status: 203,
+              receiver_id: friend_id,
+            });
           }
         }
       }
@@ -1240,14 +1228,12 @@ app.get("/user_relations", async function (req, res) {
   const user_id = jwt.verify(authHeader, process.env.JWT_SECRET);
   const result = await user.find({ _id: user_id.id });
   const { incoming_reqs, outgoing_reqs, friends, servers } = result[0];
-  res
-    .status(201)
-    .json({
-      incoming_reqs: incoming_reqs,
-      outgoing_reqs: outgoing_reqs,
-      friends: friends,
-      servers: servers,
-    });
+  res.status(201).json({
+    incoming_reqs: incoming_reqs,
+    outgoing_reqs: outgoing_reqs,
+    friends: friends,
+    servers: servers,
+  });
 });
 
 app.post("/process_req", async function (req, res) {
