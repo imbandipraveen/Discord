@@ -1,205 +1,200 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
 
-.server_name{
-    position: relative;
-    border-bottom: 1px solid #232427;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    color: white;
-    justify-content: space-between;
-    cursor: pointer;
+.server_name {
+  position: relative;
+  border-bottom: 1px solid #232427;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: white;
+  justify-content: space-between;
+  cursor: pointer;
 }
 
-.server_name:hover{
-    background-color: #4F545C66;
+.server_name:hover {
+  background-color: #4f545c66;
 }
 
-.options_wrap{
-    position: absolute;
-    top: 4rem;
-    left: .7rem;
-    color: white;
-    background-color: #18191C;
-    border-radius: 5px;
-    padding: .5rem;
-    width: 90%;
+.options_wrap {
+  position: absolute;
+  top: 4rem;
+  left: 0.7rem;
+  color: white;
+  background-color: #18191c;
+  border-radius: 5px;
+  padding: 0.5rem;
+  width: 90%;
 }
 
-.options{
-    display: flex;
-    justify-content: space-between;
-    padding: .5rem;
-    font-weight: 400;
-    font-size: .8rem;
-    cursor: pointer;
-    border-radius: 5px;
-    color: #B9BBBE;
+.options {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  font-weight: 400;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 5px;
+  color: #b9bbbe;
 }
 
-.options:hover{
-    background-color: blueviolet;
-    color: white !important; 
+.options:hover {
+  background-color: blueviolet;
+  color: white !important;
 }
 
-.options:last-child:hover{
-    background-color: rgb(231, 98, 95);
+.options:last-child:hover {
+  background-color: rgb(231, 98, 95);
 }
 
-#modal_main_wrap{
-    max-width: 450px;
+#modal_main_wrap {
+  max-width: 450px;
 }
 
-
-.modal_main{
-    background-color: #36393F;
-    padding: 1rem;  
-    color: white;  
+.modal_main {
+  background-color: #36393f;
+  padding: 1rem;
+  color: white;
 }
 
-.modal_comps{
-    margin-bottom: .5rem;
+.modal_comps {
+  margin-bottom: 0.5rem;
 }
 
-#modal_header{
-    margin-bottom: 1rem;
+#modal_header {
+  margin-bottom: 1rem;
 }
 
-#primary_heading{
-    color: white;
-    font-size: 1.5rem;
-    font-weight: 650;
+#primary_heading {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 650;
 }
 
-#channel_name{
-    color: white;
-    font-size: .8rem;
-    font-weight: 600;
-    margin-block: 1rem;
-    
+#channel_name {
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-block: 1rem;
 }
 
-.input_div{
-    display: flex;
-    align-items: center;
-    background-color: #202225;
-    margin-top: .5rem;
-    border-radius: 5px;
-    padding: .5rem;
+.input_div {
+  display: flex;
+  align-items: center;
+  background-color: #202225;
+  margin-top: 0.5rem;
+  border-radius: 5px;
+  padding: 0.5rem;
 }
 
-
-#channel_name input{
-    background-color: #202225;
-    border: none;
-    width: 100%;
-    text-indent: .5rem;
-    caret-color: white;  
-    font-size: 1rem;
-    color: #A0A3A6
+#channel_name input {
+  background-color: #202225;
+  border: none;
+  width: 100%;
+  text-indent: 0.5rem;
+  caret-color: white;
+  font-size: 1rem;
+  color: #a0a3a6;
 }
 
-#channel_name input:focus{
-    outline: none;
+#channel_name input:focus {
+  outline: none;
 }
 
-#channel_name input::placeholder{
-    font-size: 1rem;
+#channel_name input::placeholder {
+  font-size: 1rem;
 }
 
-#modal_buttons{
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    align-items: center;
+#modal_buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  align-items: center;
 }
 
-.buttons{
-    cursor: pointer;
+.buttons {
+  cursor: pointer;
 }
 
-#cancel_button{
-    background-color: inherit;
-    border: none;
-    color: white;
+#cancel_button {
+  background-color: inherit;
+  border: none;
+  color: white;
 }
 
-#create_button{
-    border: none;
-    color: white;
-    background-color: blue;
-    padding: .3rem;
-    border-radius: 3px;
+#create_button {
+  border: none;
+  color: white;
+  background-color: blue;
+  padding: 0.3rem;
+  border-radius: 3px;
 }
 
-#create_button:hover{
-    background-color: rgb(71, 71, 243);
+#create_button:hover {
+  background-color: rgb(71, 71, 243);
 }
 
-#invite_modal{
-    max-width: 25rem;
-    font-family: 'Open Sans', sans-serif;
+#invite_modal {
+  max-width: 25rem;
+  font-family: "Open Sans", sans-serif;
 }
 
-.invite_modal_main{
-    position: relative;
+.invite_modal_main {
+  position: relative;
 }
 
-#close_button{
-    position: absolute;
-    right: 10px;
-    color: #777A7E;
-    cursor: pointer;
+#close_button {
+  position: absolute;
+  right: 10px;
+  color: #777a7e;
+  cursor: pointer;
 }
 
-#close_button:hover{
-    color: white;
+#close_button:hover {
+  color: white;
 }
 
-
-.invite_modal_comps{
-    font-weight: 600;
-    margin-bottom: 1rem;
+.invite_modal_comps {
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
 
-#invite_bottom_part{
-    font-size: .6rem;
+#invite_bottom_part {
+  font-size: 0.6rem;
 }
 
-#invite_bottom_part{
-    color: #B4B6BA;
-    font-weight: 700;
+#invite_bottom_part {
+  color: #b4b6ba;
+  font-weight: 700;
 }
 
-#invite_link_wrap{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: .5rem;
-    padding: .5rem;
-    background-color: #202225;
+#invite_link_wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #202225;
 }
 
-
-#invite_link_value{
-    width: 80%;
-    font-weight: 500;
-    font-size: .8rem;
-    color: #B4B6BA;
+#invite_link_value {
+  width: 80%;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #b4b6ba;
 }
 
-#copy_button{
-    background-color: #4150f0;
-    color: white;
-    border: none;
-    padding: .2rem 1rem .2rem 1rem;
-    border-radius: 2px;
-    font-weight: 600;
-    font-size: .8rem;
+#copy_button {
+  background-color: #4150f0;
+  color: white;
+  border: none;
+  padding: 0.2rem 1rem 0.2rem 1rem;
+  border-radius: 2px;
+  font-weight: 600;
+  font-size: 0.8rem;
 }
 
-#copy_button:hover{
-    background-color: #717cee;
+#copy_button:hover {
+  background-color: #717cee;
 }
-

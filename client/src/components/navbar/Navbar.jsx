@@ -17,7 +17,7 @@ import server_input from "../../images/server_image_input.svg";
 import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
@@ -27,6 +27,8 @@ import { uploadFileToS3 } from "../azure-storage-blob";
 
 function Navbar({ new_req_recieved, user_cred }) {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const currentPath = location.pathname.split("/")[2]; // Get the current server ID from URL
 
   const { username, user_servers } = user_cred;
   const [servers, setservers] = useState([
@@ -331,32 +333,30 @@ function Navbar({ new_req_recieved, user_cred }) {
       <div className={navbarcss.main_wrap}>
         <div>
           {/* for going to the dashboard */}
-          <Link
-            to={"/channels/@me"}
-            className={`${navbarcss.list_items} ${navbarcss.dms}`}
+          <OverlayTrigger
+            placement="right"
+            overlay={
+              <Tooltip id={navbarcss.button_tooltip_2}>Direct Messages</Tooltip>
+            }
           >
-            <div className={`${navbarcss.left}`}>
-              {/* this `selected` class is to specify which list item is selected using a css style which is written in it and the clas "left" is a wrap for this class */}
-              <div className={navbarcss.selected}></div>
-            </div>
-            <div
-              className={`${navbarcss.middle}`}
-              id={navbarcss.direct_message}
+            <Link
+              to={"/channels/@me"}
+              className={`${navbarcss.list_items} ${navbarcss.dms} ${
+                currentPath === "@me" ? navbarcss.active : ""
+              }`}
             >
-              <img src={discord_logo} alt="" />
-            </div>
-            <div className={`${navbarcss.right}`}></div>
-          </Link>
-          {/* pops up when a new message comes up and be there only till it is not clicked */}
-          <div className={`${navbarcss.list_items} ${navbarcss.dms}`}>
-            <div className={`${navbarcss.left}`}>
-              <div className={navbarcss.selected}></div>
-            </div>
-            <div className={`${navbarcss.middle}`}>
-              <img src={discord_logo_2} alt="" />
-            </div>
-            <div className={`${navbarcss.right}`}></div>
-          </div>
+              <div className={`${navbarcss.left}`}>
+                <div className={navbarcss.selected}></div>
+              </div>
+              <div
+                className={`${navbarcss.middle}`}
+                id={navbarcss.direct_message}
+              >
+                <img src={discord_logo} alt="" />
+              </div>
+              <div className={`${navbarcss.right}`}></div>
+            </Link>
+          </OverlayTrigger>
         </div>
 
         {/* servers from here */}
@@ -377,7 +377,9 @@ function Navbar({ new_req_recieved, user_cred }) {
                     onClick={() => {
                       dispatch(server_role(elem.server_role));
                     }}
-                    className={`${navbarcss.list_items} ${navbarcss.servers}`}
+                    className={`${navbarcss.list_items} ${navbarcss.servers} ${
+                      currentPath === elem.server_id ? navbarcss.active : ""
+                    }`}
                   >
                     <div className={`${navbarcss.left}`}>
                       <div className={navbarcss.selected}></div>
