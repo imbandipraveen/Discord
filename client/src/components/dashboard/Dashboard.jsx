@@ -44,6 +44,7 @@ function Dashboard() {
     blocked_staus: false,
   });
   const [new_req, setnew_req] = useState(1);
+  const [hideMembers, setHideMembers] = useState(false);
 
   const new_req_recieved = (new_req_value) => {
     setnew_req(new_req + new_req_value);
@@ -167,6 +168,9 @@ function Dashboard() {
                 pending: status.pending_status,
                 all_friends: status.all_friends_status,
               }}
+              setHideMembers={() => {
+                setHideMembers(!hideMembers);
+              }}
             />
           </div>
           <div
@@ -185,7 +189,11 @@ function Dashboard() {
             className={dashboardcss.components}
             id={dashboardcss.component_5}
           >
-            <Right_nav />
+            {!hideMembers ? (
+              <Right_nav />
+            ) : (
+              <div style={{ height: "100%", backgroundColor: "#36393F" }}></div>
+            )}
           </div>
         </>
       )}
