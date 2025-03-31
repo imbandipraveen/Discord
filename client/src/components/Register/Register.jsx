@@ -117,6 +117,15 @@ function Register() {
     setAlertMessage(message);
     setAlertBox(true);
   };
+  const handleCloseBtn = async () => {
+    const res = await fetch(`${url}/users/delete`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: userValues.email }),
+    });
+    console.log(res);
+    setModalShow(false);
+  };
 
   return (
     <>
@@ -383,7 +392,9 @@ function Register() {
                 Verify
               </button>
               <button
-                onClick={() => setModalShow(false)}
+                onClick={() => {
+                  handleCloseBtn();
+                }}
                 className={registercss.close_btn}
                 style={{ marginLeft: "1rem" }}
               >

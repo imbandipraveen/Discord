@@ -316,3 +316,17 @@ async function add_friend(user, friendUser) {
     User.updateOne({ _id: friendUser._id }, friendUpdate),
   ]);
 }
+
+exports.deleteUser = async (req, res) => {
+  try {
+    let { email } = req.body;
+    console.log(req.body, "Req.body from delete");
+    let data = await User.deleteOne({ email });
+    if (data) {
+      return res.status(200).send({ message: "user removed" });
+    }
+    return res.status(400).send({ message: "try Again" });
+  } catch (err) {
+    return res.status(500).send({ message: err.message });
+  }
+};
