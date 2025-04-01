@@ -272,7 +272,7 @@ function DirectMessage({ friendId }) {
           style={{
             cursor: "pointer",
             position: "absolute",
-            bottom: "40px",
+            bottom: "25px",
             left: "40px",
           }}
           onClick={() => document.getElementById("fileInput").click()}
