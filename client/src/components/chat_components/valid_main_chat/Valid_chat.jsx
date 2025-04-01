@@ -333,7 +333,7 @@ function Valid_chat() {
           <input
             type="text"
             onKeyDown={send_message}
-            value={chat_message.content !== "text" ? "" : chat_message.content}
+            value={chat_message.content}
             onChange={(e) => {
               setchat_message({
                 content: e.target.value,
