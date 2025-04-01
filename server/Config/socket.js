@@ -132,6 +132,7 @@ const setupSocket = (server) => {
         const timestamp = messageData?.timestamp || Date.now();
         const sender_name = messageData?.sender_name;
         const sender_pic = messageData?.sender_pic;
+        const contentType = messageData?.contentType;
 
         // Validate required fields
         if (!sender_id) {
@@ -170,6 +171,7 @@ const setupSocket = (server) => {
           receiver_id,
           room_id: roomId,
           content,
+          contentType,
           timestamp,
         };
 

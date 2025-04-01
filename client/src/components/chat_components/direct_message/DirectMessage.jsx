@@ -8,29 +8,28 @@ import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import InboxIcon from "@mui/icons-material/Inbox";
 import HelpIcon from "@mui/icons-material/Help";
 import jwt from "jwt-decode";
-
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { uploadFileToS3 } from "../../aws-s3-storage-blob";
 function DirectMessage({ friendId }) {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({
+    content: "",
+    contentType: "text",
+  });
   const [messages, setMessages] = useState([]);
   const [friendDetails, setFriendDetails] = useState(null);
   const messageEndRef = useRef(null);
 
-  // Get user details from Redux
   const userId = useSelector((state) => state.user_info.id);
   const username = useSelector((state) => state.user_info.username);
 
-  // Get profile pic from token as fallback
   const token = localStorage.getItem("token");
   const tokenData = token ? jwt(token) : {};
-  // Use the profile_pic directly from token data
   const profile_pic = tokenData.profile_pic || "";
 
-  // URL base without /api prefix
   const baseUrl = (
     process.env.REACT_APP_URL || "http://localhost:3080"
   ).replace(/\/api$/, "");
 
-  // Scroll to bottom of messages
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -38,10 +37,8 @@ function DirectMessage({ friendId }) {
   useEffect(() => {
     console.log("DirectMessage component mounted with friendId:", friendId);
 
-    // Retrieve friend details
     const fetchFriendDetails = async () => {
       try {
-        // Using baseUrl to ensure no /api prefix
         const response = await fetch(`${baseUrl}/api/users/${friendId}`, {
           method: "GET",
           headers: {
@@ -59,8 +56,6 @@ function DirectMessage({ friendId }) {
             `Failed to fetch friend details: ${response.status} ${response.statusText}`
           );
 
-          // Create fallback friend details from friendId
-          // This allows messaging to work even if API call fails
           setFriendDetails({
             id: friendId,
             username: `User_${friendId.substring(0, 6)}`,
@@ -198,7 +193,7 @@ function DirectMessage({ friendId }) {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (message.trim()) {
+    if (message["content"].trim()) {
       // Check if socket is connected
       if (!socket.connected) {
         console.error("Socket is not connected! Attempting to reconnect...");
@@ -218,21 +213,23 @@ function DirectMessage({ friendId }) {
       const messageData = {
         sender_id: userId,
         receiver_id: friendId,
-        content: message,
+        content: message.content,
         timestamp: timestamp,
         sender_name: username,
         sender_pic: profile_pic,
         room_id: roomId,
+        contentType: message["contentType"],
       };
-
+      console.log(messageData, "from DM chat");
       // Add message to local state with format matching database schema
       const localMessage = {
-        content: message,
+        content: message.content,
         sender_id: userId,
         receiver_id: friendId,
         sender_name: username,
         sender_pic: profile_pic,
         timestamp: timestamp,
+        contentType: message.contentType,
         room_id: roomId,
         _id: `temp-${Date.now()}`, // Temporary ID until server assigns one
         pending: true, // Mark as pending until confirmed
@@ -246,7 +243,10 @@ function DirectMessage({ friendId }) {
 
       try {
         socket.emit("send_dm", messageData);
-        setMessage("");
+        setMessage({
+          content: "",
+          contentType: "text",
+        });
       } catch (error) {
         console.error("Error sending message:", error);
         alert(`Failed to send message: ${error.message}`);
@@ -277,7 +277,14 @@ function DirectMessage({ friendId }) {
       })}`;
     }
   };
-
+  const handleImageSelect = async (e) => {
+    const file = e.target.files[0];
+    let imgUrl = await uploadFileToS3(file);
+    setMessage({
+      content: imgUrl,
+      contentType: "image",
+    });
+  };
   // Get the friend's name to display
   const displayName =
     friendDetails?.username || `Friend ID: ${friendId.substring(0, 8)}...`;
@@ -349,7 +356,18 @@ function DirectMessage({ friendId }) {
                   </div>
                 )}
                 <div className={dmCSS.messageContent}>
-                  <p>{msg.content || msg.message}</p>
+                  <p>
+                    {console.log(msg, "msg")}
+                    {msg.contentType === "image" ? (
+                      <img
+                        src={msg.content}
+                        style={{ width: "200px" }}
+                        alt="message "
+                      />
+                    ) : (
+                      msg.content
+                    )}
+                  </p>
                   {msg.pending && (
                     <span className={dmCSS.pendingIndicator}>Sending...</span>
                   )}
@@ -360,14 +378,91 @@ function DirectMessage({ friendId }) {
         )}
         <div ref={messageEndRef} />
       </div>
-
+      {message.contentType === "image" && (
+        <div
+          style={{
+            width: "100%",
+            height: "200px",
+            position: "absolute",
+            bottom: "100px",
+            backgroundColor: "rgba(108, 122, 137, 0.3)", // bg-slate-700 with opacity
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: "8px",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              width: "fit-content",
+              padding: "8px",
+              cursor: "pointer",
+              color: "black",
+              transition: "color 0.2s",
+              color: "white",
+            }}
+            title="Remove"
+            onClick={() => {
+              setMessage({ content: "", contentType: "text" });
+            }}
+          >
+            X
+          </div>
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "12px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src={message.content}
+              alt="uploadImage"
+              style={{
+                width: "250px", // Set a fixed width and height to ensure it's square
+                height: "250px",
+                objectFit: "contain", // Ensures the full image is visible without cropping
+                borderRadius: "8px",
+              }}
+            />
+          </div>
+        </div>
+      )}
       <form className={dmCSS.messageForm} onSubmit={handleSendMessage}>
         <input
+          type="file"
+          id="fileInput"
+          style={{ display: "none" }}
+          onChange={handleImageSelect}
+          // onKeyDown={send_message}
+        />
+
+        <AddCircleIcon
+          htmlColor="#B9BBBE"
+          style={{
+            cursor: "pointer",
+            position: "absolute",
+            bottom: "43px",
+            left: "35px",
+          }}
+          onClick={() => document.getElementById("fileInput").click()}
+        />
+
+        <input
           type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={message.content ? "" : message.content}
+          onChange={(e) =>
+            setMessage({ content: e.target.value, contentType: "text" })
+          }
           placeholder={`Message ${displayName}`}
           className={dmCSS.messageInput}
+          style={{ paddingLeft: "35px" }}
         />
         <button type="submit" className={dmCSS.sendButton}>
           Send

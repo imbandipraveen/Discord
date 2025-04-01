@@ -23,7 +23,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { server_role } from "../../Redux/current_page";
 // import uploadFileToS3 from "../azure-storage-blob.ts";
-import { uploadFileToS3 } from "../azure-storage-blob";
+import { uploadFileToS3 } from "../aws-s3-storage-blob";
 
 function Navbar({ new_req_recieved, user_cred }) {
   const dispatch = useDispatch();

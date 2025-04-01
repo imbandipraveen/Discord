@@ -5,7 +5,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import TagIcon from "@mui/icons-material/Tag";
 import socket from "../../Socket/Socket";
 import { useParams } from "react-router-dom";
-import { uploadFileToS3 } from "../../azure-storage-blob";
+import { uploadFileToS3 } from "../../aws-s3-storage-blob";
 
 function Valid_chat() {
   const url = process.env.REACT_APP_URL;
@@ -278,9 +278,9 @@ function Valid_chat() {
               color: "white",
             }}
             title="Remove"
-            // onMouseEnter={(e) => (e.target.style.color = "red")}
-            // onMouseLeave={(e) => (e.target.style.color = "black")}
-            // onClick={handleClearUploadImage}
+            onClick={() => {
+              setchat_message({ content: "", contentType: "text" });
+            }}
           >
             X
           </div>
@@ -297,9 +297,9 @@ function Valid_chat() {
               src={chat_message.content}
               alt="uploadImage"
               style={{
-                width: "250px", // Set a fixed width and height to ensure it's square
+                width: "250px",
                 height: "250px",
-                objectFit: "contain", // Ensures the full image is visible without cropping
+                objectFit: "contain",
                 borderRadius: "8px",
               }}
             />
@@ -326,7 +326,7 @@ function Valid_chat() {
           <input
             type="text"
             onKeyDown={send_message}
-            value={chat_message.content}
+            value={chat_message.content !== "text" ? "" : chat_message.content}
             onChange={(e) => {
               setchat_message({
                 content: e.target.value,
