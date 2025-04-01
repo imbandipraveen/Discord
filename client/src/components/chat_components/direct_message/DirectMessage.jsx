@@ -17,6 +17,8 @@ function DirectMessage({ friendId }) {
   const [friendDetails, setFriendDetails] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const messageEndRef = useRef(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingTimeout, setTypingTimeout] = useState(null);
 
   const userId = useSelector((state) => state.user_info.id);
   const username = useSelector((state) => state.user_info.username);
@@ -104,12 +106,40 @@ function DirectMessage({ friendId }) {
     socket.off("dm_history").on("dm_history", historyHandler);
     socket.emit("join_dm", { userId, friendId });
 
+    // Typing indicator event handlers
+    const typingHandler = (data) => {
+      if (data.sender_id === friendId && data.receiver_id === userId) {
+        setIsTyping(true);
+
+        // Clear any existing timeout
+        if (typingTimeout) {
+          clearTimeout(typingTimeout);
+        }
+
+        // Set a timeout to clear the typing indicator after 3 seconds
+        const timeout = setTimeout(() => {
+          setIsTyping(false);
+        }, 3000);
+
+        setTypingTimeout(timeout);
+      }
+    };
+
+    // Add typing event listener
+    socket.on("typing_indicator", typingHandler);
+
     return () => {
       socket.off("receive_dm", receiveHandler);
       socket.off("dm_history", historyHandler);
       socket.emit("leave_dm", { userId, friendId });
+      socket.off("typing_indicator", typingHandler);
+
+      // Clear any existing timeout
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
     };
-  }, [friendId, userId, token]);
+  }, [friendId, userId, token, typingTimeout]);
 
   const handleImageSelect = async (e) => {
     const file = e.target.files[0];
@@ -162,6 +192,18 @@ function DirectMessage({ friendId }) {
 
   const displayName =
     friendDetails?.username || `Friend ID: ${friendId.substring(0, 8)}...`;
+
+  // Handle typing detection
+  const handleInputChange = (e) => {
+    setMessage({ content: e.target.value, contentType: "text" });
+
+    // Emit typing event to socket
+    socket.emit("typing", {
+      sender_id: userId,
+      receiver_id: friendId,
+      room_id: [userId, friendId].sort().join("_"),
+    });
+  };
 
   return (
     <div className={dmCSS.dm_container}>
@@ -243,6 +285,19 @@ function DirectMessage({ friendId }) {
             </div>
           </div>
         ))}
+
+        {/* Typing indicator */}
+        {isTyping && (
+          <div className={dmCSS.typing_indicator}>
+            {friendDetails?.username} is typing
+            <div className={dmCSS.typing_dots}>
+              <div className={dmCSS.typing_dot}></div>
+              <div className={dmCSS.typing_dot}></div>
+              <div className={dmCSS.typing_dot}></div>
+            </div>
+          </div>
+        )}
+
         <div ref={messageEndRef} />
       </div>
 
@@ -280,9 +335,7 @@ function DirectMessage({ friendId }) {
         <input
           type="text"
           value={message.content}
-          onChange={(e) =>
-            setMessage({ content: e.target.value, contentType: "text" })
-          }
+          onChange={handleInputChange}
           style={{ paddingLeft: "50px" }}
           placeholder={`Message @${displayName}`}
           className={dmCSS.messageInput}

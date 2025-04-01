@@ -117,6 +117,34 @@ const setupSocket = (server) => {
       console.log(`User left DM room: ${roomId}`);
     });
 
+    // Handle typing indicator
+    socket.on("typing", (data) => {
+      try {
+        const { sender_id, receiver_id, room_id } = data;
+
+        if (!sender_id || !receiver_id) {
+          console.error("❌ Missing sender_id or receiver_id in typing event");
+          return;
+        }
+
+        // Use provided room_id or create one if not provided
+        const roomId = room_id || [sender_id, receiver_id].sort().join("_");
+
+        console.log(
+          `✏️ User ${sender_id} is typing to ${receiver_id} in room ${roomId}`
+        );
+
+        // Emit typing event to the room (excluding the sender)
+        socket.to(roomId).emit("typing_indicator", {
+          sender_id,
+          receiver_id,
+          timestamp: Date.now(),
+        });
+      } catch (error) {
+        console.error("❌ Exception in typing handler:", error);
+      }
+    });
+
     socket.on("send_dm", (messageData) => {
       try {
         console.log(
