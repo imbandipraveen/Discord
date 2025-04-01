@@ -161,7 +161,13 @@ function Dashboard() {
     return (
       <div
         className={dashboardcss.main}
-        style={{ gridTemplateColumns: grid_layout }}
+        style={{
+          display: "grid",
+          gridTemplateColumns: "70px 250px 1fr",
+          height: "100vh",
+          width: "100%",
+          overflow: "hidden",
+        }}
       >
         <div className={dashboardcss.components} id={dashboardcss.component_1}>
           <Navbar
@@ -172,26 +178,16 @@ function Dashboard() {
         <div className={dashboardcss.components} id={dashboardcss.component_2}>
           <Navbar_2 />
         </div>
-        <div className={dashboardcss.components} id={dashboardcss.component_3}>
-          <Top_nav
-            button_status={{
-              pending: status.pending_status,
-              all_friends: status.all_friends_status,
-            }}
-            setHideMembers={() => setHideMembers(!hideMembers)}
-          />
-        </div>
         <div
           className={dashboardcss.components}
-          id={dashboardcss.component_4}
-          style={{ position: "relative" }}
+          style={{
+            position: "relative",
+            backgroundColor: "#36393f",
+            height: "100vh",
+            overflow: "hidden",
+          }}
         >
-          {/* Direct Message component rendered directly */}
           <DirectMessage friendId={friend_id} />
-        </div>
-        <div className={dashboardcss.components} id={dashboardcss.component_5}>
-          {/* Empty right panel for DMs */}
-          <div style={{ backgroundColor: "#36393f", height: "100%" }}></div>
         </div>
       </div>
     );

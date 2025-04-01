@@ -283,96 +283,109 @@ function DirectMessage({ friendId }) {
     friendDetails?.username || `Friend ID: ${friendId.substring(0, 8)}...`;
 
   return (
-    <div className={dmCSS.directMessageContainer}>
-      <div className={dmCSS.header}>
-        <div className={dmCSS.headerLeft}>
-          <h3>{displayName}</h3>
+    <div className={dmCSS.dm_container}>
+      {/* Header */}
+      <div className={dmCSS.dm_header}>
+        <div className={dmCSS.user_info}>
+          <img
+            src={
+              friendDetails?.profile_pic ||
+              "https://cdn.discordapp.com/embed/avatars/0.png"
+            }
+            alt={friendDetails?.username}
+            className={dmCSS.user_avatar}
+          />
+          <span className={dmCSS.user_name}>
+            {friendDetails?.username || "Loading..."}
+          </span>
         </div>
-        <div className={dmCSS.headerRight}>
-          <div className={dmCSS.headerIcon}>
-            <NotificationsIcon fontSize="small" />
-          </div>
-          <div className={dmCSS.headerIcon}>
-            <PushPinIcon fontSize="small" />
-          </div>
-          <div className={dmCSS.headerIcon}>
-            <PeopleAltIcon fontSize="small" />
-          </div>
-          <div className={dmCSS.headerIcon}>
-            <InboxIcon fontSize="small" />
-          </div>
-          <div className={dmCSS.headerIcon}>
-            <HelpIcon fontSize="small" />
-          </div>
+        <div className={dmCSS.header_actions}>
+          <NotificationsIcon className={dmCSS.header_icon} />
+          <PushPinIcon className={dmCSS.header_icon} />
+          <PeopleAltIcon className={dmCSS.header_icon} />
+          <InboxIcon className={dmCSS.header_icon} />
+          <HelpIcon className={dmCSS.header_icon} />
         </div>
       </div>
 
-      <div className={dmCSS.messageArea}>
-        {messages.length === 0 ? (
-          <div className={dmCSS.emptyState}>
-            <p>No messages yet. Start a conversation!</p>
+      {/* Messages Area */}
+      <div className={dmCSS.messages_container}>
+        {messages.map((msg, index) => (
+          <div
+            key={msg._id || `${msg.sender_id}-${index}`}
+            className={dmCSS.messageItem}
+          >
+            <div className={dmCSS.messageHeader}>
+              <img
+                src={
+                  msg.sender_id === userId
+                    ? profile_pic
+                    : friendDetails?.profile_pic
+                }
+                alt=""
+                className={dmCSS.avatar}
+              />
+              <span className={dmCSS.username}>
+                {msg.sender_id === userId ? username : friendDetails?.username}
+              </span>
+              <span className={dmCSS.timestamp}>
+                {new Date(msg.timestamp).toLocaleTimeString()}
+              </span>
+              {msg.pending && (
+                <span className={dmCSS.pendingIndicator}>(sending...)</span>
+              )}
+            </div>
+            <div className={dmCSS.messageContent}>
+              <p>{msg.content}</p>
+            </div>
           </div>
-        ) : (
-          messages.map((msg, index) => {
-            const isCurrentUser =
-              msg.sender_id === userId || msg.senderId === userId;
-            const senderName = isCurrentUser
-              ? username
-              : friendDetails?.username || msg.sender_name || "Friend";
-            const showHeader =
-              index === 0 ||
-              (messages[index - 1].sender_id !== msg.sender_id &&
-                messages[index - 1].senderId !== msg.sender_id);
-
-            const senderPic = isCurrentUser
-              ? profile_pic
-              : friendDetails?.profile_pic ||
-                msg.sender_pic ||
-                "https://cdn.discordapp.com/embed/avatars/0.png";
-
-            return (
-              <div
-                key={msg._id || msg.id || index}
-                className={dmCSS.messageItem}
-              >
-                {showHeader && (
-                  <div className={dmCSS.messageHeader}>
-                    <img
-                      src={senderPic}
-                      alt={senderName}
-                      className={dmCSS.avatar}
-                    />
-                    <span className={dmCSS.username}>{senderName}</span>
-                    <span className={dmCSS.timestamp}>
-                      {formatTimestamp(msg.timestamp)}
-                    </span>
-                  </div>
-                )}
-                <div className={dmCSS.messageContent}>
-                  <p>{msg.content || msg.message}</p>
-                  {msg.pending && (
-                    <span className={dmCSS.pendingIndicator}>Sending...</span>
-                  )}
-                </div>
-              </div>
-            );
-          })
-        )}
+        ))}
         <div ref={messageEndRef} />
       </div>
 
-      <form className={dmCSS.messageForm} onSubmit={handleSendMessage}>
+      {/* Message Input */}
+      <form onSubmit={handleSendMessage} className={dmCSS.messageForm}>
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={`Message ${displayName}`}
+          placeholder={`Message @${friendDetails?.username || "..."}`}
           className={dmCSS.messageInput}
         />
         <button type="submit" className={dmCSS.sendButton}>
           Send
         </button>
       </form>
+
+      {/* User Info Panel */}
+      <div className={dmCSS.user_info_panel}>
+        <div className={dmCSS.user_profile}>
+          <img
+            src={
+              friendDetails?.profile_pic ||
+              "https://cdn.discordapp.com/embed/avatars/0.png"
+            }
+            alt={friendDetails?.username}
+            className={dmCSS.profile_avatar}
+          />
+          <h2 className={dmCSS.profile_name}>{friendDetails?.username}</h2>
+          <span className={dmCSS.profile_tag}>#{friendDetails?.tag}</span>
+        </div>
+
+        <div className={dmCSS.divider} />
+
+        <div className={dmCSS.user_section}>
+          <h3 className={dmCSS.section_title}>Discord Member Since</h3>
+          <div className={dmCSS.section_content}>
+            {new Date().toLocaleDateString()}
+          </div>
+        </div>
+
+        <div className={dmCSS.user_section}>
+          <h3 className={dmCSS.section_title}>Note</h3>
+          <div className={dmCSS.section_content}>Click to add a note</div>
+        </div>
+      </div>
     </div>
   );
 }
