@@ -23,6 +23,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import BlockIcon from "@mui/icons-material/Block";
 import PersonOffIcon from "@mui/icons-material/PersonOff";
+import { useNavigate } from "react-router-dom";
 
 function Main_dashboard({ user_relations }) {
   const dispatch = useDispatch();
@@ -66,6 +67,20 @@ function Main_dashboard({ user_relations }) {
   let pending_reqs = [...incoming_reqs, ...outgoing_reqs];
   const url = process.env.REACT_APP_URL;
 
+  const navigate = useNavigate();
+
+  // Function to start a direct message with a friend
+  const startDM = (friendId) => {
+    console.log("Starting DM with friend ID:", friendId);
+
+    // Create the target URL for the direct message route
+    const targetUrl = `/channels/@me/${friendId}`;
+    console.log("Navigating to URL:", targetUrl);
+
+    // Navigate to the direct message route
+    navigate(targetUrl);
+  };
+
   useEffect(() => {
     console.log("User relations received:", user_relations);
     if (option_check === 2) {
@@ -87,6 +102,13 @@ function Main_dashboard({ user_relations }) {
   }, [option_check]);
 
   const button_clicked = async (message, friend_data) => {
+    // Handle Message button click
+    if (message === "Message") {
+      console.log("Message button clicked for:", friend_data);
+      startDM(friend_data.id);
+      return;
+    }
+
     // Don't make API call for More button
     if (message === "More") {
       // TODO: Implement More button functionality (e.g., show menu with options)
@@ -282,6 +304,7 @@ function Main_dashboard({ user_relations }) {
       {value}
     </Tooltip>
   );
+
   return (
     <>
       {option_status === false ? (
