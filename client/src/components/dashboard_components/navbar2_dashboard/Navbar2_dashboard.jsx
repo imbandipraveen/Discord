@@ -68,8 +68,8 @@ function Navbar_2_dashboard() {
       if (data && data.friends) {
         console.log("Setting friends from API:", data.friends);
         setFriends(data.friends);
-        // Friends are already sorted by last_message_timestamp from the server
-        setRecentFriends(data.friends);
+        // Use friends_with_messages for recent conversations (DM column)
+        setRecentFriends(data.friends_with_messages || []);
       } else {
         console.log("No friends found in response");
         setFriends([]);

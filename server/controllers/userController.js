@@ -72,7 +72,8 @@ exports.getUserRelations = async (req, res) => {
     res.json({
       incoming_reqs: user.incoming_reqs,
       outgoing_reqs: user.outgoing_reqs,
-      friends: sortedFriends,
+      friends: user.friends,
+      friends_with_messages: sortedFriends,
       blocked_users: user.blocked,
       servers: user.servers,
     });

@@ -53,6 +53,7 @@ function Dashboard() {
     friends: "",
     servers: "",
     blocked_users: "",
+    friends_with_messages: [],
   });
   const [status, setstatus] = useState({
     pending_status: false,
@@ -113,8 +114,14 @@ function Dashboard() {
 
       const data = await res.json();
       console.log(data, "userRequests 2");
-      const { incoming_reqs, outgoing_reqs, friends, servers, blocked_users } =
-        data;
+      const {
+        incoming_reqs,
+        outgoing_reqs,
+        friends,
+        servers,
+        blocked_users,
+        friends_with_messages,
+      } = data;
       let pending = incoming_reqs.length + outgoing_reqs.length;
       let status_2 = {
         pending_status: false,
@@ -142,6 +149,7 @@ function Dashboard() {
         friends: friends,
         servers: servers,
         blocked_users: blocked_users,
+        friends_with_messages: friends_with_messages || [],
       });
     } catch (error) {
       console.error("Error fetching user relations:", error);
