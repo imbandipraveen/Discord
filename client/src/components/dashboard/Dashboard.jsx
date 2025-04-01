@@ -6,7 +6,7 @@ import Top_nav from "../top_nav/Top_nav";
 import Main from "../main/Main";
 import Right_nav from "../right_nav/Right_nav";
 import jwt from "jwt-decode";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   change_username,
@@ -15,11 +15,26 @@ import {
   option_user_id,
 } from "../../Redux/user_creds_slice";
 import { server_existence } from "../../Redux/current_page";
+import DirectMessage from "../chat_components/direct_message/DirectMessage";
 
 function Dashboard() {
   const [hideMembers, setHideMembers] = useState(false);
   const dispatch = useDispatch();
-  const { server_id } = useParams();
+  const { server_id, friend_id } = useParams();
+  const location = useLocation();
+
+  // Check if this is a DM route
+  const isDM = server_id === "@me" && friend_id;
+  const isDMPath = location.pathname.includes("/@me/");
+
+  console.log("Dashboard component - path info:", {
+    path: location.pathname,
+    server_id,
+    friend_id,
+    isDM,
+    isDMPath,
+  });
+
   const option_state = useSelector(
     (state) => state.selected_option.updated_options
   );
@@ -37,6 +52,7 @@ function Dashboard() {
     outgoing_reqs: "",
     friends: "",
     servers: "",
+    blocked_users: "",
   });
   const [status, setstatus] = useState({
     pending_status: false,
@@ -50,6 +66,7 @@ function Dashboard() {
     setnew_req(new_req + new_req_value);
   };
 
+  // Always set a default grid layout
   const [grid_layout, setgrid_layout] = useState("70px 250px auto auto 370px");
 
   useEffect(() => {
@@ -57,80 +74,122 @@ function Dashboard() {
   }, [new_req, option_state]);
 
   useEffect(() => {
-    if (server_id === "@me" || server_id === undefined) {
-      setgrid_layout("70px 250px auto auto 370px");
-    } else {
-      if (server_exists === false) {
-        setgrid_layout("70px 250px auto");
-      } else {
-        setgrid_layout("70px 250px auto auto 300px");
-      }
+    // For DMs, always set server exists to true
+    dispatch(server_existence(true));
 
-      let does_exists = false;
-      if (server_id !== "@me") {
-        for (let index = 0; index < user_data.servers.length; index++) {
-          if (server_id === user_data.servers[index].server_id) {
-            does_exists = true;
-          }
-        }
-      }
-      dispatch(server_existence(does_exists));
+    if (isDM || isDMPath) {
+      // For DMs, use this layout
+      setgrid_layout("70px 250px auto auto 370px");
+    } else if (server_id === "@me") {
+      // For friends page
+      setgrid_layout("70px 250px auto auto 370px");
+    } else if (server_exists === false) {
+      // For invalid servers
+      setgrid_layout("70px 250px auto");
+    } else {
+      // For valid servers
+      setgrid_layout("70px 250px auto auto 300px");
     }
-  }, [server_id, user_data.servers]);
+  }, [server_id, friend_id, server_exists, dispatch, isDM, isDMPath]);
 
   useEffect(() => {
     dispatch(change_username(username));
     dispatch(change_tag(tag));
     dispatch(option_profile_pic(profile_pic));
     dispatch(option_user_id(id));
-  }, []);
+  }, [username, tag, profile_pic, id, dispatch]);
 
   // this use effect will run once and after that it will run whenever there is some change in requests like accept or denied or something
 
   const user_relations = async () => {
-    const res = await fetch(`${url}/users/relations`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": localStorage.getItem("token"),
-      },
-    });
+    try {
+      const res = await fetch(`${url}/users/relations`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": localStorage.getItem("token"),
+        },
+      });
 
-    const data = await res.json();
-    console.log(data, "userRequests 2");
-    const { incoming_reqs, outgoing_reqs, friends, servers, blocked_users } =
-      data;
-    let pending = incoming_reqs.length + outgoing_reqs.length;
-    let status_2 = {
-      pending_status: false,
-      online_status: false,
-      all_friends_status: false,
-      blocked_staus: false,
-    };
-    // had to make an object inside because if i directly try to use setstate then it will change the values simultaneously as there are many conditions and usestate is not updated in one instant so the default value will be in it for the time being so it wont work
+      const data = await res.json();
+      console.log(data, "userRequests 2");
+      const { incoming_reqs, outgoing_reqs, friends, servers, blocked_users } =
+        data;
+      let pending = incoming_reqs.length + outgoing_reqs.length;
+      let status_2 = {
+        pending_status: false,
+        online_status: false,
+        all_friends_status: false,
+        blocked_staus: false,
+      };
 
-    if (pending !== 0) {
-      status_2 = { ...status_2, pending_status: true };
-    } else {
-      status_2 = { ...status_2, pending_status: false };
+      if (pending !== 0) {
+        status_2 = { ...status_2, pending_status: true };
+      } else {
+        status_2 = { ...status_2, pending_status: false };
+      }
+
+      if (friends.length !== 0) {
+        status_2 = { ...status_2, all_friends_status: true };
+      } else {
+        status_2 = { ...status_2, all_friends_status: false };
+      }
+
+      setstatus(status_2);
+      setuser_data({
+        incoming_reqs: incoming_reqs,
+        outgoing_reqs: outgoing_reqs,
+        friends: friends,
+        servers: servers,
+        blocked_users: blocked_users,
+      });
+    } catch (error) {
+      console.error("Error fetching user relations:", error);
     }
-
-    if (friends.length !== 0) {
-      status_2 = { ...status_2, all_friends_status: true };
-    } else {
-      status_2 = { ...status_2, all_friends_status: false };
-    }
-
-    setstatus(status_2);
-    setuser_data({
-      incoming_reqs: incoming_reqs,
-      outgoing_reqs: outgoing_reqs,
-      friends: friends,
-      servers: servers,
-      blocked_users: blocked_users,
-    });
   };
 
+  // For direct message route, override the main content
+  if (isDM || isDMPath) {
+    return (
+      <div
+        className={dashboardcss.main}
+        style={{ gridTemplateColumns: grid_layout }}
+      >
+        <div className={dashboardcss.components} id={dashboardcss.component_1}>
+          <Navbar
+            user_cred={{ username: username, user_servers: user_data.servers }}
+            new_req_recieved={new_req_recieved}
+          />
+        </div>
+        <div className={dashboardcss.components} id={dashboardcss.component_2}>
+          <Navbar_2 />
+        </div>
+        <div className={dashboardcss.components} id={dashboardcss.component_3}>
+          <Top_nav
+            button_status={{
+              pending: status.pending_status,
+              all_friends: status.all_friends_status,
+            }}
+            setHideMembers={() => setHideMembers(!hideMembers)}
+          />
+        </div>
+        <div
+          className={dashboardcss.components}
+          id={dashboardcss.component_4}
+          style={{ position: "relative" }}
+        >
+          {/* Direct Message component rendered directly */}
+          <DirectMessage friendId={friend_id} />
+        </div>
+        <div className={dashboardcss.components} id={dashboardcss.component_5}>
+          {/* Empty right panel for DMs */}
+          <div style={{ backgroundColor: "#36393f", height: "100%" }}></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Standard render for non-DM routes
   return (
     <div
       className={dashboardcss.main}
@@ -145,7 +204,7 @@ function Dashboard() {
       <div className={dashboardcss.components} id={dashboardcss.component_2}>
         <Navbar_2 />
       </div>
-      {server_exists === false && server_id !== "@me" ? (
+      {server_exists === false && server_id !== "@me" && !isDM ? (
         <div
           style={{ gridArea: "1 / 3 / 6 / 6" }}
           className={dashboardcss.components}

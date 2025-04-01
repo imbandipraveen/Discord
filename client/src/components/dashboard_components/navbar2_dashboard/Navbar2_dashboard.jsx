@@ -76,7 +76,14 @@ function Navbar_2_dashboard() {
 
   const startDM = (friendId) => {
     handleClose();
-    navigate(`/channels/@me/${friendId}`);
+    console.log("Starting DM with friend ID:", friendId);
+
+    // Create the target URL - this is very important!
+    const targetUrl = `/channels/@me/${friendId}`;
+    console.log("Navigating to URL:", targetUrl);
+
+    // Navigate to the direct message route
+    navigate(targetUrl);
   };
 
   return (
@@ -144,7 +151,13 @@ function Navbar_2_dashboard() {
                   <div
                     key={friend.id}
                     className={navbar_chat_css.friend_details}
-                    onClick={() => startDM(friend.id)}
+                    onClick={() => {
+                      // Alert for debugging
+                      alert(
+                        `Clicking on friend: ${friend.username} (${friend.id})`
+                      );
+                      startDM(friend.id);
+                    }}
                   >
                     <div
                       className={navbar_chat_css.friend_details_comps}

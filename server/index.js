@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const { Server } = require("socket.io");
 const short_id = require("shortid");
+const DirectMessage = require("./models/DirectMessage");
 
 app.use(cors());
 app.use(express.json({ limit: "10kb" }));
@@ -20,7 +21,8 @@ const server = app.listen(port, () => {
 const io = require("socket.io")(server, {
   pingTimeout: 20000,
   cors: {
-    origin: "https://project-discord.netlify.app",
+    origin: ["https://project-discord.netlify.app", "http://localhost:3000"],
+    credentials: true,
   },
 });
 
@@ -69,6 +71,79 @@ io.on("connection", (socket) => {
       });
     }
   );
+
+  // Direct Message socket events
+  socket.on("join_dm", ({ userId, friendId }) => {
+    const roomId = [userId, friendId].sort().join("_");
+    socket.join(roomId);
+    console.log(`User ${userId} joined DM room with ${friendId}: ${roomId}`);
+
+    // Fetch message history for this room
+    DirectMessage.find({ room_id: roomId })
+      .sort({ timestamp: 1 })
+      .then((messages) => {
+        // Send message history to the user who just joined
+        socket.emit("dm_history", messages);
+        console.log(
+          `Sent ${messages.length} messages to user ${userId} for room ${roomId}`
+        );
+      })
+      .catch((err) => {
+        console.error("Error fetching direct messages:", err);
+      });
+  });
+
+  socket.on("leave_dm", ({ userId, friendId }) => {
+    const roomId = [userId, friendId].sort().join("_");
+    socket.leave(roomId);
+    console.log(`User left DM room: ${roomId}`);
+  });
+
+  socket.on("send_dm", (messageData) => {
+    const {
+      senderId,
+      receiverId,
+      content,
+      timestamp,
+      senderName,
+      senderProfilePic,
+    } = messageData;
+
+    // Create a consistent room ID by sorting the user IDs and joining them
+    const roomId = [senderId, receiverId].sort().join("_");
+
+    console.log(`DM sent in room ${roomId}: ${content}`);
+    console.log(`From: ${senderName} (${senderId}) to: ${receiverId}`);
+
+    // Save the message to the database
+    const newMessage = new DirectMessage({
+      sender_id: senderId,
+      receiver_id: receiverId,
+      room_id: roomId,
+      content: content,
+      timestamp: timestamp,
+      sender_name: senderName,
+      sender_pic: senderProfilePic,
+    });
+
+    newMessage
+      .save()
+      .then((savedMessage) => {
+        console.log("Message saved to database with ID:", savedMessage._id);
+
+        // Emit to the receiver's individual room
+        socket.to(receiverId).emit("receive_dm", savedMessage);
+
+        // Also emit to the DM room (for when multiple clients are open)
+        socket.to(roomId).emit("receive_dm", savedMessage);
+
+        // Log success confirmation
+        console.log(`Message emitted to ${receiverId} and room ${roomId}`);
+      })
+      .catch((err) => {
+        console.error("Error saving direct message:", err);
+      });
+  });
 });
 
 // mogoose config
@@ -215,6 +290,22 @@ var username_details = mongoose.model("discord_username", user_name_details);
 var servers = mongoose.model("discord_server", servers);
 var invites = mongoose.model("discord_invites", invites);
 var chats = mongoose.model("discord_chats", chats);
+
+// Direct Messages Schema
+var directMessages = new mongoose.Schema({
+  room_id: String, // Combination of both user IDs in sorted order
+  messages: [
+    {
+      content: String,
+      sender_id: String,
+      sender_name: String,
+      sender_pic: String,
+      timestamp: Number,
+    },
+  ],
+});
+
+const DirectMessage = mongoose.model("DirectMessage", directMessages);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -1638,5 +1729,189 @@ app.post("/get_messages", async function (req, res) {
     res.json({ chats: response[0].channels[0].chat_details });
   } else {
     res.json({ chats: [] });
+  }
+});
+
+// Function to store direct messages
+function storeDM(
+  message,
+  sender_id,
+  receiver_id,
+  timestamp,
+  sender_name,
+  sender_pic
+) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Create a consistent room ID by sorting the user IDs
+      const roomId = [sender_id, receiver_id].sort().join("_");
+
+      // Check if a conversation already exists
+      const existingConversation = await DirectMessage.findOne({
+        room_id: roomId,
+      });
+
+      if (existingConversation) {
+        // Add message to existing conversation
+        await DirectMessage.updateOne(
+          { room_id: roomId },
+          {
+            $push: {
+              messages: {
+                content: message,
+                sender_id,
+                sender_name,
+                sender_pic,
+                timestamp,
+              },
+            },
+          }
+        );
+      } else {
+        // Create a new conversation
+        const newConversation = new DirectMessage({
+          room_id: roomId,
+          messages: [
+            {
+              content: message,
+              sender_id,
+              sender_name,
+              sender_pic,
+              timestamp,
+            },
+          ],
+        });
+
+        await newConversation.save();
+      }
+
+      resolve({ status: 200, message: "Message stored successfully" });
+    } catch (error) {
+      console.error("Error storing DM:", error);
+      reject({ status: 500, message: "Failed to store message" });
+    }
+  });
+}
+
+// Function to get direct messages
+function getDMs(roomId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const conversation = await DirectMessage.findOne({ room_id: roomId });
+
+      if (conversation) {
+        resolve({
+          status: 200,
+          messages: conversation.messages.sort(
+            (a, b) => a.timestamp - b.timestamp
+          ),
+        });
+      } else {
+        resolve({ status: 200, messages: [] });
+      }
+    } catch (error) {
+      console.error("Error fetching DMs:", error);
+      reject({ status: 500, message: "Failed to fetch messages" });
+    }
+  });
+}
+
+// API endpoint to store a direct message
+app.post("/chats/direct-message", authToken, async (req, res) => {
+  try {
+    const { message, timestamp, sender_id, receiver_id, room_id } = req.body;
+
+    // Get sender details
+    const sender = await user.findById(sender_id);
+
+    if (!sender) {
+      return res.status(404).json({ message: "Sender not found", status: 404 });
+    }
+
+    const result = await storeDM(
+      message,
+      sender_id,
+      receiver_id,
+      timestamp,
+      sender.username,
+      sender.profile_pic
+    );
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error in /chats/direct-message:", error);
+    res.status(500).json({ message: "Server error", status: 500 });
+  }
+});
+
+// API endpoint to get direct messages
+app.get("/chats/direct-messages/:roomId", authToken, async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const result = await getDMs(roomId);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error in /chats/direct-messages/:roomId:", error);
+    res.status(500).json({ message: "Server error", status: 500 });
+  }
+});
+
+// API endpoint to get user details by ID
+app.get("/users/:userId", authToken, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    console.log(`Fetching user details for ID: ${userId}`);
+
+    const userData = await user.findById(userId);
+
+    if (!userData) {
+      console.log(`User not found: ${userId}`);
+      return res.status(404).json({ message: "User not found", status: 404 });
+    }
+
+    console.log(`Found user: ${userData.username}`);
+
+    // Return only necessary user details
+    res.status(200).json({
+      id: userData._id,
+      username: userData.username,
+      profile_pic: userData.profile_pic,
+      tag: userData.tag,
+    });
+  } catch (error) {
+    console.error("Error in /users/:userId:", error);
+    res.status(500).json({ message: "Server error", status: 500 });
+  }
+});
+
+// Add endpoints for retrieving direct messages
+app.get("/api/messages/direct-messages/:roomId", async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const messages = await DirectMessage.find({ room_id: roomId }).sort({
+      timestamp: 1,
+    });
+    res.json({ messages });
+  } catch (error) {
+    console.error("Error retrieving direct messages:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// Add endpoint for marking messages as read
+app.post("/api/messages/mark-read", async (req, res) => {
+  try {
+    const { userId, friendId } = req.body;
+    const roomId = [userId, friendId].sort().join("_");
+
+    await DirectMessage.updateMany(
+      { room_id: roomId, receiver_id: userId, read: false },
+      { read: true }
+    );
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error marking messages as read:", error);
+    res.status(500).json({ error: "Server error" });
   }
 });

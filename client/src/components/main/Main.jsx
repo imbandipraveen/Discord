@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Main_dashboard from "../dashboard_components/main_dashboard/Main_dashboard";
 import Main_chat from "../chat_components/main_chat/Main_chat";
+import DirectMessage from "../chat_components/direct_message/DirectMessage";
 import socket from "../Socket/Socket";
 import { update_options } from "../../Redux/options_slice";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,8 +23,17 @@ function Main({ user_relations }) {
     id: null,
   });
 
-  const url = process.env.REACT_APP_URL;
-  const { server_id } = useParams();
+  const { server_id, friend_id } = useParams();
+  const isDM = server_id === "@me" && friend_id;
+
+  // Log important debugging information
+  console.log("Main component parameters:", {
+    server_id,
+    friend_id,
+    isDM,
+    params: useParams(),
+    "window.location": window.location.pathname,
+  });
 
   useEffect(() => {
     if (id !== 0) {
@@ -36,47 +46,67 @@ function Main({ user_relations }) {
       dispatch(update_options());
       setreq_popup({ ...req_popup, value: false });
     }
-    // have to add this condition because otherwise useeffect will run once when the component will load without change in the dependency
-  }, [req_popup_data.id]);
+  }, [req_popup_data.id, dispatch]);
 
-  socket.on("recieve_req", (message) => {
-    const { sender_name, sender_profile_pic, sender_id } = message;
-    setreq_popup_data({
-      name: sender_name,
-      profile_pic: sender_profile_pic,
-      id: sender_id,
-      notif_message: "Sent you a friend Request",
-    });
-    setreq_popup({ state: "flex", value: true });
-  });
+  useEffect(() => {
+    const receiveReqHandler = (message) => {
+      const { sender_name, sender_profile_pic, sender_id } = message;
+      setreq_popup_data({
+        name: sender_name,
+        profile_pic: sender_profile_pic,
+        id: sender_id,
+        notif_message: "Sent you a friend Request",
+      });
+      setreq_popup({ state: "flex", value: true });
+    };
 
-  socket.on("req_accepted_notif", (message) => {
-    const { sender_id, friend_id, friend_profile_pic, friend_name } = message;
-    setreq_popup_data({
-      name: friend_name,
-      profile_pic: friend_profile_pic,
-      id: sender_id,
-      notif_message: "Accepted your friend Request",
-    });
-    setreq_popup({ state: "flex", value: true });
-  });
+    const reqAcceptedHandler = (message) => {
+      const { sender_id, friend_id, friend_profile_pic, friend_name } = message;
+      setreq_popup_data({
+        name: friend_name,
+        profile_pic: friend_profile_pic,
+        id: sender_id,
+        notif_message: "Accepted your friend Request",
+      });
+      setreq_popup({ state: "flex", value: true });
+    };
+
+    socket.on("recieve_req", receiveReqHandler);
+    socket.on("req_accepted_notif", reqAcceptedHandler);
+
+    return () => {
+      socket.off("recieve_req", receiveReqHandler);
+      socket.off("req_accepted_notif", reqAcceptedHandler);
+    };
+  }, []);
+
+  // Directly check if the URL contains @me/ to determine if we're in a DM
+  const pathContainsDM =
+    window.location.pathname.includes("/@me/") && friend_id;
 
   return (
     <div className={maincss.main}>
-      <>
-        {server_id === "@me" || server_id === undefined ? (
-          <Main_dashboard user_relations={user_relations}></Main_dashboard>
-        ) : (
-          <Main_chat></Main_chat>
-        )}
-      </>
+      {/* Force render the DirectMessage component when in a DM route */}
+      {pathContainsDM ? (
+        <div style={{ width: "100%", height: "100%" }}>
+          <DirectMessage friendId={friend_id} />
+        </div>
+      ) : isDM ? (
+        <div style={{ width: "100%", height: "100%" }}>
+          <DirectMessage friendId={friend_id} />
+        </div>
+      ) : server_id === "@me" || server_id === undefined ? (
+        <Main_dashboard user_relations={user_relations} />
+      ) : (
+        <Main_chat />
+      )}
+
       <div
         className={maincss.notification}
         style={{ display: req_popup.state }}
       >
         <div className={maincss.notif_top}>
           <div className={maincss.notif_top_left}>
-            {" "}
             <img src={discord_logo} alt="" /> Discord
           </div>
           <div className={maincss.notif_top_right}>
@@ -85,7 +115,7 @@ function Main({ user_relations }) {
                 setreq_popup({ ...req_popup, state: "none" });
               }}
               fontSize="small"
-            ></CloseIcon>
+            />
           </div>
         </div>
         <div className={maincss.notif_bottom}>

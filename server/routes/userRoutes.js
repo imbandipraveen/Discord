@@ -7,6 +7,7 @@ const {
   blockUser,
   unblockUser,
 } = require("../controllers/userController");
+const { getUserById } = require("../controllers/directMessageController");
 const { authToken } = require("../middleware/auth");
 
 router.use(authToken);
@@ -16,5 +17,6 @@ router.post("/add-friend", addFriend);
 router.post("/remove-friend", removeFriend);
 router.post("/block-user", blockUser);
 router.post("/unblock-user", unblockUser);
+router.get("/:userId", getUserById);
 
 module.exports = router;

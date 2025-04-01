@@ -11,6 +11,7 @@ const userRoutes = require("./routes/userRoutes");
 const serverRoutes = require("./routes/serverRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const inviteRoutes = require("./routes/inviteRoutes");
+const directMessageRoutes = require("./routes/directMessageRoutes");
 
 const app = express();
 const port = process.env.PORT || 3080;
@@ -29,6 +30,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/servers", serverRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/invites", inviteRoutes);
+app.use("/api/messages", directMessageRoutes);
 
 // Start server
 const server = app.listen(port, () => {
