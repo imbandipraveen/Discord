@@ -89,7 +89,7 @@
 
 .messageHeader {
   display: flex;
-  align-items: baseline;
+  align-items: space-around;
   margin-top: 16px;
   padding: 2px 0;
 }
@@ -99,7 +99,7 @@
   height: 40px;
   border-radius: 50%;
   margin-right: 16px;
-  margin-top: -2px;
+  margin-top: 7px;
   object-fit: cover;
 }
 
@@ -121,7 +121,7 @@
 }
 
 .messageContent p {
-  margin: 0;
+  margin-top: -20px;
   color: #dcddde;
   font-size: 16px;
   line-height: 1.375rem;
