@@ -2,6 +2,7 @@ const User = require("../models/User");
 const Username = require("../models/Username");
 const { generateTag } = require("../utils/helpers");
 const DirectMessage = require("../models/DirectMessage");
+const jwt = require("jsonwebtoken");
 
 exports.getUserRelations = async (req, res) => {
   try {
@@ -384,5 +385,110 @@ exports.deleteUser = async (req, res) => {
     return res.status(400).send({ message: "try Again" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
+  }
+};
+
+exports.updateProfilePic = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { profilePicUrl } = req.body;
+
+    if (!profilePicUrl) {
+      return res
+        .status(400)
+        .json({ message: "Profile picture URL is required", status: 400 });
+    }
+
+    // Update user's profile picture
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { profile_pic: profilePicUrl },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found", status: 404 });
+    }
+
+    // Also update profile picture in friend lists, requests, etc.
+    await Promise.all([
+      // Update in friends' lists
+      User.updateMany(
+        { "friends.id": userId },
+        { $set: { "friends.$.profile_pic": profilePicUrl } }
+      ),
+      // Update in incoming requests
+      User.updateMany(
+        { "incoming_reqs.id": userId },
+        { $set: { "incoming_reqs.$.profile_pic": profilePicUrl } }
+      ),
+      // Update in outgoing requests
+      User.updateMany(
+        { "outgoing_reqs.id": userId },
+        { $set: { "outgoing_reqs.$.profile_pic": profilePicUrl } }
+      ),
+      // Update in blocked lists
+      User.updateMany(
+        { "blocked.id": userId },
+        { $set: { "blocked.$.profile_pic": profilePicUrl } }
+      ),
+    ]);
+
+    // Generate new token with updated profile picture
+    const token = jwt.sign(
+      {
+        id: updatedUser._id,
+        username: updatedUser.username,
+        tag: updatedUser.tag,
+        profile_pic: profilePicUrl, // Use updated profile picture URL
+        email: updatedUser.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    res.status(200).json({
+      message: "Profile picture updated successfully",
+      status: 200,
+      profile_pic: profilePicUrl,
+      token: token,
+    });
+  } catch (error) {
+    console.error("Update profile picture error:", error);
+    res.status(500).json({ message: "Server error", status: 500 });
+  }
+};
+
+exports.refreshToken = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Get the latest user data from the database
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found", status: 404 });
+    }
+
+    // Generate new token with latest user data
+    const token = jwt.sign(
+      {
+        id: user._id,
+        username: user.username,
+        tag: user.tag,
+        profile_pic: user.profile_pic,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    res.status(200).json({
+      message: "Token refreshed successfully",
+      status: 200,
+      token: token,
+    });
+  } catch (error) {
+    console.error("Token refresh error:", error);
+    res.status(500).json({ message: "Server error", status: 500 });
   }
 };

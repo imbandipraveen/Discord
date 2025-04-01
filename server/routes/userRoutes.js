@@ -7,6 +7,8 @@ const {
   blockUser,
   unblockUser,
   deleteUser,
+  updateProfilePic,
+  refreshToken,
 } = require("../controllers/userController");
 const { getUserById } = require("../controllers/directMessageController");
 const { authToken } = require("../middleware/auth");
@@ -16,6 +18,8 @@ router.post("/add-friend", authToken, addFriend);
 router.post("/remove-friend", authToken, removeFriend);
 router.post("/block-user", authToken, blockUser);
 router.post("/unblock-user", authToken, unblockUser);
+router.post("/update-profile-pic", authToken, updateProfilePic);
+router.get("/refresh-token", authToken, refreshToken);
 router.get("/:userId", authToken, getUserById);
 router.delete("/delete", deleteUser);
 
