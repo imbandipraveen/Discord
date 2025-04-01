@@ -1,29 +1,84 @@
 const User = require("../models/User");
 const Username = require("../models/Username");
 const { generateTag } = require("../utils/helpers");
+const DirectMessage = require("../models/DirectMessage");
 
 exports.getUserRelations = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const userId = req.user.id;
+
+    // Find the user and all their relations
+    const user = await User.findById(userId);
+
     if (!user) {
-      return res.status(404).json({ message: "User not found", status: 404 });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("Found user:", user);
-    console.log("User blocked array:", user.blocked);
+    // Get friend IDs
+    const friendIds = user.friends.map((friend) => friend.id);
 
-    const { incoming_reqs, outgoing_reqs, friends, servers, blocked } = user;
+    // Fetch the most recent message for each friend
+    const recentMessages = await Promise.all(
+      friendIds.map(async (friendId) => {
+        const roomId = [userId, friendId].sort().join("_");
 
-    res.status(200).json({
-      incoming_reqs,
-      outgoing_reqs,
-      friends,
-      servers,
-      blocked_users: blocked || [],
+        // Find the latest message in this conversation
+        const latestMessage = await DirectMessage.findOne({ room_id: roomId })
+          .sort({ timestamp: -1 })
+          .limit(1);
+
+        return {
+          friendId,
+          message: latestMessage ? latestMessage.content : null,
+          timestamp: latestMessage ? latestMessage.timestamp : null,
+        };
+      })
+    );
+
+    // Create a map of friend ID to recent message data
+    const messageMap = {};
+    recentMessages.forEach((item) => {
+      messageMap[item.friendId] = {
+        last_message: item.message,
+        last_message_timestamp: item.timestamp,
+      };
+    });
+
+    // Add the recent message data to each friend
+    const friendsWithMessages = user.friends.map((friend) => {
+      const messageData = messageMap[friend.id] || {
+        last_message: null,
+        last_message_timestamp: null,
+      };
+      return {
+        ...friend.toObject(),
+        last_message: messageData.last_message,
+        last_message_timestamp: messageData.last_message_timestamp,
+      };
+    });
+
+    // Filter to only include friends who have message history
+    const friendsWithChatHistory = friendsWithMessages.filter(
+      (friend) => friend.last_message !== null
+    );
+
+    // Sort friends by most recent message timestamp (descending)
+    const sortedFriends = friendsWithChatHistory.sort((a, b) => {
+      const timestampA = a.last_message_timestamp || 0;
+      const timestampB = b.last_message_timestamp || 0;
+      return timestampB - timestampA;
+    });
+
+    res.json({
+      incoming_reqs: user.incoming_reqs,
+      outgoing_reqs: user.outgoing_reqs,
+      friends: sortedFriends,
+      blocked_users: user.blocked,
+      servers: user.servers,
     });
   } catch (error) {
-    console.error("Get user relations error:", error);
-    res.status(500).json({ message: "Server error", status: 500 });
+    console.error("Error getting user relations:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
 

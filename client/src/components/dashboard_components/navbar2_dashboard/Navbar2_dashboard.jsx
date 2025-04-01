@@ -68,16 +68,8 @@ function Navbar_2_dashboard() {
       if (data && data.friends) {
         console.log("Setting friends from API:", data.friends);
         setFriends(data.friends);
-
-        // Sort friends based on last_message_timestamp if available
-        // This simulates getting "recent" conversations without a dedicated endpoint
-        const sortedFriends = [...data.friends].sort((a, b) => {
-          const timestampA = a.last_message_timestamp || 0;
-          const timestampB = b.last_message_timestamp || 0;
-          return timestampB - timestampA;
-        });
-
-        setRecentFriends(sortedFriends);
+        // Friends are already sorted by last_message_timestamp from the server
+        setRecentFriends(data.friends);
       } else {
         console.log("No friends found in response");
         setFriends([]);
@@ -210,18 +202,20 @@ function Navbar_2_dashboard() {
                 <div className={navbar_chat_css.conversation_name}>
                   {friend.username}
                 </div>
-                <div className={navbar_chat_css.conversation_last_message}>
-                  {friend.last_message
-                    ? friend.last_message.length > 20
-                      ? friend.last_message.substring(0, 20) + "..."
-                      : friend.last_message
-                    : "Click to start chatting"}
-                  {friend.last_message_timestamp && (
-                    <span className={navbar_chat_css.timestamp}>
-                      • {formatTimestamp(friend.last_message_timestamp)}
-                    </span>
-                  )}
-                </div>
+                {(friend.last_message || friend.last_message_timestamp) && (
+                  <div className={navbar_chat_css.conversation_last_message}>
+                    {friend.last_message
+                      ? friend.last_message.length > 20
+                        ? friend.last_message.substring(0, 20) + "..."
+                        : friend.last_message
+                      : ""}
+                    {friend.last_message_timestamp && (
+                      <span className={navbar_chat_css.timestamp}>
+                        • {formatTimestamp(friend.last_message_timestamp)}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
               {friend.unread_count > 0 && (
                 <div className={navbar_chat_css.unread_badge}></div>
@@ -230,7 +224,10 @@ function Navbar_2_dashboard() {
           ))
         ) : (
           <div className={navbar_chat_css.no_conversations}>
-            <span>No recent conversations</span>
+            <span>No message history found</span>
+            <div className={navbar_chat_css.no_chat_hint}>
+              Start a conversation by clicking the + button
+            </div>
           </div>
         )}
       </div>

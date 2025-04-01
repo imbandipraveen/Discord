@@ -118,7 +118,7 @@ function Navbar({ new_req_recieved, user_cred }) {
         <div id={navbarcss.new_server}>
           <div id={navbarcss.server_heading} className={navbarcss.components}>
             {" "}
-            Create a server
+            Create a servert
           </div>
           <div
             id={navbarcss.server_sub_heading}
@@ -359,7 +359,7 @@ function Navbar({ new_req_recieved, user_cred }) {
 
         {/* servers from here */}
         <div className={navbarcss.servers_wrap}>
-          {servers.length > 0 ? (
+          {servers?.length > 0 ? (
             servers.map((elem, key) => {
               return (
                 <OverlayTrigger

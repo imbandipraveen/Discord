@@ -436,3 +436,21 @@
 .recent_conversations::-webkit-scrollbar-thumb:hover {
   background: #2f3136;
 }
+
+.no_conversations {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  color: #8e9297;
+  font-size: 14px;
+  text-align: center;
+}
+
+.no_chat_hint {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #72767d;
+  font-style: italic;
+}
