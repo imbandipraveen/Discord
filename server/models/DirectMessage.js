@@ -45,6 +45,11 @@ const DirectMessageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    contentType: {
+      type: String,
+      enum: ["text", "image", "video"],
+      default: "text",
+    },
     timestamp: {
       type: Number,
       default: Date.now,

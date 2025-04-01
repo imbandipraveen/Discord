@@ -1,4 +1,4 @@
-const Chat = require('../models/Chat');
+const Chat = require("../models/Chat");
 
 exports.storeMessage = async (req, res) => {
   try {
@@ -7,15 +7,16 @@ exports.storeMessage = async (req, res) => {
       server_id,
       channel_id,
       channel_name,
-      timestamp
+      timestamp,
+      contentType,
     } = req.body;
 
     const chat = await Chat.findOne({ server_id });
 
     if (!chat) {
-      return res.status(404).json({ 
-        status: 404, 
-        message: 'Chat not found' 
+      return res.status(404).json({
+        status: 404,
+        message: "Chat not found",
       });
     }
 
@@ -25,16 +26,19 @@ exports.storeMessage = async (req, res) => {
       sender_name: req.user.username,
       sender_pic: req.user.profile_pic,
       sender_tag: req.user.tag,
-      timestamp
+      contentType,
+      timestamp,
     };
 
     // Add message to existing channel or create new channel
-    const channelExists = chat.channels.find(c => c.channel_id === channel_id);
-    
+    const channelExists = chat.channels.find(
+      (c) => c.channel_id === channel_id
+    );
+
     if (channelExists) {
       await Chat.updateOne(
-        { 'channels.channel_id': channel_id },
-        { $push: { 'channels.$.chat_details': messageData } }
+        { "channels.channel_id": channel_id },
+        { $push: { "channels.$.chat_details": messageData } }
       );
     } else {
       await Chat.updateOne(
@@ -44,18 +48,18 @@ exports.storeMessage = async (req, res) => {
             channels: {
               channel_id,
               channel_name,
-              chat_details: [messageData]
-            }
-          }
+              chat_details: [messageData],
+            },
+          },
         }
       );
     }
 
     res.status(200).json({ status: 200 });
   } catch (error) {
-    res.status(500).json({ 
-      status: 500, 
-      message: 'Server error' 
+    res.status(500).json({
+      status: 500,
+      message: "Server error",
     });
   }
 };
@@ -68,7 +72,7 @@ exports.getMessages = async (req, res) => {
     if (!channel_id || !server_id) {
       return res.status(400).json({
         status: 400,
-        message: 'Channel ID and Server ID are required'
+        message: "Channel ID and Server ID are required",
       });
     }
 
@@ -76,8 +80,8 @@ exports.getMessages = async (req, res) => {
     const chat = await Chat.aggregate([
       {
         $match: {
-          server_id: server_id
-        }
+          server_id: server_id,
+        },
       },
       {
         $project: {
@@ -85,11 +89,11 @@ exports.getMessages = async (req, res) => {
             $filter: {
               input: "$channels",
               as: "channel",
-              cond: { $eq: ["$$channel.channel_id", channel_id] }
-            }
-          }
-        }
-      }
+              cond: { $eq: ["$$channel.channel_id", channel_id] },
+            },
+          },
+        },
+      },
     ]);
 
     // Check if chat exists and has channels
@@ -99,18 +103,17 @@ exports.getMessages = async (req, res) => {
 
     // If channel exists, return its chat details
     if (chat[0].channels.length > 0) {
-      res.json({ 
-        chats: chat[0].channels[0].chat_details 
+      res.json({
+        chats: chat[0].channels[0].chat_details,
       });
     } else {
       res.json({ chats: [] });
     }
-
   } catch (error) {
-    console.error('Get messages error:', error);
+    console.error("Get messages error:", error);
     res.status(500).json({
       status: 500,
-      message: 'Server error'
+      message: "Server error",
     });
   }
-}; 
+};

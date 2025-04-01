@@ -5,6 +5,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import TagIcon from "@mui/icons-material/Tag";
 import socket from "../../Socket/Socket";
 import { useParams } from "react-router-dom";
+import { uploadFileToS3 } from "../../aws-s3-storage-blob";
 
 function Valid_chat() {
   const url = process.env.REACT_APP_URL;
@@ -17,8 +18,11 @@ function Valid_chat() {
   const tag = useSelector((state) => state.user_info.tag);
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
   const id = useSelector((state) => state.user_info.id);
-
-  const [chat_message, setchat_message] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [chat_message, setchat_message] = useState({
+    content: "",
+    contentType: "text",
+  });
   const [all_messages, setall_messages] = useState([]);
   const [latest_message, setlatest_message] = useState(null);
 
@@ -31,16 +35,24 @@ function Valid_chat() {
   }, [channel_id]);
 
   const send_message = (e) => {
-    if (e.code === "Enter" && chat_message.trim() !== "") {
-      const message_to_send = chat_message.trim();
+    if (
+      (e.code === "Enter" && chat_message["content"].trim() !== "") ||
+      imageUrl
+    ) {
+      const message_to_send =
+        chat_message.contentType === "image"
+          ? imageUrl
+          : chat_message["content"].trim();
       const timestamp = Date.now();
-      setchat_message("");
-
+      const contentType = chat_message.contentType;
+      setchat_message({ content: "", contentType: "text" });
+      setImageUrl("");
       const newMessage = {
         content: message_to_send,
         sender_id: id,
         sender_name: username,
         sender_pic: profile_pic,
+        contentType,
         timestamp,
       };
 
@@ -53,14 +65,15 @@ function Valid_chat() {
         timestamp,
         username,
         tag,
+        contentType,
         profile_pic
       );
 
-      store_message(message_to_send, timestamp);
+      store_message(message_to_send, contentType, timestamp);
     }
   };
 
-  const store_message = async (chat_message, timestamp) => {
+  const store_message = async (chat_message, contentType, timestamp) => {
     try {
       const res = await fetch(`${url}/chats/message`, {
         method: "POST",
@@ -77,12 +90,13 @@ function Valid_chat() {
           username,
           tag,
           id,
+          contentType,
           profile_pic,
         }),
       });
 
       const data = await res.json();
-      console.log(data);
+      console.log(data, "Message upload data");
       if (data.status === 200) {
         console.log("Message stored successfully");
       }
@@ -157,7 +171,15 @@ function Valid_chat() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [all_messages]);
-
+  const handleImageSelect = async (e) => {
+    const file = e.target.files[0];
+    let imgUrl = await uploadFileToS3(file);
+    setchat_message({
+      content: "",
+      contentType: "image",
+    });
+    setImageUrl(imgUrl);
+  };
   return (
     <div className={valid_chat_css.mainchat}>
       <div id={valid_chat_css.top}>
@@ -217,26 +239,107 @@ function Valid_chat() {
                       className={valid_chat_css.message_right_comps}
                       id={valid_chat_css.message_right_bottom}
                     >
-                      {elem.content}
+                      {elem.contentType === "image" ? (
+                        <img
+                          src={elem.content}
+                          style={{ width: "200px" }}
+                          alt="message "
+                        />
+                      ) : (
+                        elem.content
+                      )}
                     </div>
                   </div>
                 </div>
               );
             })}
 
-          {/* 🔹 Invisible div to track the end of messages */}
           <div ref={chatEndRef} />
         </div>
       </div>
+      {chat_message.contentType === "image" && (
+        <div
+          style={{
+            width: "100%",
+            height: "200px",
+            position: "absolute",
+            bottom: "100px",
+            backgroundColor: "rgba(108, 122, 137, 0.3)", // bg-slate-700 with opacity
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: "8px",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              width: "fit-content",
+              padding: "8px",
+              cursor: "pointer",
+              color: "black",
+              transition: "color 0.2s",
+              color: "white",
+            }}
+            title="Remove"
+            onClick={() => {
+              setchat_message({ content: "", contentType: "text" });
+            }}
+          >
+            X
+          </div>
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "12px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src={imageUrl}
+              alt="uploadImage"
+              style={{
+                width: "250px",
+                height: "250px",
+                objectFit: "contain",
+                borderRadius: "8px",
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       <div id={valid_chat_css.bottom}>
         <div id={valid_chat_css.message_input}>
-          <AddCircleIcon htmlColor="#B9BBBE" />
+          <input
+            type="file"
+            id="fileInput"
+            style={{ display: "none" }}
+            onChange={handleImageSelect}
+            onKeyDown={send_message}
+          />
+
+          <AddCircleIcon
+            htmlColor="#B9BBBE"
+            style={{ cursor: "pointer" }}
+            onClick={() => document.getElementById("fileInput").click()}
+          />
+
           <input
             type="text"
             onKeyDown={send_message}
-            value={chat_message}
-            onChange={(e) => setchat_message(e.target.value)}
+            value={chat_message.content}
+            onChange={(e) => {
+              setchat_message({
+                content: e.target.value,
+                contentType: "text",
+              });
+            }}
             placeholder={`Message #${channel_name}`}
           />
         </div>
