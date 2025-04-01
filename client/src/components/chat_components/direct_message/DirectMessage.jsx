@@ -10,6 +10,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import jwt from "jwt-decode";
 
 function DirectMessage({ friendId }) {
+  const [hideMembers, setHideMembers] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [friendDetails, setFriendDetails] = useState(null);
@@ -300,11 +301,11 @@ function DirectMessage({ friendId }) {
           </span>
         </div>
         <div className={dmCSS.header_actions}>
-          <NotificationsIcon className={dmCSS.header_icon} />
-          <PushPinIcon className={dmCSS.header_icon} />
-          <PeopleAltIcon className={dmCSS.header_icon} />
-          <InboxIcon className={dmCSS.header_icon} />
-          <HelpIcon className={dmCSS.header_icon} />
+          <NotificationsIcon className={dmCSS.header_icon} fontSize="large" />
+          <PushPinIcon className={dmCSS.header_icon} fontSize="large" />
+          <PeopleAltIcon className={dmCSS.header_icon} fontSize="large" />
+          <InboxIcon className={dmCSS.header_icon} fontSize="large" />
+          <HelpIcon className={dmCSS.header_icon} fontSize="large" />
         </div>
       </div>
 
