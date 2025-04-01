@@ -337,15 +337,15 @@ function DirectMessage({ friendId }) {
               >
                 {showHeader && (
                   <div className={dmCSS.messageHeader}>
-                    <img
-                      src={senderPic}
-                      alt={senderName}
-                      className={dmCSS.avatar}
-                    />
-                    <span className={dmCSS.username}>{senderName}</span>
-                    <span className={dmCSS.timestamp}>
-                      {formatTimestamp(msg.timestamp)}
-                    </span>
+                      <img
+                        src={senderPic}
+                        alt={senderName}
+                        className={dmCSS.avatar}
+                      />
+                      <span className={dmCSS.username}>{senderName}</span>
+                      <span className={dmCSS.timestamp}>
+                        {formatTimestamp(msg.timestamp)}
+                      </span>
                   </div>
                 )}
                 <div className={dmCSS.messageContent}>
