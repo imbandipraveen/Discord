@@ -28,15 +28,13 @@ import { useNavigate } from "react-router-dom";
 function Main_dashboard({ user_relations }) {
   const dispatch = useDispatch();
   const option_check = useSelector((state) => state.selected_option.value);
-  //   console.log(option_check, "friend request options");
   const option_name_check = useSelector(
     (state) => state.selected_option.option_name
   );
   const option_status = useSelector((state) => state.selected_option.status);
-
   const option_text = useSelector((state) => state.selected_option.text);
-  console.log(option_text, "option text");
-  // user details from redux
+
+  // User details from redux
   const username = useSelector((state) => state.user_info.username);
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
   const id = useSelector((state) => state.user_info.id);
@@ -44,7 +42,7 @@ function Main_dashboard({ user_relations }) {
   const [button_state, setbutton_state] = useState(true);
   const [option_data, setoption_data] = useState([]);
   const [input, setinput] = useState("");
-  let images_arr = [
+  const images_arr = [
     online_wumpus,
     friends_wumpus,
     pending_wumpus,
@@ -53,6 +51,7 @@ function Main_dashboard({ user_relations }) {
   ];
   const [image, setimage] = useState(images_arr[0]);
   const [alert, setalert] = useState({ style: "none", message: "none" });
+  const [isLoading, setIsLoading] = useState(false); // Loading state for the button
 
   // Menu state
   const [anchorEl, setAnchorEl] = useState(null);
@@ -64,7 +63,7 @@ function Main_dashboard({ user_relations }) {
   const outgoing_reqs = user_relations?.outgoing_reqs || [];
   const friends = user_relations?.friends || [];
   const blocked_users = user_relations?.blocked_users || [];
-  let pending_reqs = [...incoming_reqs, ...outgoing_reqs];
+  const pending_reqs = [...incoming_reqs, ...outgoing_reqs];
   const url = process.env.REACT_APP_URL;
 
   const navigate = useNavigate();
@@ -82,13 +81,11 @@ function Main_dashboard({ user_relations }) {
   };
 
   useEffect(() => {
-    console.log("User relations received:", user_relations);
     if (option_check === 2) {
       setoption_data(pending_reqs);
     } else if (option_check === 1) {
       setoption_data(friends);
     } else if (option_check === 3) {
-      console.log("Setting blocked users:", blocked_users);
       setoption_data(blocked_users);
     } else if (option_check === 4) {
       setoption_data([]); // For add friend section
@@ -111,7 +108,6 @@ function Main_dashboard({ user_relations }) {
 
     // Don't make API call for More button
     if (message === "More") {
-      // TODO: Implement More button functionality (e.g., show menu with options)
       console.log("More button clicked for user:", friend_data);
       return;
     }
@@ -152,7 +148,6 @@ function Main_dashboard({ user_relations }) {
     if (!selectedUser) return;
 
     try {
-      console.log("Menu action:", action, "for user:", selectedUser);
       const res = await fetch(`${url}/users/${action}`, {
         method: "POST",
         headers: {
@@ -166,7 +161,6 @@ function Main_dashboard({ user_relations }) {
       const data = await res.json();
 
       if (data.status === 200) {
-        console.log("Action successful:", action);
         dispatch(update_options());
         handleMenuClose();
       }
@@ -184,7 +178,7 @@ function Main_dashboard({ user_relations }) {
         >
           <div className={main_dashboardcss.item_3_comps}>
             <OverlayTrigger placement="top" overlay={tooltips(message)}>
-              {<Icon />}
+              <Icon />
             </OverlayTrigger>
           </div>
         </div>
@@ -202,7 +196,7 @@ function Main_dashboard({ user_relations }) {
         >
           <div className={main_dashboardcss.item_3_comps}>
             <OverlayTrigger placement="top" overlay={tooltips(message)}>
-              {<Icon />}
+              <Icon />
             </OverlayTrigger>
           </div>
         </div>
@@ -218,7 +212,7 @@ function Main_dashboard({ user_relations }) {
       >
         <div className={main_dashboardcss.item_3_comps}>
           <OverlayTrigger placement="top" overlay={tooltips(message)}>
-            {<Icon />}
+            <Icon />
           </OverlayTrigger>
         </div>
       </div>
@@ -227,7 +221,11 @@ function Main_dashboard({ user_relations }) {
 
   const add_friend = async (e) => {
     e.preventDefault();
-    console.log(url);
+
+    // Show alert immediately after clicking the button
+    setalert({ style: "flex", message: "Sending friend request..." });
+    setIsLoading(true); // Disable button until the request completes
+    console.log("Input", input);
     const res = await fetch(`${url}/users/add-friend`, {
       method: "POST",
       headers: {
@@ -238,33 +236,30 @@ function Main_dashboard({ user_relations }) {
         friend: input,
       }),
     });
-    const data = await res.json();
 
+    const data = await res.json();
+    console.log("testData", data);
+    setalert({ style: "flex", message: "Friend Request Sent" });
+    setIsLoading(false); // Re-enable button after operation
+
+    // Provide feedback based on response status
     if (
       data.status === 404 ||
       data.status === 201 ||
       data.status === 202 ||
-      data.status === 203
+      data.status === 200
     ) {
       setalert({ style: "flex", message: data.message });
-    }
 
-    if (data.status === 201 || data.status === 203) {
-      dispatch(update_options());
-      if (data.status === 203) {
+      if (data.status === 201 || data.status === 200) {
+        console.log("Here checked", data);
+        dispatch(update_options());
         socket.emit("send_req", data.receiver_id, id, profile_pic, username);
       }
-
-      // this is to update props and send the value back to parent element to update some states
     } else if (data.status === 400) {
       setalert({ style: "flex", message: data.message });
     }
   };
-
-  // function testing(){
-  //     console.log('cliekd')
-  //     socket.emit('send_req' , '638376eecd35da269c668965')
-  // }
 
   useEffect(() => {
     if (input.length >= 1) {
@@ -279,13 +274,12 @@ function Main_dashboard({ user_relations }) {
     setalert({ ...alert, style: "none" });
     let current_key = e.nativeEvent.data;
     let input_size = input.length;
-    // if(/[0-9]/.test(e.nativeEvent.data)==true && e.nativeEvent.data!=null){
+
     if (
       input[input_size - 1] === "#" &&
       /[0-9]/.test(current_key) === false &&
       current_key != null
     ) {
-      // i had to add this null condition because for some reason whenever i try to press backspace with only the regex and specifically the regex for lowercase letters , the conidition was getting true for even backspace
       setinput(input);
     } else if (
       (input[input_size - 5] === "#" &&
@@ -338,10 +332,11 @@ function Main_dashboard({ user_relations }) {
                     />
                     <button
                       onClick={add_friend}
-                      disabled={button_state}
+                      disabled={button_state || isLoading} // Disable when loading
                       id={main_dashboardcss.add_friend_3_button}
                     >
-                      Send Friend Request
+                      {isLoading ? "Sending..." : "Send Friend Request"}{" "}
+                      {/* Button Text */}
                     </button>
                   </div>
                   <div
