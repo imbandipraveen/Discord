@@ -18,7 +18,7 @@ function Valid_chat() {
   const tag = useSelector((state) => state.user_info.tag);
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
   const id = useSelector((state) => state.user_info.id);
-
+  const [imageUrl, setImageUrl] = useState("");
   const [chat_message, setchat_message] = useState({
     content: "",
     contentType: "text",
@@ -35,12 +35,18 @@ function Valid_chat() {
   }, [channel_id]);
 
   const send_message = (e) => {
-    if (e.code === "Enter" && chat_message["content"].trim() !== "") {
-      const message_to_send = chat_message["content"].trim();
+    if (
+      (e.code === "Enter" && chat_message["content"].trim() !== "") ||
+      imageUrl
+    ) {
+      const message_to_send =
+        chat_message.contentType === "image"
+          ? imageUrl
+          : chat_message["content"].trim();
       const timestamp = Date.now();
       const contentType = chat_message.contentType;
       setchat_message({ content: "", contentType: "text" });
-
+      setImageUrl("");
       const newMessage = {
         content: message_to_send,
         sender_id: id,
@@ -169,9 +175,10 @@ function Valid_chat() {
     const file = e.target.files[0];
     let imgUrl = await uploadFileToS3(file);
     setchat_message({
-      content: imgUrl,
+      content: "",
       contentType: "image",
     });
+    setImageUrl(imgUrl);
   };
   return (
     <div className={valid_chat_css.mainchat}>
@@ -294,7 +301,7 @@ function Valid_chat() {
             }}
           >
             <img
-              src={chat_message.content}
+              src={imageUrl}
               alt="uploadImage"
               style={{
                 width: "250px",

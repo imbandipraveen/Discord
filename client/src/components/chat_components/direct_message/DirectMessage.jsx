@@ -18,7 +18,7 @@ function DirectMessage({ friendId }) {
   const [messages, setMessages] = useState([]);
   const [friendDetails, setFriendDetails] = useState(null);
   const messageEndRef = useRef(null);
-
+  const [imageUrl, setImageUrl] = useState("");
   const userId = useSelector((state) => state.user_info.id);
   const username = useSelector((state) => state.user_info.username);
 
@@ -193,7 +193,7 @@ function DirectMessage({ friendId }) {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (message["content"].trim()) {
+    if (message["content"].trim() || imageUrl) {
       // Check if socket is connected
       if (!socket.connected) {
         console.error("Socket is not connected! Attempting to reconnect...");
@@ -213,7 +213,7 @@ function DirectMessage({ friendId }) {
       const messageData = {
         sender_id: userId,
         receiver_id: friendId,
-        content: message.content,
+        content: message.contentType === "image" ? imageUrl : message.content,
         timestamp: timestamp,
         sender_name: username,
         sender_pic: profile_pic,
@@ -223,7 +223,7 @@ function DirectMessage({ friendId }) {
       console.log(messageData, "from DM chat");
       // Add message to local state with format matching database schema
       const localMessage = {
-        content: message.content,
+        content: message.contentType === "image" ? imageUrl : message.content,
         sender_id: userId,
         receiver_id: friendId,
         sender_name: username,
@@ -247,6 +247,7 @@ function DirectMessage({ friendId }) {
           content: "",
           contentType: "text",
         });
+        setImageUrl("");
       } catch (error) {
         console.error("Error sending message:", error);
         alert(`Failed to send message: ${error.message}`);
@@ -279,11 +280,14 @@ function DirectMessage({ friendId }) {
   };
   const handleImageSelect = async (e) => {
     const file = e.target.files[0];
+    console.log("Called");
+    if (!file) return;
     let imgUrl = await uploadFileToS3(file);
     setMessage({
-      content: imgUrl,
+      content: "",
       contentType: "image",
     });
+    setImageUrl(imgUrl);
   };
   // Get the friend's name to display
   const displayName =
@@ -344,15 +348,15 @@ function DirectMessage({ friendId }) {
               >
                 {showHeader && (
                   <div className={dmCSS.messageHeader}>
-                      <img
-                        src={senderPic}
-                        alt={senderName}
-                        className={dmCSS.avatar}
-                      />
-                      <span className={dmCSS.username}>{senderName}</span>
-                      <span className={dmCSS.timestamp}>
-                        {formatTimestamp(msg.timestamp)}
-                      </span>
+                    <img
+                      src={senderPic}
+                      alt={senderName}
+                      className={dmCSS.avatar}
+                    />
+                    <span className={dmCSS.username}>{senderName}</span>
+                    <span className={dmCSS.timestamp}>
+                      {formatTimestamp(msg.timestamp)}
+                    </span>
                   </div>
                 )}
                 <div className={dmCSS.messageContent}>
@@ -422,7 +426,7 @@ function DirectMessage({ friendId }) {
             }}
           >
             <img
-              src={message.content}
+              src={imageUrl}
               alt="uploadImage"
               style={{
                 width: "250px", // Set a fixed width and height to ensure it's square
@@ -456,7 +460,7 @@ function DirectMessage({ friendId }) {
 
         <input
           type="text"
-          value={message.content ? "" : message.content}
+          value={message.content}
           onChange={(e) =>
             setMessage({ content: e.target.value, contentType: "text" })
           }
