@@ -23,7 +23,17 @@ exports.createServer = async (req, res) => {
           user_id: userId,
         },
       ],
-      // Add categories based on template...
+      categories: [
+        {
+          category_name: name,
+          channels: [
+            {
+              channel_name: `${name}-channel`,
+              channel_type: "text",
+            },
+          ],
+        },
+      ],
     });
 
     // const savedServer = await server.save();
