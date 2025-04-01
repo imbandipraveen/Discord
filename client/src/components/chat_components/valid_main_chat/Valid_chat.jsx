@@ -47,15 +47,21 @@ function Valid_chat() {
       const contentType = chat_message.contentType;
       setchat_message({ content: "", contentType: "text" });
       setImageUrl("");
+
+      // Ensure profile_pic is a string and not undefined
+      const userProfilePic =
+        profile_pic || "https://cdn.discordapp.com/embed/avatars/0.png";
+
       const newMessage = {
         content: message_to_send,
         sender_id: id,
         sender_name: username,
-        sender_pic: profile_pic,
+        sender_pic: userProfilePic,
         contentType,
         timestamp,
       };
 
+      // Add new message to state with guaranteed profile pic
       setall_messages((prev) => [...prev, newMessage]);
 
       socket.emit(
@@ -66,7 +72,7 @@ function Valid_chat() {
         username,
         tag,
         contentType,
-        profile_pic
+        userProfilePic
       );
 
       store_message(message_to_send, contentType, timestamp);
@@ -141,13 +147,17 @@ function Valid_chat() {
         sender_id,
       } = latest_message.message_data;
 
+      // Ensure profile_pic is a string and not undefined
+      const userProfilePic =
+        sender_pic || "https://cdn.discordapp.com/embed/avatars/0.png";
+
       setall_messages((prev) => [
         ...prev,
         {
           content: message,
           sender_id,
           sender_name,
-          sender_pic,
+          sender_pic: userProfilePic,
           timestamp,
         },
       ]);
@@ -215,8 +225,16 @@ function Valid_chat() {
                     <div className={valid_chat_css.user_image_wrap}>
                       <img
                         id={valid_chat_css.user_image}
-                        src={elem?.sender_pic}
+                        src={
+                          elem?.sender_pic ||
+                          "https://cdn.discordapp.com/embed/avatars/0.png"
+                        }
                         alt="User"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src =
+                            "https://cdn.discordapp.com/embed/avatars/0.png";
+                        }}
                       />
                     </div>
                   </div>
@@ -246,7 +264,7 @@ function Valid_chat() {
                           alt="message "
                         />
                       ) : (
-                        elem.content
+                        <div>{elem.content}</div>
                       )}
                     </div>
                   </div>
@@ -335,12 +353,14 @@ function Valid_chat() {
             onKeyDown={send_message}
             value={chat_message.content}
             onChange={(e) => {
+              const input = e.target.value.slice(0, 150);
               setchat_message({
-                content: e.target.value,
+                content: input,
                 contentType: "text",
               });
             }}
             placeholder={`Message #${channel_name}`}
+            maxLength="150"
           />
         </div>
       </div>

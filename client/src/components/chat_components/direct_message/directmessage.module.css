@@ -388,3 +388,42 @@
     transform: translateY(0);
   }
 }
+
+/* Update the media query to fix positioning issues */
+@media screen and (max-width: 1000px) {
+  .user_info_panel {
+    display: none;
+  }
+
+  .dm_header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 320px; /* Combined width of server and channel sidebars */
+    right: 0;
+    z-index: 10;
+  }
+
+  .messages_container {
+    margin-top: 60px; /* Add space for fixed header */
+    margin-bottom: 68px; /* Add space for fixed message form */
+    width: 100%;
+  }
+
+  .messageForm {
+    position: fixed;
+    bottom: 0;
+    left: 320px; /* Combined width of server and channel sidebars */
+    right: 0;
+    width: auto;
+    padding: 10px;
+    z-index: 10;
+  }
+  .messageForm {
+    padding: 0 16px 8px;
+    margin: 0 16px;
+    display: flex;
+    height: 65px;
+    padding-left: 30px;
+  }
+}

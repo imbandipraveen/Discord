@@ -45,7 +45,7 @@
   bottom: 10px;
   padding: 1rem;
   width: 98%;
-  height: 40px;
+  height: 50px;
   margin-left: 0.5rem;
   display: flex;
   align-items: center;
@@ -126,4 +126,10 @@
 
 #message_right_bottom {
   color: #b9bbbe;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  white-space: pre-wrap;
+  line-height: 1.4;
 }
