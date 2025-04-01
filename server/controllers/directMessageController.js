@@ -14,6 +14,72 @@ exports.getDirectMessages = async (req, res) => {
   }
 };
 
+exports.getRecentConversations = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Find all messages where the user is either sender or receiver
+    const messages = await DirectMessage.aggregate([
+      {
+        $match: {
+          $or: [{ sender_id: userId }, { receiver_id: userId }],
+        },
+      },
+      // Group by room_id and get the latest message
+      {
+        $sort: { timestamp: -1 },
+      },
+      {
+        $group: {
+          _id: "$room_id",
+          latestMessage: { $first: "$$ROOT" },
+          timestamp: { $max: "$timestamp" },
+        },
+      },
+      // Sort by latest message timestamp
+      {
+        $sort: { timestamp: -1 },
+      },
+      // Limit to 10 most recent conversations
+      {
+        $limit: 10,
+      },
+    ]);
+
+    // Extract other user IDs from the room_ids
+    const conversations = await Promise.all(
+      messages.map(async (item) => {
+        const roomParts = item._id.split("_");
+        const otherUserId =
+          roomParts[0] === userId ? roomParts[1] : roomParts[0];
+
+        // Get the other user's details
+        const otherUser = await User.findById(otherUserId);
+
+        return {
+          room_id: item._id,
+          friend_id: otherUserId,
+          username: otherUser ? otherUser.username : "Unknown User",
+          profile_pic: otherUser ? otherUser.profile_pic : null,
+          tag: otherUser ? otherUser.tag : "0000",
+          last_message: item.latestMessage.content,
+          timestamp: item.timestamp,
+          unread:
+            item.latestMessage.receiver_id === userId &&
+            !item.latestMessage.read
+              ? true
+              : false,
+        };
+      })
+    );
+
+    res.json({ conversations });
+  } catch (error) {
+    console.error("Error retrieving recent conversations:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 exports.markMessagesAsRead = async (req, res) => {
   try {
     const { userId, friendId } = req.body;

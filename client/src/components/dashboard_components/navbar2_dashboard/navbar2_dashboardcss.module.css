@@ -328,3 +328,111 @@
 }
 
 /* Keep existing styles for new_server and others */
+
+/* Recent conversations styling */
+.recent_conversations {
+  width: 100%;
+  overflow-y: auto;
+  max-height: calc(100vh - 260px);
+}
+
+.conversation_item {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  margin: 0 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+.conversation_item:hover {
+  background-color: #4f545c;
+}
+
+.conversation_item.active {
+  background-color: #4f545c;
+}
+
+.conversation_avatar {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.conversation_avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.conversation_info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation_name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conversation_last_message {
+  font-size: 0.75rem;
+  color: #b9bbbe;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+}
+
+.timestamp {
+  margin-left: 4px;
+  color: #72767d;
+  font-size: 0.7rem;
+}
+
+.unread_badge {
+  width: 8px;
+  height: 8px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  margin-left: 4px;
+}
+
+.loading_indicator,
+.no_conversations {
+  padding: 8px 16px;
+  color: #72767d;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+/* Add scrollbar styling for the recent conversations */
+.recent_conversations::-webkit-scrollbar {
+  width: 4px;
+}
+
+.recent_conversations::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.recent_conversations::-webkit-scrollbar-thumb {
+  background: #202225;
+  border-radius: 4px;
+}
+
+.recent_conversations::-webkit-scrollbar-thumb:hover {
+  background: #2f3136;
+}

@@ -8,7 +8,7 @@ import offline_icon from "../../../images/offline_status.svg";
 import { useSelector, useDispatch } from "react-redux";
 import Modal from "react-bootstrap/Modal";
 import CloseIcon from "@mui/icons-material/Close";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 function Navbar_2_dashboard() {
@@ -17,10 +17,15 @@ function Navbar_2_dashboard() {
   const token = useSelector((state) => state.user_info.token);
   const userInfo = useSelector((state) => state.user_info);
   const navigate = useNavigate();
+  const { friend_id } = useParams();
 
   const [show, setShow] = useState(false);
   const [friends, setFriends] = useState([]);
+  const [recentFriends, setRecentFriends] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingConversations, setLoadingConversations] = useState(false);
+
+  const baseUrl = process.env.REACT_APP_URL || "http://localhost:3080";
 
   // Debug log to see what's in the Redux store
   useEffect(() => {
@@ -31,6 +36,12 @@ function Navbar_2_dashboard() {
     }
   }, [userInfo]);
 
+  useEffect(() => {
+    if (userId) {
+      fetchFriends();
+    }
+  }, [userId]);
+
   const handleClose = () => setShow(false);
   const handleShow = () => {
     setShow(true);
@@ -39,6 +50,7 @@ function Navbar_2_dashboard() {
 
   const fetchFriends = async () => {
     setLoading(true);
+    setLoadingConversations(true);
     try {
       console.log("Fetching friends...");
       const url = process.env.REACT_APP_URL;
@@ -56,15 +68,28 @@ function Navbar_2_dashboard() {
       if (data && data.friends) {
         console.log("Setting friends from API:", data.friends);
         setFriends(data.friends);
+
+        // Sort friends based on last_message_timestamp if available
+        // This simulates getting "recent" conversations without a dedicated endpoint
+        const sortedFriends = [...data.friends].sort((a, b) => {
+          const timestampA = a.last_message_timestamp || 0;
+          const timestampB = b.last_message_timestamp || 0;
+          return timestampB - timestampA;
+        });
+
+        setRecentFriends(sortedFriends);
       } else {
         console.log("No friends found in response");
         setFriends([]);
+        setRecentFriends([]);
       }
     } catch (error) {
       console.error("Error fetching friends:", error);
       setFriends([]);
+      setRecentFriends([]);
     } finally {
       setLoading(false);
+      setLoadingConversations(false);
     }
   };
 
@@ -84,6 +109,32 @@ function Navbar_2_dashboard() {
 
     // Navigate to the direct message route
     navigate(targetUrl);
+  };
+
+  // Format timestamp for display
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return "";
+
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) {
+      // Today - show time
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else if (diffInDays === 1) {
+      // Yesterday
+      return "Yesterday";
+    } else if (diffInDays < 7) {
+      // Within a week - show day name
+      return date.toLocaleDateString([], { weekday: "short" });
+    } else {
+      // Older - show date
+      return date.toLocaleDateString([], { month: "short", day: "numeric" });
+    }
   };
 
   return (
@@ -124,6 +175,66 @@ function Navbar_2_dashboard() {
         </div>
       </div>
 
+      {/* Recent Conversations */}
+      <div className={navbar_chat_css.recent_conversations}>
+        {loadingConversations ? (
+          <div className={navbar_chat_css.loading_indicator}>
+            <span>Loading conversations...</span>
+          </div>
+        ) : recentFriends.length > 0 ? (
+          recentFriends.map((friend) => (
+            <div
+              key={friend.id}
+              className={`${navbar_chat_css.conversation_item} ${
+                friend_id === friend.id ? navbar_chat_css.active : ""
+              }`}
+              onClick={() => startDM(friend.id)}
+            >
+              <div className={navbar_chat_css.conversation_avatar}>
+                <img
+                  src={
+                    friend.profile_pic ||
+                    "https://cdn.discordapp.com/embed/avatars/0.png"
+                  }
+                  alt={friend.username}
+                />
+                <div className={navbar_chat_css.online_status}>
+                  <img
+                    src={offline_icon}
+                    className={navbar_chat_css.offline_icon}
+                    alt=""
+                  />
+                </div>
+              </div>
+              <div className={navbar_chat_css.conversation_info}>
+                <div className={navbar_chat_css.conversation_name}>
+                  {friend.username}
+                </div>
+                <div className={navbar_chat_css.conversation_last_message}>
+                  {friend.last_message
+                    ? friend.last_message.length > 20
+                      ? friend.last_message.substring(0, 20) + "..."
+                      : friend.last_message
+                    : "Click to start chatting"}
+                  {friend.last_message_timestamp && (
+                    <span className={navbar_chat_css.timestamp}>
+                      • {formatTimestamp(friend.last_message_timestamp)}
+                    </span>
+                  )}
+                </div>
+              </div>
+              {friend.unread_count > 0 && (
+                <div className={navbar_chat_css.unread_badge}></div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className={navbar_chat_css.no_conversations}>
+            <span>No recent conversations</span>
+          </div>
+        )}
+      </div>
+
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Body>
           <div className={navbar_chat_css.new_server}>
@@ -151,13 +262,7 @@ function Navbar_2_dashboard() {
                   <div
                     key={friend.id}
                     className={navbar_chat_css.friend_details}
-                    onClick={() => {
-                      // Alert for debugging
-                      alert(
-                        `Clicking on friend: ${friend.username} (${friend.id})`
-                      );
-                      startDM(friend.id);
-                    }}
+                    onClick={() => startDM(friend.id)}
                   >
                     <div
                       className={navbar_chat_css.friend_details_comps}

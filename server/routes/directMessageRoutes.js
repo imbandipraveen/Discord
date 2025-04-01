@@ -4,6 +4,7 @@ const {
   getDirectMessages,
   markMessagesAsRead,
   getUserById,
+  getRecentConversations,
 } = require("../controllers/directMessageController");
 const { authToken } = require("../middleware/auth");
 
@@ -14,5 +15,6 @@ router.use(authToken);
 router.get("/direct-messages/:roomId", getDirectMessages);
 router.post("/mark-read", markMessagesAsRead);
 router.get("/user/:userId", getUserById);
+router.get("/recent-conversations", getRecentConversations);
 
 module.exports = router;
