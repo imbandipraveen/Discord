@@ -145,6 +145,7 @@
   font-size: 16px;
   margin-bottom: 8px;
   outline: none;
+  margin-right: 10px;
 }
 
 .messageInput:focus {
