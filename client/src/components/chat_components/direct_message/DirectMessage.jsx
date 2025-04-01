@@ -301,11 +301,11 @@ function DirectMessage({ friendId }) {
           </span>
         </div>
         <div className={dmCSS.header_actions}>
-          <NotificationsIcon className={dmCSS.header_icon} fontSize="large" />
-          <PushPinIcon className={dmCSS.header_icon} fontSize="large" />
-          <PeopleAltIcon className={dmCSS.header_icon} fontSize="large" />
-          <InboxIcon className={dmCSS.header_icon} fontSize="large" />
-          <HelpIcon className={dmCSS.header_icon} fontSize="large" />
+          <NotificationsIcon className={dmCSS.header_icon} sx={{ fontSize: 40 }} />
+          <PushPinIcon className={dmCSS.header_icon} fontSize="large" sx={{ fontSize: 40 }} />
+          <PeopleAltIcon className={dmCSS.header_icon} fontSize="large" sx={{ fontSize: 40 }} />
+          <InboxIcon className={dmCSS.header_icon} fontSize="large" sx={{ fontSize: 40 }} />
+          <HelpIcon className={dmCSS.header_icon} fontSize="large" sx={{ fontSize: 40 }} />
         </div>
       </div>
 
