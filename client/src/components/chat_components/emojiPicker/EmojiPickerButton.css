@@ -1,0 +1,36 @@
+.emoji-picker-button {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 44px;
+    flex: 0 0 auto;
+  }
+  
+  .emoji-picker-button:hover .emoji {
+    filter: none;
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  
+  .emoji {
+    width: 22px;
+    height: 22px;
+    background-image: url("https://i.imgur.com/GCsoD7z.png");
+    background-repeat: no-repeat;
+    transition: filter 100ms ease-in-out, opacity 100ms ease-in-out,
+      transform 100ms ease-in-out;
+    filter: grayscale(100%);
+    opacity: 0.3;
+  }
+  
+  .emoji:hover {
+    filter: none;
+    opacity: 1;
+  }

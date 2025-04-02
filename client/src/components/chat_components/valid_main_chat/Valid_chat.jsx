@@ -6,7 +6,8 @@ import TagIcon from "@mui/icons-material/Tag";
 import socket from "../../Socket/Socket";
 import { useParams } from "react-router-dom";
 import { uploadFileToS3 } from "../../aws-s3-storage-blob";
-
+import Picker from "emoji-picker-react";
+import EmojiPickerButton from "../emojiPicker/EmojiPickerButton";
 function Valid_chat() {
   const url = process.env.REACT_APP_URL;
   const { server_id } = useParams();
@@ -23,8 +24,22 @@ function Valid_chat() {
     content: "",
     contentType: "text",
   });
+  const [showEmojiPicker, setShowEmojiPicket] = useState(false);
   const [all_messages, setall_messages] = useState([]);
   const [latest_message, setlatest_message] = useState(null);
+  const pickerRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+        setShowEmojiPicket(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (channel_id) {
@@ -340,7 +355,43 @@ function Valid_chat() {
             style={{ cursor: "pointer" }}
             onClick={() => document.getElementById("fileInput").click()}
           />
-
+          <EmojiPickerButton
+            setShowEmojiPicket={() => {
+              setShowEmojiPicket(!showEmojiPicker);
+            }}
+          />
+          {showEmojiPicker && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: "100px",
+                left: "100px",
+                zIndex: 100,
+                background: "#2f3136",
+                borderRadius: "8px",
+                boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
+                width: "auto",
+                maxHeight: "400px",
+                overflowY: "auto",
+                padding: "10px",
+              }}
+              ref={pickerRef}
+            >
+              <Picker
+                pickerStyle={{ width: "100%" }}
+                theme="dark"
+                emojiStyle="facebook"
+                onEmojiClick={(e) => {
+                  setchat_message((prev) => {
+                    return {
+                      content: prev.content + e.emoji,
+                      contentType: "text",
+                    };
+                  });
+                }}
+              />
+            </div>
+          )}
           <input
             type="text"
             onKeyDown={send_message}

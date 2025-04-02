@@ -10,7 +10,8 @@ import HelpIcon from "@mui/icons-material/Help";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import jwt from "jwt-decode";
 import { uploadFileToS3 } from "../../aws-s3-storage-blob";
-
+import EmojiPickerButton from "../emojiPicker/EmojiPickerButton";
+import Picker from "emoji-picker-react";
 function DirectMessage({ friendId }) {
   const [message, setMessage] = useState({ content: "", contentType: "text" });
   const [messages, setMessages] = useState([]);
@@ -19,7 +20,7 @@ function DirectMessage({ friendId }) {
   const messageEndRef = useRef(null);
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
-
+  const [showEmojiPicker, setShowEmojiPicket] = useState(false);
   const userId = useSelector((state) => state.user_info.id);
   const username = useSelector((state) => state.user_info.username);
   const token = localStorage.getItem("token");
@@ -29,7 +30,19 @@ function DirectMessage({ friendId }) {
   const baseUrl = (
     process.env.REACT_APP_URL || "https://discord-clonerepo2.onrender.com"
   ).replace(/\/api$/, "");
+  const pickerRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (pickerRef.current && !pickerRef.current.contains(event.target)) {
+        setShowEmojiPicket(false);
+      }
+    };
 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -332,6 +345,38 @@ function DirectMessage({ friendId }) {
           }}
           onClick={() => document.getElementById("fileInput").click()}
         />
+        {showEmojiPicker && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "100px",
+              right: "380px",
+              zIndex: 100,
+              background: "#2f3136",
+              borderRadius: "8px",
+              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
+              width: "auto",
+              maxHeight: "400px",
+              overflowY: "auto",
+              padding: "10px",
+            }}
+            ref={pickerRef}
+          >
+            <Picker
+              pickerStyle={{ width: "100%" }}
+              theme="dark"
+              emojiStyle="facebook"
+              onEmojiClick={(e) => {
+                setMessage((prev) => {
+                  return {
+                    content: prev.content + e.emoji,
+                    contentType: "text",
+                  };
+                });
+              }}
+            />
+          </div>
+        )}
         <input
           type="text"
           value={message.content}
@@ -340,6 +385,13 @@ function DirectMessage({ friendId }) {
           placeholder={`Message @${displayName}`}
           className={dmCSS.messageInput}
         />
+        <div style={{ position: "absolute", right: "500px" }}>
+          <EmojiPickerButton
+            setShowEmojiPicket={() => {
+              setShowEmojiPicket(!showEmojiPicker);
+            }}
+          />
+        </div>
         <button type="submit" className={dmCSS.sendButton}>
           Send
         </button>
