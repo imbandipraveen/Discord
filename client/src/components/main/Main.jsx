@@ -25,16 +25,6 @@ function Main({ user_relations }) {
 
   const { server_id, friend_id } = useParams();
   const isDM = server_id === "@me" && friend_id;
-
-  // Log important debugging information
-  console.log("Main component parameters:", {
-    server_id,
-    friend_id,
-    isDM,
-    params: useParams(),
-    "window.location": window.location.pathname,
-  });
-
   useEffect(() => {
     if (id !== 0) {
       socket.emit("get_userid", id);

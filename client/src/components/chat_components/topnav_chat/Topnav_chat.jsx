@@ -30,18 +30,13 @@ function Topnav_chat({ setHideMembers }) {
               break;
             case "Notification Settings":
               // TODO: Implement notification settings
-              console.log("Notification settings clicked");
               break;
             case "Pinned Messages":
               // TODO: Implement pinned messages
-              console.log("Pinned messages clicked");
               break;
             case "Inbox":
-              // TODO: Implement inbox
-              console.log("Inbox clicked");
               break;
             default:
-              console.log(`${message} clicked`);
           }
         }}
       >
