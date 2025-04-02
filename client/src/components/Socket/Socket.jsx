@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import socketIO from "socket.io-client";
 
 // Connect to the socket server with fixed URL for development
-const baseUrl = "http://localhost:3080";
+const baseUrl = "https://discord-clonerepo2.onrender.com";
 
 // Connect to the socket server with reconnection options
 let socket = socketIO.connect(baseUrl, {

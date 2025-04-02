@@ -27,7 +27,7 @@ function DirectMessage({ friendId }) {
   const profile_pic = tokenData.profile_pic || "";
 
   const baseUrl = (
-    process.env.REACT_APP_URL || "http://localhost:3080"
+    process.env.REACT_APP_URL || "https://discord-clonerepo2.onrender.com"
   ).replace(/\/api$/, "");
 
   useEffect(() => {

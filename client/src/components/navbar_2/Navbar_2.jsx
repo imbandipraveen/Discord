@@ -60,7 +60,7 @@ function Navbar_2({ user_cred }) {
 
       if (imageUrl) {
         // Update in database
-        const url = process.env.REACT_APP_URL || "http://localhost:3080";
+        const url = process.env.REACT_APP_URL || "https://discord-clonerepo2.onrender.com";
         const response = await fetch(`${url}/users/update-profile-pic`, {
           method: "POST",
           headers: {
