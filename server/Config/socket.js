@@ -5,7 +5,7 @@ const setupSocket = (server) => {
   const io = new Server(server, {
     pingTimeout: 20000,
     cors: {
-      origin: "https://discord-clonerepo2.vercel.app/",
+      origin: "https://discord-clonerepo2.vercel.app",
     },
   });
 
