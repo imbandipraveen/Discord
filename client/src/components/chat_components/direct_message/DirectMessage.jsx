@@ -328,7 +328,8 @@ function DirectMessage({ friendId }) {
       )}
 
       {/* Message Input */}
-      <form onSubmit={handleSendMessage} className={dmCSS.messageForm}>
+     <div className={dmCSS.messageForm}>
+     <form onSubmit={handleSendMessage} style={{width: '100%'}}>
         <input
           type="file"
           id="fileInput"
@@ -340,7 +341,7 @@ function DirectMessage({ friendId }) {
           style={{
             cursor: "pointer",
             position: "absolute",
-            bottom: "25px",
+            bottom: "30px",
             left: "40px",
           }}
           onClick={() => document.getElementById("fileInput").click()}
@@ -396,6 +397,7 @@ function DirectMessage({ friendId }) {
           Send
         </button>
       </form>
+     </div>
 
       {/* Right User Panel (Optional) */}
       <div className={dmCSS.user_info_panel}>
