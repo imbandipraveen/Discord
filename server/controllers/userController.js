@@ -492,3 +492,30 @@ exports.refreshToken = async (req, res) => {
     res.status(500).json({ message: "Server error", status: 500 });
   }
 };
+
+exports.searchUsers = async (req, res) => {
+  try {
+    const { q } = req.query;
+    const userId = req.user.id;
+
+    if (!q) {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    // Find users whose username or tag matches the search query
+    const users = await User.find({
+      _id: { $ne: userId }, // Exclude the current user
+      $or: [
+        { username: { $regex: q, $options: "i" } },
+        { tag: { $regex: q, $options: "i" } },
+      ],
+    })
+      .select("username tag profile_pic id")
+      .limit(10);
+
+    res.json({ users });
+  } catch (error) {
+    console.error("Error searching users:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

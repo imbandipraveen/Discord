@@ -112,8 +112,33 @@
   transition: 0.3s;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
   background-color: #4752c4;
+}
+
+.button:disabled {
+  background-color: #4f545c;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.otp_sent {
+  color: #43b581;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: 0.75rem;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .link {
@@ -204,6 +229,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #5c5d5b;
 }
+
 .password_wrapper {
   position: relative;
   display: flex;
@@ -227,6 +253,7 @@
 .toggle_icon:hover {
   color: white;
 }
+
 .close_btn {
   background-color: transparent;
   border: 1px solid #b5bac1;
@@ -264,4 +291,10 @@
   .verify_btn {
     width: 100%;
   }
+}
+
+.error_message {
+  color: hsl(359, calc((1, 1) * 82.6%), 59.4%);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
 }

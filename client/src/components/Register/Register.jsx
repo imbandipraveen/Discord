@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import registercss from "./register.module.css";
-import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Alert,
+} from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
-import Alert from "@mui/material/Alert";
 import IconButton from "@mui/material/IconButton";
 import Collapse from "@mui/material/Collapse";
 import CloseIcon from "@mui/icons-material/Close";
@@ -29,6 +35,11 @@ function Register() {
     email: "",
     showPassword: false,
   });
+  const [passwordError, setPasswordError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
 
   const months = [
     "January",
@@ -69,11 +80,17 @@ function Register() {
 
   const registerReq = async (e) => {
     e.preventDefault();
+    setPasswordError("");
+    setUsernameError("");
+    setEmailError("");
+    setIsLoading(true);
+    setOtpSent(false);
 
     const dob = `${userValues.month_value} ${userValues.date_value}, ${userValues.year_value}`;
     const date = new Date(dob);
     if (date.getDate() !== parseInt(userValues.date_value)) {
       setDateValidation({ display: "flex" });
+      setIsLoading(false);
       return;
     }
 
@@ -81,19 +98,54 @@ function Register() {
 
     const { email, password, username } = userValues;
 
-    const res = await fetch(`${url}/auth/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, username, dob }),
-    });
+    // Client-side validation
+    if (password.length < 7) {
+      setPasswordError("Password must be at least 7 characters long");
+      setIsLoading(false);
+      return;
+    }
+    if (!password.match(/[A-Z]/)) {
+      setPasswordError("Password must contain at least one uppercase letter");
+      setIsLoading(false);
+      return;
+    }
+    if (!password.match(/\d/)) {
+      setPasswordError("Password must contain at least one number");
+      setIsLoading(false);
+      return;
+    }
 
-    const data = await res.json();
+    try {
+      const res = await fetch(`${url}/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, username, dob }),
+      });
 
-    if (data.status === 201) setModalShow(true);
-    else if (data.status === 202) setError("User Already Exists");
-    else if (data.status === 204) setError("Field is empty");
-    else if (data.status === 400)
-      setError("Password must be at least 7 characters");
+      const data = await res.json();
+
+      if (data.status === 201) {
+        setOtpSent(true);
+        setModalShow(true);
+      } else if (data.status === 400) {
+        if (data.message.includes("email")) {
+          setEmailError(data.message);
+        } else if (data.message.includes("username")) {
+          setUsernameError(data.message);
+        } else if (data.message.includes("password")) {
+          setPasswordError(data.message);
+        } else {
+          setError(data.message);
+        }
+      } else {
+        setError(data.message || "Something went wrong");
+      }
+    } catch (error) {
+      setError("Server error. Please try again.");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const verifyReq = async (e) => {
@@ -178,6 +230,9 @@ function Register() {
                   className={registercss.input}
                   required
                 />
+                {emailError && (
+                  <div className={registercss.error_message}>{emailError}</div>
+                )}
               </div>
 
               {/* Username */}
@@ -193,6 +248,11 @@ function Register() {
                   className={registercss.input}
                   required
                 />
+                {usernameError && (
+                  <div className={registercss.error_message}>
+                    {usernameError}
+                  </div>
+                )}
               </div>
 
               {/* Password */}
@@ -225,6 +285,11 @@ function Register() {
                     )}
                   </span>
                 </div>
+                {passwordError && (
+                  <div className={registercss.error_message}>
+                    {passwordError}
+                  </div>
+                )}
               </div>
 
               {/* Date of Birth */}
@@ -347,9 +412,19 @@ function Register() {
                 </div>
               </div>
 
-              <button type="submit" className={registercss.button}>
-                Continue
+              <button
+                type="submit"
+                className={registercss.button}
+                disabled={isLoading}
+              >
+                {isLoading ? "Sending..." : "Continue"}
               </button>
+
+              {otpSent && (
+                <div className={registercss.otp_sent}>
+                  OTP has been sent to your email
+                </div>
+              )}
 
               <p className={registercss.link}>
                 Already have an account?{" "}

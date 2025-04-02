@@ -10,6 +10,7 @@ import Modal from "react-bootstrap/Modal";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import SearchIcon from "@mui/icons-material/Search";
 
 function Navbar_2_dashboard() {
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
@@ -24,6 +25,9 @@ function Navbar_2_dashboard() {
   const [recentFriends, setRecentFriends] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingConversations, setLoadingConversations] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const baseUrl = process.env.REACT_APP_URL || "http://localhost:3080";
 
@@ -129,12 +133,81 @@ function Navbar_2_dashboard() {
     }
   };
 
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    setIsSearching(true);
+
+    if (query.trim() === "") {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    // Filter friends based on username or tag
+    const filteredFriends = friends.filter(
+      (friend) =>
+        friend.username.toLowerCase().includes(query) ||
+        friend.tag.toLowerCase().includes(query)
+    );
+
+    setSearchResults(filteredFriends);
+    setIsSearching(false);
+  };
+
+  const startDMWithUser = (userId) => {
+    setSearchQuery("");
+    setSearchResults([]);
+    startDM(userId);
+  };
+
   return (
     <div>
       <div className={navbar_chat_css.search_wrap}>
         <div className={navbar_chat_css.search}>
-          Find or start a conversation
+          <SearchIcon style={{ marginRight: "8px", color: "#72767d" }} />
+          <input
+            type="text"
+            placeholder="Find or start a conversation"
+            value={searchQuery}
+            onChange={handleSearch}
+            className={navbar_chat_css.search_input}
+          />
         </div>
+        {searchQuery && (
+          <div className={navbar_chat_css.search_results}>
+            {isSearching ? (
+              <div className={navbar_chat_css.search_loading}>Searching...</div>
+            ) : searchResults.length > 0 ? (
+              searchResults.map((user) => (
+                <div
+                  key={user.id}
+                  className={navbar_chat_css.search_result_item}
+                  onClick={() => startDMWithUser(user.id)}
+                >
+                  <img
+                    src={
+                      user.profile_pic ||
+                      "https://cdn.discordapp.com/embed/avatars/0.png"
+                    }
+                    alt={user.username}
+                    className={navbar_chat_css.search_result_avatar}
+                  />
+                  <div className={navbar_chat_css.search_result_info}>
+                    <div className={navbar_chat_css.search_result_name}>
+                      {user.username}
+                    </div>
+                    <div className={navbar_chat_css.search_result_tag}>
+                      #{user.tag}
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className={navbar_chat_css.no_results}>No users found</div>
+            )}
+          </div>
+        )}
       </div>
       <div className={navbar_chat_css.friends_wrap}>
         <div className={navbar_chat_css.friends}>

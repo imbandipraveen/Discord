@@ -9,6 +9,7 @@ const {
   deleteUser,
   updateProfilePic,
   refreshToken,
+  searchUsers,
 } = require("../controllers/userController");
 const { getUserById } = require("../controllers/directMessageController");
 const { authToken } = require("../middleware/auth");
@@ -22,5 +23,6 @@ router.post("/update-profile-pic", authToken, updateProfilePic);
 router.get("/refresh-token", authToken, refreshToken);
 router.get("/:userId", authToken, getUserById);
 router.delete("/delete", deleteUser);
+router.get("/search", searchUsers);
 
 module.exports = router;

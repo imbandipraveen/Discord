@@ -328,7 +328,7 @@ function send_mail(otp, mail_value, name_value) {
     to: mail_value,
     subject: "Email for Verification",
     text: `Hello ${name_value}
-    You registered an account on Discord Clone, Here is your otp for verification - ${otp}
+    You registered an account on Riscol - Discord Clone, Here is your otp for verification - ${otp}
     Kind Regards, Riscol`,
   };
 
