@@ -102,12 +102,10 @@ function Valid_chat() {
       });
 
       const data = await res.json();
-      console.log(data, "Message upload data");
       if (data.status === 200) {
-        console.log("Message stored successfully");
       }
     } catch (error) {
-      console.error("Error storing message:", error);
+      throw error;
     }
   };
 
@@ -126,14 +124,10 @@ function Valid_chat() {
       });
 
       const data = await res.json();
-      console.log(data, "sent_chats");
-
       if (data.chats?.length) {
         setall_messages(data.chats);
       }
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -166,7 +160,6 @@ function Valid_chat() {
 
   useEffect(() => {
     const messageListener = (message_data) => {
-      console.log(message_data, "this is message");
       setlatest_message(message_data);
     };
 

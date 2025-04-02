@@ -32,7 +32,6 @@ const uploadFileToS3 = async (file) => {
 
   // Convert file to Buffer
   const fileBuffer = await file.arrayBuffer(); // Converts File to ArrayBuffer
-  console.log(fileBuffer, "fileBuffer");
   const params = {
     Bucket: bucketName,
     Key: fileName,
@@ -41,7 +40,6 @@ const uploadFileToS3 = async (file) => {
   };
 
   try {
-    console.log("Uploading file to S3...");
     await s3Client.send(new PutObjectCommand(params));
     return `https://${bucketName}.s3.${region}.amazonaws.com/${fileName}`;
   } catch (error) {

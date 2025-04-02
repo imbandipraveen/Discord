@@ -82,7 +82,6 @@ function Navbar({ new_req_recieved, user_cred }) {
   const create_server = async () => {
     let image_url = "";
     if (new_server_image !== "") {
-      console.log("Upload s3 Image");
       const file_url = await uploadFileToS3(new_server_image);
       image_url = file_url;
     }

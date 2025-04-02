@@ -71,42 +71,29 @@ const setupSocket = (server) => {
     socket.on("join_dm", ({ userId, friendId }) => {
       try {
         if (!userId || !friendId) {
-          console.error("❌ Missing userId or friendId in join_dm event");
+          console.error(" Missing userId or friendId in join_dm event");
           return;
         }
 
         const roomId = [userId, friendId].sort().join("_");
-        console.log(
-          `🚪 User ${userId} joining DM room with ${friendId}: ${roomId}`
-        );
 
         // Join both user's individual room and the DM room
         socket.join(userId);
         socket.join(roomId);
-        console.log(`✅ User ${userId} joined rooms: ${userId} and ${roomId}`);
-        console.log(
-          `🚪 Socket now in rooms:`,
-          socket.rooms ? Array.from(socket.rooms) : "No rooms available"
-        );
 
         // Fetch message history for this room
         DirectMessage.find({ room_id: roomId })
           .sort({ timestamp: 1 })
           .then((messages) => {
             // Send message history to the user who just joined
-            console.log(
-              `📚 Found ${messages.length} messages for room ${roomId}`
-            );
             socket.emit("dm_history", messages);
           })
           .catch((err) => {
-            console.error("❌ Error fetching direct messages:", err);
             socket.emit("dm_error", {
               error: "Failed to load message history",
             });
           });
       } catch (error) {
-        console.error("❌ Exception in join_dm handler:", error);
         socket.emit("dm_error", { error: "Server error joining DM room" });
       }
     });
@@ -114,7 +101,6 @@ const setupSocket = (server) => {
     socket.on("leave_dm", ({ userId, friendId }) => {
       const roomId = [userId, friendId].sort().join("_");
       socket.leave(roomId);
-      console.log(`User left DM room: ${roomId}`);
     });
 
     // Handle typing indicator
@@ -123,16 +109,11 @@ const setupSocket = (server) => {
         const { sender_id, receiver_id, room_id } = data;
 
         if (!sender_id || !receiver_id) {
-          console.error("❌ Missing sender_id or receiver_id in typing event");
           return;
         }
 
         // Use provided room_id or create one if not provided
         const roomId = room_id || [sender_id, receiver_id].sort().join("_");
-
-        console.log(
-          `✏️ User ${sender_id} is typing to ${receiver_id} in room ${roomId}`
-        );
 
         // Emit typing event to the room (excluding the sender)
         socket.to(roomId).emit("typing_indicator", {
@@ -141,17 +122,12 @@ const setupSocket = (server) => {
           timestamp: Date.now(),
         });
       } catch (error) {
-        console.error("❌ Exception in typing handler:", error);
+        throw error;
       }
     });
 
     socket.on("send_dm", (messageData) => {
       try {
-        console.log(
-          "💬 Received send_dm event with data:",
-          JSON.stringify(messageData, null, 2)
-        );
-
         // Extract fields with proper snake_case field names
         // Use optional chaining to avoid errors with undefined fields
         const sender_id = messageData?.sender_id;
@@ -190,9 +166,6 @@ const setupSocket = (server) => {
         // Create a consistent room ID by sorting the user IDs and joining them
         const roomId = [sender_id, receiver_id].sort().join("_");
 
-        console.log(`💬 DM sent in room ${roomId}: ${content}`);
-        console.log(`👤 From: ${sender_name || sender_id} to: ${receiver_id}`);
-
         // Create a new message document with ONLY the fields defined in our schema
         const newMessage = {
           sender_id,
@@ -213,20 +186,15 @@ const setupSocket = (server) => {
         directMessage
           .save()
           .then((savedMessage) => {
-            console.log(
-              "✅ Message saved to database with ID:",
-              savedMessage._id
-            );
+            console.log("Message saved to database with ID:", savedMessage._id);
 
             try {
               // Only emit to the room once - everyone in the conversation should be in this room
-              console.log(`📤 Emitting to shared room: ${roomId}`);
               io.to(roomId).emit("receive_dm", savedMessage);
 
               // No need to emit to individual rooms since both users are in the shared room
               // This avoids duplicate messages for receivers
             } catch (emitError) {
-              console.error("❌ Error emitting message:", emitError);
               socket.emit("dm_error", {
                 error: "Error sending message to recipient",
                 details: emitError.message || "Unknown emit error",
@@ -234,8 +202,6 @@ const setupSocket = (server) => {
             }
           })
           .catch((err) => {
-            console.error("❌ Error saving direct message:", err);
-
             let errorMessage = "Failed to save message to database";
 
             // Check for duplicate key error
@@ -256,7 +222,6 @@ const setupSocket = (server) => {
             });
           });
       } catch (error) {
-        console.error("❌ Exception in send_dm handler:", error);
         socket.emit("dm_error", {
           error: "Server error processing message",
           details: error.message || "Unknown error",

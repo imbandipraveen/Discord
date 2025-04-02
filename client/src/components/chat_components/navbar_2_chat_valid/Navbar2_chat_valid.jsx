@@ -70,7 +70,6 @@ function Navbar2_chat_valid() {
   };
 
   const create_invite_link = async () => {
-    console.log("run this");
     const res = await fetch(`${url}/invites/create`, {
       method: "POST",
       headers: {
@@ -92,7 +91,6 @@ function Navbar2_chat_valid() {
   };
 
   const delete_server = async () => {
-    console.log(server_id);
     const res = await fetch(`${url}/servers/delete`, {
       method: "POST",
       headers: {
@@ -107,12 +105,10 @@ function Navbar2_chat_valid() {
     if (data.status === 200) {
       dispatch(update_options());
       Navigate("/channels/@me");
-      console.log("server deleted");
     }
   };
 
   const leave_server = async () => {
-    console.log(server_id);
     const res = await fetch(`${url}/servers/leave`, {
       method: "POST",
       headers: {
@@ -139,7 +135,6 @@ function Navbar2_chat_valid() {
   }
 
   const server_info = async () => {
-    console.log("i am in server info");
     const res = await fetch(`${url}/servers/info`, {
       method: "POST",
       headers: {
@@ -151,7 +146,6 @@ function Navbar2_chat_valid() {
       }),
     });
     const data = await res.json();
-    console.log(data, "server_info");
     setserver_details(data);
 
     dispatch(change_page_name(data.categories[0]?.channels[0]?.channel_name));

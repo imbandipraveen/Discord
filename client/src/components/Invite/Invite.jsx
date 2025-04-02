@@ -34,10 +34,7 @@ function Invite() {
     });
     const data = await res.json();
     if (data.status === 200 || data.status === 403) {
-      console.log("going");
       Navigate("/channels/@me");
-    } else {
-      console.log("something went wrong");
     }
   };
 

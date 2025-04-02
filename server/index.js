@@ -1644,7 +1644,6 @@ app.post("/store_message", async function (req, res) {
     id,
     profile_pic,
   } = req.body;
-  console.log(channel_name, channel_id);
 
   const response = await chats.find({
     server_id: server_id,

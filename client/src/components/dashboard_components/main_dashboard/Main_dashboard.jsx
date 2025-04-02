@@ -70,11 +70,8 @@ function Main_dashboard({ user_relations }) {
 
   // Function to start a direct message with a friend
   const startDM = (friendId) => {
-    console.log("Starting DM with friend ID:", friendId);
-
     // Create the target URL for the direct message route
     const targetUrl = `/channels/@me/${friendId}`;
-    console.log("Navigating to URL:", targetUrl);
 
     // Navigate to the direct message route
     navigate(targetUrl);
@@ -101,14 +98,12 @@ function Main_dashboard({ user_relations }) {
   const button_clicked = async (message, friend_data) => {
     // Handle Message button click
     if (message === "Message") {
-      console.log("Message button clicked for:", friend_data);
       startDM(friend_data.id);
       return;
     }
 
     // Don't make API call for More button
     if (message === "More") {
-      console.log("More button clicked for user:", friend_data);
       return;
     }
 
@@ -225,7 +220,6 @@ function Main_dashboard({ user_relations }) {
     // Show alert immediately after clicking the button
     setalert({ style: "flex", message: "Sending friend request..." });
     setIsLoading(true); // Disable button until the request completes
-    console.log("Input", input);
     const res = await fetch(`${url}/users/add-friend`, {
       method: "POST",
       headers: {
@@ -238,7 +232,6 @@ function Main_dashboard({ user_relations }) {
     });
 
     const data = await res.json();
-    console.log("testData", data);
     setalert({ style: "flex", message: "Friend Request Sent" });
     setIsLoading(false); // Re-enable button after operation
 
@@ -252,7 +245,6 @@ function Main_dashboard({ user_relations }) {
       setalert({ style: "flex", message: data.message });
 
       if (data.status === 201 || data.status === 200) {
-        console.log("Here checked", data);
         dispatch(update_options());
         socket.emit("send_req", data.receiver_id, id, profile_pic, username);
       }

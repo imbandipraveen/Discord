@@ -33,10 +33,8 @@ function Navbar_2_dashboard() {
 
   // Debug log to see what's in the Redux store
   useEffect(() => {
-    console.log("User Info from Redux:", userInfo);
     // Check if friends are directly in userInfo
     if (userInfo && userInfo.friends && userInfo.friends.length > 0) {
-      console.log("Found friends directly in userInfo:", userInfo.friends);
     }
   }, [userInfo]);
 
@@ -56,7 +54,6 @@ function Navbar_2_dashboard() {
     setLoading(true);
     setLoadingConversations(true);
     try {
-      console.log("Fetching friends...");
       const url = process.env.REACT_APP_URL;
 
       // Fetch user relations from the API
@@ -67,15 +64,12 @@ function Navbar_2_dashboard() {
       });
 
       const data = await response.json();
-      console.log("User relations response:", data);
 
       if (data && data.friends) {
-        console.log("Setting friends from API:", data.friends);
         setFriends(data.friends);
         // Use friends_with_messages for recent conversations (DM column)
         setRecentFriends(data.friends_with_messages || []);
       } else {
-        console.log("No friends found in response");
         setFriends([]);
         setRecentFriends([]);
       }
@@ -97,11 +91,9 @@ function Navbar_2_dashboard() {
 
   const startDM = (friendId) => {
     handleClose();
-    console.log("Starting DM with friend ID:", friendId);
 
     // Create the target URL - this is very important!
     const targetUrl = `/channels/@me/${friendId}`;
-    console.log("Navigating to URL:", targetUrl);
 
     // Navigate to the direct message route
     navigate(targetUrl);
