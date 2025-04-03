@@ -7,6 +7,7 @@ const {
   validatePassword,
   validateUsername,
 } = require("../utils/validation");
+const bcrypt = require("bcrypt");
 
 exports.signup = async (req, res) => {
   try {
@@ -28,6 +29,8 @@ exports.signup = async (req, res) => {
         status: 400,
       });
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const usernameError = validateUsername(username);
     if (usernameError) {
@@ -70,7 +73,7 @@ exports.signup = async (req, res) => {
       username,
       tag,
       email,
-      password, // In production, hash this password
+      password : hashedPassword,
       dob,
       profile_pic: process.env.default_profile_pic,
       authorized: false,
@@ -145,11 +148,11 @@ exports.signin = async (req, res) => {
     }
 
     // Verify password
-    // Note: In production, you should use bcrypt to compare passwords
-    if (password !== user.password) {
-      return res.status(442).json({
-        error: "Invalid username or password",
-        status: 442,
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Credentials",
       });
     }
 
