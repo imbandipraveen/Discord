@@ -10,9 +10,7 @@ function Rightnav_chat() {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [showRoles, setShowRoles] = useState("");
   const serverId = useParams().server_id;
-  console.log(serverId);
   const positionRef = useRef(null);
-  console.log(showRoles);
   const dispatch = useDispatch();
   useEffect(() => {
     all_users.forEach((user) => {
