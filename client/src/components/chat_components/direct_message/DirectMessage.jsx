@@ -342,7 +342,7 @@ function DirectMessage({ friendId }) {
             cursor: "pointer",
             position: "absolute",
             bottom: "30px",
-            left: "40px",
+            left: "24px",
           }}
           onClick={() => document.getElementById("fileInput").click()}
         />
@@ -382,7 +382,7 @@ function DirectMessage({ friendId }) {
           type="text"
           value={message.content}
           onChange={handleInputChange}
-          style={{ paddingLeft: "50px" }}
+          style={{ paddingLeft: "80px" }}
           placeholder={`Message @${displayName}`}
           className={dmCSS.messageInput}
         />
@@ -390,7 +390,7 @@ function DirectMessage({ friendId }) {
           Send
         </button>
       </form>
-      <div style={{ position: "fixed", right: "510px", bottom: "20px" }}>
+      <div style={{ position: "absolute", left:"50px"}}>
           <EmojiPickerButton
             setShowEmojiPicket={(e) => {
               e.preventDefault();
