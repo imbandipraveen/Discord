@@ -10,10 +10,11 @@
   position: absolute;
   height: 48px;
   bottom: 0;
-  width: auto;
+  width: 100%;
   display: grid;
   grid-template-columns: 2fr 3.5fr 2.5fr;
   background-color: #292b2f;
+  /* z-index: -1; */
 }
 .footer_comps {
   display: flex;

@@ -22,7 +22,6 @@ import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import BlockIcon from "@mui/icons-material/Block";
-import PersonOffIcon from "@mui/icons-material/PersonOff";
 import { useNavigate } from "react-router-dom";
 
 function Main_dashboard({ user_relations }) {

@@ -2,12 +2,12 @@
   "name": "discord",
   "version": "1.0.0",
   "description": "this is the exact clone of discord",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js"
   },
-  "author": "Praveen Bandi",
+  "author": "Riscol",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
