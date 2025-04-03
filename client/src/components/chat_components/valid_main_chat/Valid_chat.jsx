@@ -8,6 +8,8 @@ import { useParams } from "react-router-dom";
 import { uploadFileToS3 } from "../../aws-s3-storage-blob";
 import Picker from "emoji-picker-react";
 import EmojiPickerButton from "../emojiPicker/EmojiPickerButton";
+import { useNavigate } from "react-router-dom";
+
 function Valid_chat() {
   const url = process.env.REACT_APP_URL;
   const { server_id } = useParams();
@@ -28,6 +30,8 @@ function Valid_chat() {
   const [all_messages, setall_messages] = useState([]);
   const [latest_message, setlatest_message] = useState(null);
   const pickerRef = useRef(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (pickerRef.current && !pickerRef.current.contains(event.target)) {
@@ -142,7 +146,10 @@ function Valid_chat() {
       if (data.chats?.length) {
         setall_messages(data.chats);
       }
-    } catch (error) {}
+    } catch (error) {
+      navigate("/");
+      console.log(error);
+    }
   };
 
   useEffect(() => {

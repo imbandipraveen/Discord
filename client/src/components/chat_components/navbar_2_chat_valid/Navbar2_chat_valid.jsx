@@ -135,22 +135,29 @@ function Navbar2_chat_valid() {
   }
 
   const server_info = async () => {
-    const res = await fetch(`${url}/servers/info`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-auth-token": localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        server_id,
-      }),
-    });
-    const data = await res.json();
-    setserver_details(data);
-
-    dispatch(change_page_name(data.categories[0]?.channels[0]?.channel_name));
-    dispatch(change_page_id(data.categories[0]?.channels[0]._id));
-    dispatch(server_members(data.users));
+    try{
+      const res = await fetch(`${url}/servers/info`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          server_id,
+        }),
+      });
+      const data = await res.json();
+      setserver_details(data);
+  
+      dispatch(change_page_name(data.categories[0]?.channels[0]?.channel_name));
+      dispatch(change_page_id(data.categories[0]?.channels[0]._id));
+      dispatch(server_members(data.users));
+    }
+    catch(error)
+    {
+      Navigate("/");
+      console.log(error);
+    }
   };
 
   const create_category = async () => {
