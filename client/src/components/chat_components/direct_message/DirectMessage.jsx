@@ -392,11 +392,12 @@ function DirectMessage({ friendId }) {
       </form>
       <div style={{ position: "fixed", right: "510px", bottom: "20px" }}>
           <EmojiPickerButton
-            setShowEmojiPicket={() => {
+            setShowEmojiPicket={(e) => {
+              e.preventDefault();
               setShowEmojiPicket(!showEmojiPicker);
             }}
           />
-        </div>
+      </div>
      </div>
 
       {/* Right User Panel (Optional) */}
