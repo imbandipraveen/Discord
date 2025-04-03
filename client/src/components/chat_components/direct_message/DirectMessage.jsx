@@ -386,17 +386,17 @@ function DirectMessage({ friendId }) {
           placeholder={`Message @${displayName}`}
           className={dmCSS.messageInput}
         />
-        <div style={{ position: "absolute", right: "510px", bottom: "20px" }}>
+        <button type="submit" className={dmCSS.sendButton}>
+          Send
+        </button>
+      </form>
+      <div style={{ position: "fixed", right: "510px", bottom: "20px" }}>
           <EmojiPickerButton
             setShowEmojiPicket={() => {
               setShowEmojiPicket(!showEmojiPicker);
             }}
           />
         </div>
-        <button type="submit" className={dmCSS.sendButton}>
-          Send
-        </button>
-      </form>
      </div>
 
       {/* Right User Panel (Optional) */}
