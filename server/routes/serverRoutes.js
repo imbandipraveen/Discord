@@ -7,6 +7,7 @@ const {
   addNewCategory,
   deleteServer,
   leaveServer,
+  removeUser
 } = require("../controllers/serverController");
 const { authToken } = require("../middleware/auth");
 
@@ -18,5 +19,6 @@ router.post("/channel/new", authToken, addNewChannel);
 router.post("/category/new", authToken, addNewCategory);
 router.post("/delete", authToken, deleteServer);
 router.post("/leave", authToken, leaveServer);
+router.put("/remove", removeUser);
 
 module.exports = router;

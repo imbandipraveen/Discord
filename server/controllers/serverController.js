@@ -221,6 +221,35 @@ exports.deleteServer = async (req, res) => {
   }
 };
 
+exports.removeUser = async (req, res) => {
+  try {
+    const { user_id, server_id} = req.body;
+    const serverData = await Server.findById(server_id);
+    serverData.users = serverData.users.filter((user) => {
+      if (user.user_id !== user_id) {
+        return user;
+      }
+    });
+    await serverData.save();
+    const userData = await User.findById(user_id);
+    console.log(userData);
+    userData.servers = userData.servers.filter(
+      (server) => server.server_id !== server_id
+    );
+    console.log(userData, "userData");
+    await userData.save();
+    res.status(200).json({
+      status: 200,
+      message: "user deleted from server",
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 500,
+      message: "Server error",
+    });
+  }
+};
+
 exports.leaveServer = async (req, res) => {
   try {
     const { server_id } = req.body;
