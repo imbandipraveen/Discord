@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import valid_css from "../navbar_2_chat_valid/valid_navbar.module.css";
+import valid_css from "./validNavbar.module.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import ServerDetails from "../server_details/ServerDetails";
 import { useDispatch, useSelector } from "react-redux";

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./EmojiPickerButton.css";
+import "./emojiPickerButton.css";
 
 const EMOJIS_COUNT = 50;
 const EMOJIS_COLUMNS = 11;

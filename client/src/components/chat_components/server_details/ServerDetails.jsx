@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import servercss from "../server_details/server_details.module.css";
+import servercss from "./serverDetails.module.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import AddIcon from "@mui/icons-material/Add";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
