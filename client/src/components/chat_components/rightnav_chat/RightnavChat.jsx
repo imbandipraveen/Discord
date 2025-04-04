@@ -3,6 +3,7 @@ import rightnav_chatcss from "../rightnav_chat/rightnav_chat.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { server_members } from "../../../Redux/current_page";
+import config from "../../../config/config";
 
 function RightnavChat() {
   const all_users = useSelector((state) => state.current_page.members);
@@ -35,7 +36,7 @@ function RightnavChat() {
   }, []);
   const handleEdit = async (userId, operation) => {
     try {
-      let server = await fetch(`${process.env.REACT_APP_URL}/servers/remove`, {
+      let server = await fetch(`${config.API_BASE_URL}/servers/remove`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

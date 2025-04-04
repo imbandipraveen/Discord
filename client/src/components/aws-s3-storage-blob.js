@@ -4,11 +4,12 @@ import {
   ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import { v4 } from "uuid";
+import config from "../config/config";
 
-const bucketName = process.env.REACT_APP_S3_BUCKET_NAME;
-const region = process.env.REACT_APP_S3_REGION;
-const accessKeyId = process.env.REACT_APP_S3_ACCESS_KEY;
-const secretAccessKey = process.env.REACT_APP_S3_SECRET_KEY;
+const bucketName = config.S3.BUCKET_NAME;
+const region = config.S3.REGION;
+const accessKeyId = config.S3.ACCESS_KEY;
+const secretAccessKey = config.S3.SECRET_KEY;
 
 const s3Client = new S3Client({
   region,

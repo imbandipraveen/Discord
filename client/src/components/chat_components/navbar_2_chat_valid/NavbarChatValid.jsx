@@ -18,9 +18,10 @@ import Modal from "react-bootstrap/Modal";
 import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
 import { update_options } from "../../../Redux/options_slice";
+import config from "../../../config/config";
 
 function NavbarChatValid() {
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
   const { server_id } = useParams();
   const Navigate = useNavigate();
 
@@ -28,7 +29,7 @@ function NavbarChatValid() {
   const username = useSelector((state) => state.user_info.username);
   const id = useSelector((state) => state.user_info.id);
 
-  const front_end_url = process.env.REACT_APP_front_end_url;
+  const front_end_url = config.FRONTEND_URL;
 
   // add channel modal states
   const [show, setShow] = useState(false);

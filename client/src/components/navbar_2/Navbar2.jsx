@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { uploadFileToS3 } from "../aws-s3-storage-blob";
 import { option_profile_pic } from "../../Redux/user_creds_slice";
+import config from "../../config/config";
 
 function Navbar2() {
   const { server_id } = useParams();
@@ -56,7 +57,7 @@ function Navbar2() {
 
       if (imageUrl) {
         // Update in database
-        const url = process.env.REACT_APP_URL || "http://localhost:3080";
+        const url = config.FRONTEND_URL;
         const response = await fetch(`${url}/users/update-profile-pic`, {
           method: "POST",
           headers: {

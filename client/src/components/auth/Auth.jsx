@@ -3,13 +3,14 @@ import { useNavigate, Outlet } from "react-router-dom";
 import Login from "../Login/Login";
 import { useState } from "react";
 import Loading from "../Loading_page/Loading";
+import config from "../../config/config";
 
 const Auth = (props) => {
   const Navigate = useNavigate();
   // reading data from redux store
   const [auth_check, setAuth_check] = useState(null);
 
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
 
   const private_routes = async () => {
     const res = await fetch(`${url}/auth/verify-route`, {
@@ -36,7 +37,7 @@ const Auth = (props) => {
     } else {
       private_routes();
     }
-  }, []);
+  });
 
   return (
     <>

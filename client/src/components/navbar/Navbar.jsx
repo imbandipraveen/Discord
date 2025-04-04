@@ -71,7 +71,7 @@ function Navbar({ new_req_recieved, user_cred }) {
     useState(server_input);
   const [new_server_image, setnew_server_image] = useState("");
 
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
 
   function update_server_pic(e) {
     let file = e.target.files[0];

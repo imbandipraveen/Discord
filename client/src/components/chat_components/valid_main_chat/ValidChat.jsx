@@ -9,9 +9,10 @@ import { uploadFileToS3 } from "../../aws-s3-storage-blob";
 import Picker from "emoji-picker-react";
 import EmojiPickerButton from "../emojiPicker/EmojiPickerButton";
 import { useNavigate } from "react-router-dom";
+import config from "../../../config/config";
 
 function ValidChat() {
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
   const { server_id } = useParams();
   const chatEndRef = useRef(null); // 🔹 Create a ref for the chat end
 
