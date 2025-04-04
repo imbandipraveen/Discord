@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
-import options from "./options_slice";
-import page from "./current_page";
-import user_creds from "./user_creds_slice";
+import options from "./optionsSlice";
+import page from "./currentPage";
+import user_creds from "./userCredsSlice";
 
 export default configureStore({
   reducer: {

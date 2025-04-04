@@ -11,7 +11,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import { server_role } from "../../Redux/current_page";
+import { server_role } from "../../redux/currentPage";
 import config from "../../config/config";
 import { uploadFileToS3 } from "../storage/aws-s3-storage-blob";
 import {

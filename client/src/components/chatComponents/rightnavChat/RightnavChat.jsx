@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import rightnav_chatcss from "./rightnavChat.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { server_members } from "../../../Redux/current_page";
+import { server_members } from "../../../redux/currentPage";
 import config from "../../../config/config";
 
 function RightnavChat() {

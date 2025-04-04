@@ -13,8 +13,8 @@ import {
   change_tag,
   option_profile_pic,
   option_user_id,
-} from "../../Redux/user_creds_slice";
-import { server_existence } from "../../Redux/current_page";
+} from "../../redux/userCredsSlice";
+import { server_existence } from "../../redux/currentPage";
 import DirectMessage from "../chatComponents/directMessage/DirectMessage";
 import config from "../../config/config";
 

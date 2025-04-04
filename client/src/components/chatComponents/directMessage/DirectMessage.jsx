@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import dmCSS from "./directMessage.module.css";
-import socket from "../../Socket/Socket";
+import socket from "../../socket/Socket";
 import { useSelector } from "react-redux";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PushPinIcon from "@mui/icons-material/PushPin";

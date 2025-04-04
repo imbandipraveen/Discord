@@ -6,7 +6,7 @@ import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import TagIcon from "@mui/icons-material/Tag";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useDispatch } from "react-redux";
-import { change_page_id, change_page_name } from "../../../Redux/current_page";
+import { change_page_id, change_page_name } from "../../../redux/currentPage";
 import Modal from "react-bootstrap/Modal";
 import Radio from "@mui/material/Radio";
 import { useParams } from "react-router-dom";

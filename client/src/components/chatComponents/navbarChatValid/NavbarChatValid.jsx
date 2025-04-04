@@ -8,7 +8,7 @@ import {
   change_page_id,
   server_members,
   change_page_name,
-} from "../../../Redux/current_page";
+} from "../../../redux/currentPage";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
@@ -17,7 +17,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import Modal from "react-bootstrap/Modal";
 import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
-import { update_options } from "../../../Redux/options_slice";
+import { update_options } from "../../../redux/optionsSlice";
 import config from "../../../config/config";
 
 function NavbarChatValid() {

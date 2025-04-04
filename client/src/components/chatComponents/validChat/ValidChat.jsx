@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import valid_chat_css from "./validChat.module.css";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import TagIcon from "@mui/icons-material/Tag";
-import socket from "../../Socket/Socket";
+import socket from "../../socket/Socket";
 import { useParams } from "react-router-dom";
 import { uploadFileToS3 } from "../../storage/aws-s3-storage-blob";
 import Picker from "emoji-picker-react";

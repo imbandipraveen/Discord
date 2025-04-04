@@ -11,7 +11,7 @@ import {
   change_option_name,
   option_status,
   option_text,
-} from "../../Redux/options_slice";
+} from "../../redux/optionsSlice";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 function TopnavDashboard({ buttonStatus }) {
