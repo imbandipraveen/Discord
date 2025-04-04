@@ -4,7 +4,6 @@ import logo from "../../images/discord_logo_3.png";
 import { useParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";
 import invalid_link_image from "../../images/invalid_invite.svg";
-import { useSelector } from "react-redux";
 import jwt from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
@@ -67,7 +66,7 @@ function Invite() {
       <div id={invitecss.invite_box}>
         {invalid_invite_link == null ? (
           <CircularProgress />
-        ) : invalid_invite_link == false ? (
+        ) : invalid_invite_link === false ? (
           invite_details == null ? (
             <CircularProgress />
           ) : (
@@ -86,7 +85,7 @@ function Invite() {
                   className={invitecss.server_details}
                   id={invitecss.server_icon}
                 >
-                  {invite_details.server_pic == "" ? (
+                  {invite_details.server_pic === "" ? (
                     invite_details.server_name[0]
                   ) : (
                     <img
@@ -125,7 +124,7 @@ function Invite() {
                 <button
                   id={invitecss.accept_button}
                   onClick={() => {
-                    if (invite_details.inviter_id == id) {
+                    if (invite_details.inviter_id === id) {
                       Navigate("/channels/@me");
                     } else accept_invite();
                   }}

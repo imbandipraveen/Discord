@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Main_dashboard from "../dashboard_components/main_dashboard/Main_dashboard";
-import Main_chat from "../chat_components/main_chat/Main_chat";
+import MainDashboard from "../dashboard_components/main_dashboard/MainDashboard";
+import MainChat from "../chat_components/main_chat/MainChat";
 import DirectMessage from "../chat_components/direct_message/DirectMessage";
 import socket from "../Socket/Socket";
 import { update_options } from "../../Redux/options_slice";
@@ -51,7 +51,7 @@ function Main({ user_relations }) {
     };
 
     const reqAcceptedHandler = (message) => {
-      const { sender_id, friend_id, friend_profile_pic, friend_name } = message;
+      const { sender_id, friend_profile_pic, friend_name } = message;
       setreq_popup_data({
         name: friend_name,
         profile_pic: friend_profile_pic,
@@ -86,9 +86,9 @@ function Main({ user_relations }) {
           <DirectMessage friendId={friend_id} />
         </div>
       ) : server_id === "@me" || server_id === undefined ? (
-        <Main_dashboard user_relations={user_relations} />
+        <MainDashboard user_relations={user_relations} />
       ) : (
-        <Main_chat />
+        <MainChat />
       )}
 
       <div

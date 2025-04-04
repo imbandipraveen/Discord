@@ -5,17 +5,15 @@ import AddIcon from "@mui/icons-material/Add";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import offline_icon from "../../../images/offline_status.svg";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Modal from "react-bootstrap/Modal";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
 
-function Navbar_2_dashboard() {
+function NavbarDashboard() {
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
   const userId = useSelector((state) => state.user_info.id);
-  const token = useSelector((state) => state.user_info.token);
   const userInfo = useSelector((state) => state.user_info);
   const navigate = useNavigate();
   const { friend_id } = useParams();
@@ -28,8 +26,6 @@ function Navbar_2_dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-
-  const baseUrl = process.env.REACT_APP_URL || "http://localhost:3080";
 
   // Debug log to see what's in the Redux store
   useEffect(() => {
@@ -362,4 +358,4 @@ function Navbar_2_dashboard() {
   );
 }
 
-export default Navbar_2_dashboard;
+export default NavbarDashboard;

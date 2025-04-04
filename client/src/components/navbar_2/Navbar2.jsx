@@ -2,19 +2,18 @@ import React, { useRef, useState } from "react";
 import nav2css from "../navbar_2/navbar2.module.css";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import discord_logo from "../../images/discord_logo_3.png";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HeadsetIcon from "@mui/icons-material/Headset";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import EditIcon from "@mui/icons-material/Edit";
-import Navbar2_dashboard from "../dashboard_components/navbar2_dashboard/Navbar2_dashboard";
-import Navbar2_chat from "../chat_components/navbar_2_chat/Navbar2_chat";
+import Navbar2_dashboard from "../dashboard_components/navbar2_dashboard/NavbarDashboard";
+import Navbar2_chat from "../chat_components/navbar_2_chat/NavbarChat";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { uploadFileToS3 } from "../aws-s3-storage-blob";
 import { option_profile_pic } from "../../Redux/user_creds_slice";
 
-function Navbar_2({ user_cred }) {
+function Navbar2({ user_cred }) {
   const { server_id } = useParams();
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
@@ -156,4 +155,4 @@ function Navbar_2({ user_cred }) {
   );
 }
 
-export default Navbar_2;
+export default Navbar2;
