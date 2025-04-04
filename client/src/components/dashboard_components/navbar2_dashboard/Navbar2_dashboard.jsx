@@ -29,7 +29,7 @@ function Navbar_2_dashboard() {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  const baseUrl = process.env.REACT_APP_URL || "https://discord-clonerepo2.onrender.com";
+  const baseUrl = process.env.REACT_APP_URL || "http://localhost:3080";
 
   // Debug log to see what's in the Redux store
   useEffect(() => {

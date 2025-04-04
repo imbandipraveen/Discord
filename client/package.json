@@ -32,7 +32,7 @@
     "web-vitals": "^2.1.4",
     "yarn": "^1.22.19"
   },
-  "proxy": "https://discord-clonerepo2.onrender.com",
+  "proxy": "http://localhost:3080",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

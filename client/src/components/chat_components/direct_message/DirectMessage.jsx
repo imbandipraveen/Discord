@@ -28,7 +28,7 @@ function DirectMessage({ friendId }) {
   const profile_pic = tokenData.profile_pic || "";
 
   const baseUrl = (
-    process.env.REACT_APP_URL || "https://discord-clonerepo2.onrender.com"
+    process.env.REACT_APP_URL || "http://localhost:3080"
   ).replace(/\/api$/, "");
   const pickerRef = useRef(null);
   useEffect(() => {
@@ -328,77 +328,77 @@ function DirectMessage({ friendId }) {
       )}
 
       {/* Message Input */}
-     <div className={dmCSS.messageForm}>
-     <form onSubmit={handleSendMessage} style={{width: '100%'}}>
-        <input
-          type="file"
-          id="fileInput"
-          style={{ display: "none" }}
-          onChange={handleImageSelect}
-        />
-        <AddCircleIcon
-          htmlColor="#B9BBBE"
-          style={{
-            cursor: "pointer",
-            position: "absolute",
-            bottom: "30px",
-            left: "24px",
-          }}
-          onClick={() => document.getElementById("fileInput").click()}
-        />
-        {showEmojiPicker && (
-          <div
+      <div className={dmCSS.messageForm}>
+        <form onSubmit={handleSendMessage} style={{ width: "100%" }}>
+          <input
+            type="file"
+            id="fileInput"
+            style={{ display: "none" }}
+            onChange={handleImageSelect}
+          />
+          <AddCircleIcon
+            htmlColor="#B9BBBE"
             style={{
+              cursor: "pointer",
               position: "absolute",
-              bottom: "100px",
-              right: "380px",
-              zIndex: 100,
-              background: "#2f3136",
-              borderRadius: "8px",
-              boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
-              width: "auto",
-              maxHeight: "400px",
-              overflowY: "auto",
-              padding: "10px",
+              bottom: "30px",
+              left: "24px",
             }}
-            ref={pickerRef}
-          >
-            <Picker
-              pickerStyle={{ width: "100%" }}
-              theme="dark"
-              emojiStyle="facebook"
-              onEmojiClick={(e) => {
-                setMessage((prev) => {
-                  return {
-                    content: prev.content + e.emoji,
-                    contentType: "text",
-                  };
-                });
+            onClick={() => document.getElementById("fileInput").click()}
+          />
+          {showEmojiPicker && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: "100px",
+                right: "380px",
+                zIndex: 100,
+                background: "#2f3136",
+                borderRadius: "8px",
+                boxShadow: "0 2px 10px rgba(0, 0, 0, 0.3)",
+                width: "auto",
+                maxHeight: "400px",
+                overflowY: "auto",
+                padding: "10px",
               }}
-            />
-          </div>
-        )}
-        <input
-          type="text"
-          value={message.content}
-          onChange={handleInputChange}
-          style={{ paddingLeft: "80px" }}
-          placeholder={`Message @${displayName}`}
-          className={dmCSS.messageInput}
-        />
-        <button type="submit" className={dmCSS.sendButton}>
-          Send
-        </button>
-      </form>
-      <div style={{ position: "absolute", left:"50px"}}>
+              ref={pickerRef}
+            >
+              <Picker
+                pickerStyle={{ width: "100%" }}
+                theme="dark"
+                emojiStyle="facebook"
+                onEmojiClick={(e) => {
+                  setMessage((prev) => {
+                    return {
+                      content: prev.content + e.emoji,
+                      contentType: "text",
+                    };
+                  });
+                }}
+              />
+            </div>
+          )}
+          <input
+            type="text"
+            value={message.content}
+            onChange={handleInputChange}
+            style={{ paddingLeft: "80px" }}
+            placeholder={`Message @${displayName}`}
+            className={dmCSS.messageInput}
+          />
+          <button type="submit" className={dmCSS.sendButton}>
+            Send
+          </button>
+        </form>
+        <div style={{ position: "absolute", left: "50px" }}>
           <EmojiPickerButton
             setShowEmojiPicket={(e) => {
               e.preventDefault();
               setShowEmojiPicket(!showEmojiPicker);
             }}
           />
+        </div>
       </div>
-     </div>
 
       {/* Right User Panel (Optional) */}
       <div className={dmCSS.user_info_panel}>
