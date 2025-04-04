@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import registercss from "./register.module.css";
 import {
-  Box,
   FormControl,
   InputLabel,
   MenuItem,
@@ -170,7 +169,7 @@ function Register() {
     setAlertBox(true);
   };
   const handleCloseBtn = async () => {
-    const res = await fetch(`${url}/users/delete`, {
+    await fetch(`${url}/users/delete`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: userValues.email }),

@@ -1,19 +1,9 @@
 import React from "react";
 import navbarcss from "../navbar/navbar.module.css";
-// import discord_logo from "../../images/discord_logo_2.svg";
-import discord_logo from "../../images/discord_logo_3.png";
 import AddIcon from "@mui/icons-material/Add";
 import Modal from "react-bootstrap/Modal";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import server_img_1 from "../../images/new_server.svg";
-import server_img_2 from "../../images/server_image_2.svg";
-import server_img_3 from "../../images/server_image_3.svg";
-import server_img_4 from "../../images/server_image_4.svg";
-import server_img_5 from "../../images/server_image_5.svg";
-import server_img_6 from "../../images/server_image_6.svg";
-import server_img_7 from "../../images/server_image_7.svg";
-import server_input from "../../images/server_image_input.svg";
 import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -22,8 +12,18 @@ import { useDispatch } from "react-redux";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { server_role } from "../../Redux/current_page";
-// import uploadFileToS3 from "../azure-storage-blob.ts";
 import { uploadFileToS3 } from "../aws-s3-storage-blob";
+const {
+  server_img_1,
+  server_img_2,
+  server_img_3,
+  server_img_4,
+  server_img_5,
+  server_img_6,
+  server_img_7,
+  server_input,
+  discord_logo_3,
+} = require("../../images");
 
 function Navbar({ new_req_recieved, user_cred }) {
   const dispatch = useDispatch();
@@ -349,7 +349,7 @@ function Navbar({ new_req_recieved, user_cred }) {
                 className={`${navbarcss.middle}`}
                 id={navbarcss.direct_message}
               >
-                <img src={discord_logo} alt="" />
+                <img src={discord_logo_3} alt="" />
               </div>
               <div className={`${navbarcss.right}`}></div>
             </Link>

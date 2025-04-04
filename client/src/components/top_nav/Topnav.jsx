@@ -1,11 +1,12 @@
 import React from "react";
 import topnavcss from "../top_nav/top_nav.module.css";
-import Topnav_chat from "../chat_components/topnav_chat/TopnavChat";
-import Topnav_dashboard from "../dashboard_components/top_nav_dashboard/TopnavDashboard";
+import TopnavChat from "../chat_components/topnav_chat/TopnavChat";
+import TopnavDashboard from "../dashboard_components/top_nav_dashboard/TopnavDashboard";
 import { useParams } from "react-router-dom";
 import { OverlayTrigger } from "react-bootstrap";
 import { Tooltip } from "react-bootstrap";
-
+import LogoutIcon from "@mui/icons-material/Logout";
+import GroupIcon from "@mui/icons-material/Group";
 function Topnav({ button_status, setHideMembers }) {
   const { server_id } = useParams();
 
@@ -15,7 +16,7 @@ function Topnav({ button_status, setHideMembers }) {
     </Tooltip>
   );
 
-  function buttons(message, Icon) {
+  const buttons = (message, Icon) => {
     return (
       <div
         key={message}
@@ -33,8 +34,8 @@ function Topnav({ button_status, setHideMembers }) {
               // TODO: Implement notification settings
               break;
             case "Pinned Messages":
-              // TODO: Implement pinned messages
               break;
+            // TODO: Implement pinned messages
             case "Inbox":
               // TODO: Implement inbox
               break;
@@ -47,14 +48,21 @@ function Topnav({ button_status, setHideMembers }) {
         </OverlayTrigger>
       </div>
     );
-  }
+  };
 
   return (
     <div id={topnavcss.main}>
-      {server_id == "@me" ? (
-        <Topnav_dashboard button_status={button_status}></Topnav_dashboard>
+      {server_id === "@me" ? (
+        <TopnavDashboard button_status={button_status}></TopnavDashboard>
       ) : (
-        <Topnav_chat setHideMembers={setHideMembers}></Topnav_chat>
+        <>
+          <TopnavChat setHideMembers={setHideMembers} />
+          <div style={{ display: "flex", gap: "10px", marginRight: "16px" }}>
+            {buttons("Logout", LogoutIcon)}
+            {buttons("Hide Member List", GroupIcon)}
+            {/* Add more buttons as needed */}
+          </div>
+        </>
       )}
     </div>
   );
