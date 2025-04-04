@@ -12,6 +12,8 @@ import jwt from "jwt-decode";
 import { uploadFileToS3 } from "../../aws-s3-storage-blob";
 import EmojiPickerButton from "../emojiPicker/EmojiPickerButton";
 import Picker from "emoji-picker-react";
+import config from "../../../../config/config";
+
 function DirectMessage({ friendId }) {
   const [message, setMessage] = useState({ content: "", contentType: "text" });
   const [messages, setMessages] = useState([]);
@@ -27,9 +29,7 @@ function DirectMessage({ friendId }) {
   const tokenData = token ? jwt(token) : {};
   const profile_pic = tokenData.profile_pic || "";
 
-  const baseUrl = (
-    process.env.REACT_APP_URL || "http://localhost:3080"
-  ).replace(/\/api$/, "");
+  const baseUrl = config.API_BASE_URL.replace(/\/api$/, "");
   const pickerRef = useRef(null);
   useEffect(() => {
     const handleClickOutside = (event) => {

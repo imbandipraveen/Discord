@@ -23,6 +23,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import BlockIcon from "@mui/icons-material/Block";
 import { useNavigate } from "react-router-dom";
+import config from "../../../../config/config";
 
 function Main_dashboard({ user_relations }) {
   const dispatch = useDispatch();
@@ -63,7 +64,7 @@ function Main_dashboard({ user_relations }) {
   const friends = user_relations?.friends || [];
   const blocked_users = user_relations?.blocked_users || [];
   const pending_reqs = [...incoming_reqs, ...outgoing_reqs];
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
 
   const navigate = useNavigate();
 

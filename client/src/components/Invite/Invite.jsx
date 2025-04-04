@@ -7,6 +7,7 @@ import invalid_link_image from "../../images/invalid_invite.svg";
 import { useSelector } from "react-redux";
 import jwt from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import config from "../../../config/config";
 
 function Invite() {
   // had to use token here because redux get the values when dashboard component runs and it doesnt run when this route is fired
@@ -16,7 +17,7 @@ function Invite() {
   const { username, tag, profile_pic, id } = user_creds;
 
   const { invite_link } = useParams();
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
   const [invite_details, setinvite_details] = useState(null);
   const [invalid_invite_link, setinvalid_invite_link] = useState(null);
 

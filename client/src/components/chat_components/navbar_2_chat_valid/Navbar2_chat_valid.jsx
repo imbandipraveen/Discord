@@ -18,9 +18,10 @@ import Modal from "react-bootstrap/Modal";
 import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
 import { update_options } from "../../../Redux/options_slice";
+import config from "../../../../config/config";
 
 function Navbar2_chat_valid() {
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
   const { server_id } = useParams();
   const Navigate = useNavigate();
 
@@ -28,7 +29,7 @@ function Navbar2_chat_valid() {
   const username = useSelector((state) => state.user_info.username);
   const id = useSelector((state) => state.user_info.id);
 
-  const front_end_url = process.env.REACT_APP_front_end_url;
+  const front_end_url = config.FRONTEND_URL;
 
   const page_id = useSelector((state) => state.current_page.page_id);
 
@@ -135,7 +136,7 @@ function Navbar2_chat_valid() {
   }
 
   const server_info = async () => {
-    try{
+    try {
       const res = await fetch(`${url}/servers/info`, {
         method: "POST",
         headers: {
@@ -148,13 +149,11 @@ function Navbar2_chat_valid() {
       });
       const data = await res.json();
       setserver_details(data);
-  
+
       dispatch(change_page_name(data.categories[0]?.channels[0]?.channel_name));
       dispatch(change_page_id(data.categories[0]?.channels[0]._id));
       dispatch(server_members(data.users));
-    }
-    catch(error)
-    {
+    } catch (error) {
       Navigate("/");
       console.log(error);
     }

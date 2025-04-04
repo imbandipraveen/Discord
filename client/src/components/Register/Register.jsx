@@ -16,6 +16,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import plane from "../../images/plane.png";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import config from "../../../config/config";
 
 function Register() {
   const navigate = useNavigate();
@@ -56,7 +57,7 @@ function Register() {
     "December",
   ];
 
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
 
   useEffect(() => {
     const currentYear = new Date().getFullYear();

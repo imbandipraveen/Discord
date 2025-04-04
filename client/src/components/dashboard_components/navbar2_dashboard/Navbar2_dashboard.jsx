@@ -11,6 +11,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
+import config from "../../../../config/config";
 
 function Navbar_2_dashboard() {
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
@@ -54,7 +55,7 @@ function Navbar_2_dashboard() {
     setLoading(true);
     setLoadingConversations(true);
     try {
-      const url = process.env.REACT_APP_URL;
+      const url = config.API_BASE_URL;
 
       // Fetch user relations from the API
       const response = await fetch(`${url}/users/relations`, {

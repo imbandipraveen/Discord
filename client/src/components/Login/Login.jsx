@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import login_css from "./login.module.css";
+import config from "../../../config/config";
 
 function Login() {
   const navigate = useNavigate();
   const [user_values, setUserValues] = useState({ email: "", password: "" });
   const [alertMessage, setAlertMessage] = useState("");
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
 
   const handle_user_values = (e) => {
     const { name, value } = e.target;

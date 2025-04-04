@@ -16,6 +16,7 @@ import {
 } from "../../Redux/user_creds_slice";
 import { server_existence } from "../../Redux/current_page";
 import DirectMessage from "../chat_components/direct_message/DirectMessage";
+import config from "../../../config/config";
 
 function Dashboard() {
   const [hideMembers, setHideMembers] = useState(false);
@@ -30,7 +31,7 @@ function Dashboard() {
   const option_state = useSelector(
     (state) => state.selected_option.updated_options
   );
-  const url = process.env.REACT_APP_URL;
+  const url = config.API_BASE_URL;
   const server_exists = useSelector(
     (state) => state.current_page.server_exists
   );
