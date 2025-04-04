@@ -1,5 +1,5 @@
 import React from "react";
-import loadingcss from "./Loading.module.css";
+import loadingcss from "./loading.module.css";
 
 function Loading() {
   return (
