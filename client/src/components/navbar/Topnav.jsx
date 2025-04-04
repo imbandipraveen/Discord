@@ -1,6 +1,6 @@
 import React from "react";
 import topnavcss from "./css/topNav.module.css";
-import TopnavChat from "../chat_components/topnav_chat/TopnavChat";
+import TopnavChat from "../chatComponents/topnav_chat/TopnavChat";
 import { useParams } from "react-router-dom";
 import TopnavDashboard from "../dashboard/TopnavDashboard";
 function Topnav({ buttonStatus, setHideMembers }) {

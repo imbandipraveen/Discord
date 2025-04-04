@@ -7,7 +7,7 @@ import HeadsetIcon from "@mui/icons-material/Headset";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import EditIcon from "@mui/icons-material/Edit";
 import NavbarDashboard from "../dashboard/NavbarDashboard";
-import NavbarChat from "../chat_components/navbar_2_chat/NavbarChat";
+import NavbarChat from "../chatComponents/navbar_2_chat/NavbarChat";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { uploadFileToS3 } from "../aws-s3-storage-blob";
