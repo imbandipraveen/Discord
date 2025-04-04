@@ -11,7 +11,7 @@ import maincss from "./main.module.css";
 import CloseIcon from "@mui/icons-material/Close";
 import discord_logo from "../../images/discord_logo_3.png";
 
-function Main({ user_relations }) {
+function Main({ userRelations }) {
   const dispatch = useDispatch();
   const id = useSelector((state) => state.user_info.id);
 
@@ -86,7 +86,7 @@ function Main({ user_relations }) {
           <DirectMessage friendId={friend_id} />
         </div>
       ) : server_id === "@me" || server_id === undefined ? (
-        <MainDashboard user_relations={user_relations} />
+        <MainDashboard userRelations={userRelations} />
       ) : (
         <MainChat />
       )}

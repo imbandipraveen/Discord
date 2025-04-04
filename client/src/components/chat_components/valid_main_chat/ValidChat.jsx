@@ -23,13 +23,13 @@ function ValidChat() {
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
   const id = useSelector((state) => state.user_info.id);
   const [imageUrl, setImageUrl] = useState("");
-  const [chat_message, setchat_message] = useState({
+  const [chatMessage, setChatMessage] = useState({
     content: "",
     contentType: "text",
   });
   const [showEmojiPicker, setShowEmojiPicket] = useState(false);
-  const [all_messages, setall_messages] = useState([]);
-  const [latest_message, setlatest_message] = useState(null);
+  const [allMessages, setAllMessages] = useState([]);
+  const [latestMessage, setLatestMessage] = useState(null);
   const pickerRef = useRef(null);
   const navigate = useNavigate();
 
@@ -49,23 +49,23 @@ function ValidChat() {
   useEffect(() => {
     if (channel_id) {
       socket.emit("join_chat", channel_id);
-      setall_messages([]);
-      get_messages();
+      setAllMessages([]);
+      getMessages();
     }
   }, [channel_id]);
 
-  const send_message = (e) => {
+  const sendMessage = (e) => {
     if (
-      (e.code === "Enter" && chat_message["content"].trim() !== "") ||
+      (e.code === "Enter" && chatMessage["content"].trim() !== "") ||
       imageUrl
     ) {
-      const message_to_send =
-        chat_message.contentType === "image"
+      const messageToSend =
+        chatMessage.contentType === "image"
           ? imageUrl
-          : chat_message["content"].trim();
+          : chatMessage["content"].trim();
       const timestamp = Date.now();
-      const contentType = chat_message.contentType;
-      setchat_message({ content: "", contentType: "text" });
+      const contentType = chatMessage.contentType;
+      setChatMessage({ content: "", contentType: "text" });
       setImageUrl("");
 
       // Ensure profile_pic is a string and not undefined
@@ -73,7 +73,7 @@ function ValidChat() {
         profile_pic || "https://cdn.discordapp.com/embed/avatars/0.png";
 
       const newMessage = {
-        content: message_to_send,
+        content: messageToSend,
         sender_id: id,
         sender_name: username,
         sender_pic: userProfilePic,
@@ -82,12 +82,12 @@ function ValidChat() {
       };
 
       // Add new message to state with guaranteed profile pic
-      setall_messages((prev) => [...prev, newMessage]);
+      setAllMessages((prev) => [...prev, newMessage]);
 
       socket.emit(
-        "send_message",
+        "sendMessage",
         channel_id,
-        message_to_send,
+        messageToSend,
         timestamp,
         username,
         tag,
@@ -95,11 +95,11 @@ function ValidChat() {
         userProfilePic
       );
 
-      store_message(message_to_send, contentType, timestamp);
+      storeMessage(messageToSend, contentType, timestamp);
     }
   };
 
-  const store_message = async (chat_message, contentType, timestamp) => {
+  const storeMessage = async (chatMessage, contentType, timestamp) => {
     try {
       const res = await fetch(`${url}/chats/message`, {
         method: "POST",
@@ -108,7 +108,7 @@ function ValidChat() {
           "x-auth-token": localStorage.getItem("token"),
         },
         body: JSON.stringify({
-          message: chat_message,
+          message: chatMessage,
           server_id,
           channel_id,
           channel_name,
@@ -129,7 +129,7 @@ function ValidChat() {
     }
   };
 
-  const get_messages = async () => {
+  const getMessages = async () => {
     try {
       const res = await fetch(`${url}/chats/messages`, {
         method: "POST",
@@ -145,7 +145,7 @@ function ValidChat() {
 
       const data = await res.json();
       if (data.chats?.length) {
-        setall_messages(data.chats);
+        setAllMessages(data.chats);
       }
     } catch (error) {
       navigate("/");
@@ -154,15 +154,15 @@ function ValidChat() {
   };
 
   useEffect(() => {
-    if (latest_message) {
+    if (latestMessage) {
       const { message, timestamp, sender_name, sender_pic, sender_id } =
-        latest_message.message_data;
+        latestMessage.message_data;
 
       // Ensure profile_pic is a string and not undefined
       const userProfilePic =
         sender_pic || "https://cdn.discordapp.com/embed/avatars/0.png";
 
-      setall_messages((prev) => [
+      setAllMessages((prev) => [
         ...prev,
         {
           content: message,
@@ -173,11 +173,11 @@ function ValidChat() {
         },
       ]);
     }
-  }, [latest_message]);
+  }, [latestMessage]);
 
   useEffect(() => {
     const messageListener = (message_data) => {
-      setlatest_message(message_data);
+      setLatestMessage(message_data);
     };
 
     socket.on("recieve_message", messageListener);
@@ -187,14 +187,14 @@ function ValidChat() {
     };
   }, []);
 
-  // 🔹 Scroll to bottom when messages update
+  //  Scroll to bottom when messages update
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [all_messages]);
+  }, [allMessages]);
   const handleImageSelect = async (e) => {
     const file = e.target.files[0];
     let imgUrl = await uploadFileToS3(file);
-    setchat_message({
+    setChatMessage({
       content: "",
       contentType: "image",
     });
@@ -220,8 +220,8 @@ function ValidChat() {
             This is the start of the #{channel_name} channel
           </div>
 
-          {all_messages.length > 0 &&
-            all_messages.map((elem, index) => {
+          {allMessages.length > 0 &&
+            allMessages.map((elem, index) => {
               let timestamp_init = parseInt(elem.timestamp, 10);
               const date = new Date(timestamp_init);
               const timestamp = `${date.toDateString()}, ${date.getHours()}:${date.getMinutes()}`;
@@ -285,7 +285,7 @@ function ValidChat() {
           <div ref={chatEndRef} />
         </div>
       </div>
-      {chat_message.contentType === "image" && (
+      {chatMessage.contentType === "image" && (
         <div
           style={{
             width: "100%",
@@ -313,7 +313,7 @@ function ValidChat() {
             }}
             title="Remove"
             onClick={() => {
-              setchat_message({ content: "", contentType: "text" });
+              setChatMessage({ content: "", contentType: "text" });
             }}
           >
             X
@@ -348,7 +348,7 @@ function ValidChat() {
             id="fileInput"
             style={{ display: "none" }}
             onChange={handleImageSelect}
-            onKeyDown={send_message}
+            onKeyDown={sendMessage}
           />
 
           <AddCircleIcon
@@ -383,7 +383,7 @@ function ValidChat() {
                 theme="dark"
                 emojiStyle="facebook"
                 onEmojiClick={(e) => {
-                  setchat_message((prev) => {
+                  setChatMessage((prev) => {
                     return {
                       content: prev.content + e.emoji,
                       contentType: "text",
@@ -395,11 +395,11 @@ function ValidChat() {
           )}
           <input
             type="text"
-            onKeyDown={send_message}
-            value={chat_message.content}
+            onKeyDown={sendMessage}
+            value={chatMessage.content}
             onChange={(e) => {
               const input = e.target.value.slice(0, 150);
-              setchat_message({
+              setChatMessage({
                 content: input,
                 contentType: "text",
               });

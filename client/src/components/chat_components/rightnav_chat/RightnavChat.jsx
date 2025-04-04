@@ -6,7 +6,7 @@ import { server_members } from "../../../Redux/current_page";
 import config from "../../../config/config";
 
 function RightnavChat() {
-  const all_users = useSelector((state) => state.current_page.members);
+  const allUsers = useSelector((state) => state.current_page.members);
   const currentUserId = useSelector((state) => state.user_info.id);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [showRoles, setShowRoles] = useState("");
@@ -14,14 +14,14 @@ function RightnavChat() {
   const positionRef = useRef(null);
   const dispatch = useDispatch();
   useEffect(() => {
-    all_users.forEach((user) => {
+    allUsers.forEach((user) => {
       if (user.user_id === currentUserId) {
         if (user.user_role === "author" || user.user_role === "admin") {
           setIsAuthorized(true);
         }
       }
     });
-  }, [all_users, currentUserId]);
+  }, [allUsers, currentUserId]);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (positionRef.current && !positionRef.current.contains(event.target)) {
@@ -47,7 +47,7 @@ function RightnavChat() {
         }),
       });
       if (server.status === 200) {
-        let updatedData = all_users.filter((user) => {
+        let updatedData = allUsers.filter((user) => {
           if (user.user_id !== userId) {
             return user;
           }
@@ -63,10 +63,10 @@ function RightnavChat() {
     <div className={rightnav_chatcss.main_wrap}>
       <div className={rightnav_chatcss.main}>
         <div className={rightnav_chatcss.members_length}>
-          ALL MEMBERS - {all_users.length}
+          ALL MEMBERS - {allUsers.length}
         </div>
         <div className={rightnav_chatcss.members}>
-          {all_users.map((elem, key) => {
+          {allUsers.map((elem, key) => {
             return (
               <div
                 key={key}

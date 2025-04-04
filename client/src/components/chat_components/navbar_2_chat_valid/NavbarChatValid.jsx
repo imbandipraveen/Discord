@@ -35,39 +35,39 @@ function NavbarChatValid() {
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
-    setcategory_creation_progress({ text: "Create Category", disabled: false });
+    setCategoryCreationProgress({ text: "Create Category", disabled: false });
   };
   const handleShow = () => setShow(true);
 
   // invite people modal
-  const [inviteshow, setinviteshow] = useState(false);
-  const handle_inviteClose = () => setinviteshow(false);
+  const [inviteShow, setInviteShow] = useState(false);
+  const handleInviteClose = () => setInviteShow(false);
 
   // this use state is triggered when we delete a server and we set it to false so that user goes back to dashboard and it value is updated by socket for other members in the server and with the fetch request to update it for the author
   // const [server_exists, setserver_exists] = useState(true)
 
-  const [show_options, setshow_options] = useState("none");
-  const [server_details, setserver_details] = useState([]);
+  const [showOptions, setShowOptions] = useState("none");
+  const [serverDetails, setServerDetails] = useState([]);
   const server_role = useSelector((state) => state.current_page.role);
   const dispatch = useDispatch();
-  const [new_category_name, setnew_category_name] = useState("");
-  const [category_creation_progress, setcategory_creation_progress] = useState({
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [categoryCreationProgress, setCategoryCreationProgress] = useState({
     text: "Create Category",
     disabled: false,
   });
-  const [invite_link, setinvite_link] = useState("");
+  const [inviteLink, setInviteLink] = useState("");
 
   useEffect(() => {
-    setinvite_link("");
-    setshow_options("none");
+    setInviteLink("");
+    setShowOptions("none");
   }, [server_id]);
 
-  const [new_req, setnew_req] = useState(1);
-  const new_req_recieved = (new_req_value) => {
-    setnew_req(new_req + new_req_value);
+  const [newRequest, setNewRequest] = useState(1);
+  const newRequestReceived = (newRequest_value) => {
+    setNewRequest(newRequest + newRequest_value);
   };
 
-  const create_invite_link = async () => {
+  const createInviteLink = async () => {
     const res = await fetch(`${url}/invites/create`, {
       method: "POST",
       headers: {
@@ -77,18 +77,18 @@ function NavbarChatValid() {
       body: JSON.stringify({
         inviter_name: username,
         inviter_id: id,
-        server_name: server_details.server_name,
+        server_name: serverDetails.server_name,
         server_id: server_id,
-        server_pic: server_details.server_pic,
+        server_pic: serverDetails.server_pic,
       }),
     });
     const data = await res.json();
     if (data.status === 200) {
-      setinvite_link(`${front_end_url}/invite/${data.invite_code}`);
+      setInviteLink(`${front_end_url}/invite/${data.invite_code}`);
     }
   };
 
-  const delete_server = async () => {
+  const deleteServer = async () => {
     const res = await fetch(`${url}/servers/delete`, {
       method: "POST",
       headers: {
@@ -106,7 +106,7 @@ function NavbarChatValid() {
     }
   };
 
-  const leave_server = async () => {
+  const leaveServer = async () => {
     const res = await fetch(`${url}/servers/leave`, {
       method: "POST",
       headers: {
@@ -124,15 +124,15 @@ function NavbarChatValid() {
     }
   };
 
-  function change_options_visibility() {
-    if (show_options === "none") {
-      setshow_options("block");
+  function changeOptionsVisibility() {
+    if (showOptions === "none") {
+      setShowOptions("block");
     } else {
-      setshow_options("none");
+      setShowOptions("none");
     }
   }
 
-  const server_info = async () => {
+  const serverInfo = async () => {
     try {
       const res = await fetch(`${url}/servers/info`, {
         method: "POST",
@@ -145,7 +145,7 @@ function NavbarChatValid() {
         }),
       });
       const data = await res.json();
-      setserver_details(data);
+      setServerDetails(data);
 
       dispatch(change_page_name(data.categories[0]?.channels[0]?.channel_name));
       dispatch(change_page_id(data.categories[0]?.channels[0]._id));
@@ -156,7 +156,7 @@ function NavbarChatValid() {
     }
   };
 
-  const create_category = async () => {
+  const createCategory = async () => {
     const res = await fetch(`${url}/servers/category/new`, {
       method: "POST",
       headers: {
@@ -164,31 +164,31 @@ function NavbarChatValid() {
         "x-auth-token": localStorage.getItem("token"),
       },
       body: JSON.stringify({
-        category_name: new_category_name,
+        category_name: newCategoryName,
         server_id: server_id,
       }),
     });
     const data = await res.json();
     if (data.status === 200) {
-      server_info();
+      serverInfo();
       handleClose();
     }
   };
 
   useEffect(() => {
-    server_info();
-  }, [server_id, new_req]);
+    serverInfo();
+  }, [server_id, newRequest]);
 
   return (
     <>
-      <div className={valid_css.options_wrap} style={{ display: show_options }}>
+      <div className={valid_css.options_wrap} style={{ display: showOptions }}>
         <div
           className={valid_css.options}
           onClick={() => {
-            if (invite_link.length === 0) {
-              create_invite_link();
+            if (inviteLink.length === 0) {
+              createInviteLink();
             }
-            setinviteshow(true);
+            setInviteShow(true);
           }}
         >
           <div className={valid_css.options_comps}>Invite People</div>
@@ -206,7 +206,7 @@ function NavbarChatValid() {
         {server_role === "author" ? (
           <div
             className={valid_css.options}
-            onClick={delete_server}
+            onClick={deleteServer}
             style={{ color: "#e7625f" }}
           >
             <div className={valid_css.options_comps}>Delete Server</div>
@@ -217,7 +217,7 @@ function NavbarChatValid() {
         ) : (
           <div
             className={valid_css.options}
-            onClick={leave_server}
+            onClick={leaveServer}
             style={{ color: "#e7625f" }}
           >
             <div className={valid_css.options_comps}>Leave Server</div>
@@ -229,24 +229,24 @@ function NavbarChatValid() {
       </div>
       <div
         className={`${valid_css.server_name} ${valid_css.nav_2_parts}`}
-        onClick={change_options_visibility}
+        onClick={changeOptionsVisibility}
       >
-        {server_details.server_name}
-        {show_options === "none" ? (
+        {serverDetails.server_name}
+        {showOptions === "none" ? (
           <KeyboardArrowDownIcon></KeyboardArrowDownIcon>
         ) : (
           <CloseIcon fontSize="small"></CloseIcon>
         )}
       </div>
-      {server_details.length === 0 ? (
+      {serverDetails.length === 0 ? (
         <></>
       ) : (
         <div className={`${valid_css.category_info} ${valid_css.nav_2_parts}`}>
-          {server_details.categories.map((elem, key) => {
+          {serverDetails.categories.map((elem, key) => {
             return (
               <div key={key}>
                 <ServerDetails
-                  new_req_recieved={new_req_recieved}
+                  newRequestReceived={newRequestReceived}
                   elem={elem}
                 ></ServerDetails>
               </div>
@@ -279,9 +279,9 @@ function NavbarChatValid() {
             <div className={valid_css.input_div}>
               <input
                 type="text"
-                value={new_category_name}
+                value={newCategoryName}
                 onChange={(e) => {
-                  setnew_category_name(e.target.value);
+                  setNewCategoryName(e.target.value);
                 }}
                 placeholder="new-channel"
               />
@@ -294,7 +294,7 @@ function NavbarChatValid() {
               <button
                 className={valid_css.buttons}
                 id={valid_css.cancel_button}
-                disabled={category_creation_progress.disabled}
+                disabled={categoryCreationProgress.disabled}
                 onClick={handleClose}
               >
                 Cancel
@@ -303,18 +303,18 @@ function NavbarChatValid() {
             <div>
               <button
                 className={valid_css.buttons}
-                disabled={category_creation_progress.disabled}
+                disabled={categoryCreationProgress.disabled}
                 onClick={() => {
-                  create_category();
-                  setcategory_creation_progress({
-                    ...category_creation_progress,
+                  createCategory();
+                  setCategoryCreationProgress({
+                    ...categoryCreationProgress,
                     text: "Creating",
                     disabled: true,
                   });
                 }}
                 id={valid_css.create_button}
               >
-                {category_creation_progress.text}
+                {categoryCreationProgress.text}
               </button>
             </div>
           </div>
@@ -323,8 +323,8 @@ function NavbarChatValid() {
 
       {/* invite people modal */}
       <Modal
-        show={inviteshow}
-        onHide={handle_inviteClose}
+        show={inviteShow}
+        onHide={handleInviteClose}
         backdrop="static"
         keyboard={false}
         centered
@@ -335,22 +335,22 @@ function NavbarChatValid() {
         >
           <CloseIcon
             id={valid_css.close_button}
-            onClick={handle_inviteClose}
+            onClick={handleInviteClose}
           ></CloseIcon>
           <div
             className={valid_css.invite_modal_comps}
             id={valid_css.invite_top_part}
           >
-            Invite friends to {server_details.server_name}
+            Invite friends to {serverDetails.server_name}
           </div>
           <div
             className={valid_css.invite_modal_comps}
             id={valid_css.invite_bottom_part}
           >
             SEND A SERVER INVITE LINK TO A FRIEND
-            <div id={valid_css.invite_link_wrap}>
-              <div id={valid_css.invite_link_value}>
-                {invite_link.length === 0 ? (
+            <div id={valid_css.inviteLink_wrap}>
+              <div id={valid_css.inviteLink_value}>
+                {inviteLink.length === 0 ? (
                   <Typography
                     component="div"
                     key={"caption"}
@@ -359,14 +359,14 @@ function NavbarChatValid() {
                     <Skeleton />
                   </Typography>
                 ) : (
-                  invite_link
+                  inviteLink
                 )}
               </div>
               <div id={valid_css.copy_button_wrap}>
                 <button
                   id={valid_css.copy_button}
                   onClick={() => {
-                    navigator.clipboard.writeText(invite_link);
+                    navigator.clipboard.writeText(inviteLink);
                   }}
                 >
                   Copy

@@ -25,7 +25,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import { useNavigate } from "react-router-dom";
 import config from "../../../config/config";
 
-function MainDashboard({ user_relations }) {
+function MainDashboard({ userRelations }) {
   const dispatch = useDispatch();
   const option_check = useSelector((state) => state.selected_option.value);
   const option_name_check = useSelector(
@@ -50,7 +50,7 @@ function MainDashboard({ user_relations }) {
     add_friend_wumpus,
   ];
   const [image, setimage] = useState(images_arr[0]);
-  const [alert, setalert] = useState({ style: "none", message: "none" });
+  const [Alert, setAlert] = useState({ style: "none", message: "none" });
   const [isLoading, setIsLoading] = useState(false); // Loading state for the button
 
   // Menu state
@@ -58,11 +58,11 @@ function MainDashboard({ user_relations }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const open = Boolean(anchorEl);
 
-  // Destructure user_relations properly
-  const incoming_reqs = user_relations?.incoming_reqs || [];
-  const outgoing_reqs = user_relations?.outgoing_reqs || [];
-  const friends = user_relations?.friends || [];
-  const blocked_users = user_relations?.blocked_users || [];
+  // Destructure userRelations properly
+  const incoming_reqs = userRelations?.incoming_reqs || [];
+  const outgoing_reqs = userRelations?.outgoing_reqs || [];
+  const friends = userRelations?.friends || [];
+  const blocked_users = userRelations?.blocked_users || [];
   const pending_reqs = [...incoming_reqs, ...outgoing_reqs];
   const url = config.API_BASE_URL;
 
@@ -89,7 +89,7 @@ function MainDashboard({ user_relations }) {
     } else {
       setoption_data([]); // For online section
     }
-  }, [user_relations, option_check]);
+  }, [userRelations, option_check]);
 
   useEffect(() => {
     setimage(images_arr[option_check]);
@@ -217,8 +217,8 @@ function MainDashboard({ user_relations }) {
   const add_friend = async (e) => {
     e.preventDefault();
 
-    // Show alert immediately after clicking the button
-    setalert({ style: "flex", message: "Sending friend request..." });
+    // Show Alert immediately after clicking the button
+    setAlert({ style: "flex", message: "Sending friend request..." });
     setIsLoading(true); // Disable button until the request completes
     const res = await fetch(`${url}/users/add-friend`, {
       method: "POST",
@@ -232,7 +232,7 @@ function MainDashboard({ user_relations }) {
     });
 
     const data = await res.json();
-    setalert({ style: "flex", message: "Friend Request Sent" });
+    setAlert({ style: "flex", message: "Friend Request Sent" });
     setIsLoading(false); // Re-enable button after operation
 
     // Provide feedback based on response status
@@ -242,14 +242,14 @@ function MainDashboard({ user_relations }) {
       data.status === 202 ||
       data.status === 200
     ) {
-      setalert({ style: "flex", message: data.message });
+      setAlert({ style: "flex", message: data.message });
 
       if (data.status === 201 || data.status === 200) {
         dispatch(update_options());
         socket.emit("send_req", data.receiver_id, id, profile_pic, username);
       }
     } else if (data.status === 400) {
-      setalert({ style: "flex", message: data.message });
+      setAlert({ style: "flex", message: data.message });
     }
   };
 
@@ -263,7 +263,7 @@ function MainDashboard({ user_relations }) {
 
   function handle_input(e) {
     setinput(e.target.value);
-    setalert({ ...alert, style: "none" });
+    setAlert({ ...Alert, style: "none" });
     let current_key = e.nativeEvent.data;
     let input_size = input.length;
 
@@ -333,9 +333,9 @@ function MainDashboard({ user_relations }) {
                   </div>
                   <div
                     id={main_dashboardcss.friend_req_response}
-                    style={{ display: alert.style }}
+                    style={{ display: Alert.style }}
                   >
-                    {alert.message}
+                    {Alert.message}
                   </div>
                 </div>
                 <div className={main_dashboardcss.add_friend_image}>

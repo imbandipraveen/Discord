@@ -39,7 +39,7 @@ function Dashboard() {
   let token1 = localStorage.getItem("token");
   let user_creds = jwt(token1);
   const { username, tag, profile_pic, id } = user_creds;
-  const [user_data, setuser_data] = useState({
+  const [userData, setUserData] = useState({
     incoming_reqs: "",
     outgoing_reqs: "",
     friends: "",
@@ -47,24 +47,24 @@ function Dashboard() {
     blocked_users: "",
     friends_with_messages: [],
   });
-  const [status, setstatus] = useState({
+  const [status, setStatus] = useState({
     pending_status: false,
     online_status: false,
     all_friends_status: false,
     blocked_staus: false,
   });
-  const [new_req, setnew_req] = useState(1);
+  const [newRequest, setNewRequest] = useState(1);
 
-  const new_req_recieved = (new_req_value) => {
-    setnew_req(new_req + new_req_value);
+  const newRequestReceived = (newRequest_value) => {
+    setNewRequest(newRequest + newRequest_value);
   };
 
   // Always set a default grid layout
-  const [grid_layout, setgrid_layout] = useState("70px 250px auto auto 370px");
+  const [gridLayout, setGridLayout] = useState("70px 250px auto auto 370px");
 
   useEffect(() => {
-    user_relations();
-  }, [new_req, option_state]);
+    userRelations();
+  }, [newRequest, option_state]);
 
   useEffect(() => {
     // For DMs, always set server exists to true
@@ -72,16 +72,16 @@ function Dashboard() {
 
     if (isDM || isDMPath) {
       // For DMs, use this layout
-      setgrid_layout("70px 250px auto auto 370px");
+      setGridLayout("70px 250px auto auto 370px");
     } else if (server_id === "@me") {
       // For friends page
-      setgrid_layout("70px 250px auto auto 370px");
+      setGridLayout("70px 250px auto auto 370px");
     } else if (server_exists === false) {
       // For invalid servers
-      setgrid_layout("70px 250px auto");
+      setGridLayout("70px 250px auto");
     } else {
       // For valid servers
-      setgrid_layout("70px 250px auto auto 300px");
+      setGridLayout("70px 250px auto auto 300px");
     }
   }, [server_id, friend_id, server_exists, dispatch, isDM, isDMPath]);
 
@@ -94,7 +94,7 @@ function Dashboard() {
 
   // this use effect will run once and after that it will run whenever there is some change in requests like accept or denied or something
 
-  const user_relations = async () => {
+  const userRelations = async () => {
     try {
       const res = await fetch(`${url}/users/relations`, {
         method: "GET",
@@ -133,8 +133,8 @@ function Dashboard() {
         status_2 = { ...status_2, all_friends_status: false };
       }
 
-      setstatus(status_2);
-      setuser_data({
+      setStatus(status_2);
+      setUserData({
         incoming_reqs: incoming_reqs,
         outgoing_reqs: outgoing_reqs,
         friends: friends,
@@ -162,8 +162,8 @@ function Dashboard() {
       >
         <div className={dashboardcss.components} id={dashboardcss.component_1}>
           <Navbar
-            user_cred={{ username: username, user_servers: user_data.servers }}
-            new_req_recieved={new_req_recieved}
+            user_cred={{ username: username, user_servers: userData.servers }}
+            newRequestReceived={newRequestReceived}
           />
         </div>
         <div className={dashboardcss.components} id={dashboardcss.component_2}>
@@ -188,12 +188,12 @@ function Dashboard() {
   return (
     <div
       className={dashboardcss.main}
-      style={{ gridTemplateColumns: grid_layout }}
+      style={{ gridTemplateColumns: gridLayout }}
     >
       <div className={dashboardcss.components} id={dashboardcss.component_1}>
         <Navbar
-          user_cred={{ username: username, user_servers: user_data.servers }}
-          new_req_recieved={new_req_recieved}
+          user_cred={{ username: username, user_servers: userData.servers }}
+          newRequestReceived={newRequestReceived}
         />
       </div>
       <div className={dashboardcss.components} id={dashboardcss.component_2}>
@@ -206,11 +206,11 @@ function Dashboard() {
           id={dashboardcss.component_4}
         >
           <Main
-            user_relations={{
-              incoming_reqs: user_data.incoming_reqs,
-              outgoing_reqs: user_data.outgoing_reqs,
-              friends: user_data.friends,
-              blocked_users: user_data.blocked_users,
+            userRelations={{
+              incoming_reqs: userData.incoming_reqs,
+              outgoing_reqs: userData.outgoing_reqs,
+              friends: userData.friends,
+              blocked_users: userData.blocked_users,
             }}
           />
         </div>
@@ -233,11 +233,11 @@ function Dashboard() {
             id={dashboardcss.component_4}
           >
             <Main
-              user_relations={{
-                incoming_reqs: user_data.incoming_reqs,
-                outgoing_reqs: user_data.outgoing_reqs,
-                friends: user_data.friends,
-                blocked_users: user_data.blocked_users,
+              userRelations={{
+                incoming_reqs: userData.incoming_reqs,
+                outgoing_reqs: userData.outgoing_reqs,
+                friends: userData.friends,
+                blocked_users: userData.blocked_users,
               }}
             />
           </div>

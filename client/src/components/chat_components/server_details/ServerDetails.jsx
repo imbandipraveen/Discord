@@ -12,7 +12,7 @@ import Radio from "@mui/material/Radio";
 import { useParams } from "react-router-dom";
 import config from "../../../config/config";
 
-function ServerDetails({ new_req_recieved, elem }) {
+function ServerDetails({ newRequestReceived, elem }) {
   const dispatch = useDispatch();
   const { server_id } = useParams();
   const url = config.API_BASE_URL;
@@ -54,7 +54,7 @@ function ServerDetails({ new_req_recieved, elem }) {
 
       const data = await res.json();
       if (data.status === 200) {
-        new_req_recieved(1);
+        newRequestReceived(1);
         handleClose();
       }
     } catch (error) {
