@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import navbar_chat_css from "./navbar2_dashboardcss.module.css";
+import navbar_chat_css from "./navbarDashboard2.module.css";
 import person_icon from "../../../../images/friends.svg";
 import AddIcon from "@mui/icons-material/Add";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";

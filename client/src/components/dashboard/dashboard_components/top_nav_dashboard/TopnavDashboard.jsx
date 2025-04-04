@@ -1,5 +1,5 @@
 import React from "react";
-import topnav_dashboardcss from "./topnav_dashboard.module.css";
+import topnav_dashboardcss from "./topNavDashboard.module.css";
 import friends_icon from "../../../../images/friends.svg";
 import InboxIcon from "@mui/icons-material/Inbox";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";

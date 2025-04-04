@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import main_dashboardcss from "./main_dashboard.module.css";
+import main_dashboardcss from "./mainDashboard.module.css";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
