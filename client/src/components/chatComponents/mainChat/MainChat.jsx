@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import Loading from "../../pages/Loading";
 import InvalidChat from "../invalidChat/InvalidChat";
-import ValidChat from "../valid_main_chat/ValidChat";
+import ValidChat from "../validChat/ValidChat";
 
 function MainChat() {
   // redux value to check if user is in the particular server or not
