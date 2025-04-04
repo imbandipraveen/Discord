@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { server_role } from "../../Redux/current_page";
+import config from "../../config/config";
 import { uploadFileToS3 } from "../aws-s3-storage-blob";
 const {
   server_img_1,
