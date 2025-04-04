@@ -1,6 +1,6 @@
 import React from "react";
-import topnav_dashboardcss from "../top_nav_dashboard/topnav_dashboard.module.css";
-import friends_icon from "../../../images/friends.svg";
+import topnav_dashboardcss from "./topnav_dashboard.module.css";
+import friends_icon from "../../../../images/friends.svg";
 import InboxIcon from "@mui/icons-material/Inbox";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -11,7 +11,7 @@ import {
   change_option_name,
   option_status,
   option_text,
-} from "../../../Redux/options_slice";
+} from "../../../../Redux/options_slice";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 function TopnavDashboard({ buttonStatus }) {

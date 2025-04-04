@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
-import nav2css from "../navbar_2/navbar2.module.css";
+import nav2css from "./navbar2.module.css";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import SettingsIcon from "@mui/icons-material/Settings";
 import HeadsetIcon from "@mui/icons-material/Headset";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import EditIcon from "@mui/icons-material/Edit";
-import NavbarDashboard from "../dashboard_components/navbar2_dashboard/NavbarDashboard";
+import NavbarDashboard from "../dashboard/dashboard_components/navbar2_dashboard/NavbarDashboard";
 import NavbarChat from "../chat_components/navbar_2_chat/NavbarChat";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";

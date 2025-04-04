@@ -1,29 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import main_dashboardcss from "../main_dashboard/main_dashboard.module.css";
+import main_dashboardcss from "./main_dashboard.module.css";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { useDispatch, useSelector } from "react-redux";
-import online_wumpus from "../../../images/online.svg";
-import friends_wumpus from "../../../images/friends_2.svg";
-import pending_wumpus from "../../../images/pending.svg";
-import blocked_wumpus from "../../../images/blocked.svg";
-import add_friend_wumpus from "../../../images/friends_2.svg";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import { update_options } from "../../../Redux/options_slice";
-import socket from "../../Socket/Socket";
+import { update_options } from "../../../../Redux/options_slice";
+import socket from "../../../Socket/Socket";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import BlockIcon from "@mui/icons-material/Block";
 import { useNavigate } from "react-router-dom";
-import config from "../../../config/config";
+import config from "../../../../config/config";
+import { online, friends_2, pending, blocked } from "../../../../images/index";
 
 function MainDashboard({ userRelations }) {
   const dispatch = useDispatch();
@@ -42,13 +38,7 @@ function MainDashboard({ userRelations }) {
   const [button_state, setbutton_state] = useState(true);
   const [option_data, setoption_data] = useState([]);
   const [input, setinput] = useState("");
-  const images_arr = [
-    online_wumpus,
-    friends_wumpus,
-    pending_wumpus,
-    blocked_wumpus,
-    add_friend_wumpus,
-  ];
+  const images_arr = [online, pending, blocked, friends_2];
   const [image, setImage] = useState(images_arr[0]);
   const [Alert, setAlert] = useState({ style: "none", message: "none" });
   const [isLoading, setIsLoading] = useState(false); // Loading state for the button

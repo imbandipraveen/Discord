@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import dashboardcss from "../dashboard/dashboard.module.css";
 import Navbar from "../navbar/Navbar";
-import Navbar2 from "../navbar_2/Navbar2";
-import Topnav from "../top_nav/Topnav";
+import Navbar2 from "../navbar/Navbar2";
+import Topnav from "../navbar/Topnav";
 import Main from "../main/Main";
-import Rightnav from "../right_nav/Rightnav";
+import Rightnav from "../navbar/Rightnav";
 import jwt from "jwt-decode";
 import { useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";

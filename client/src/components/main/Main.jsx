@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import MainDashboard from "../dashboard_components/main_dashboard/MainDashboard";
+import MainDashboard from "../dashboard/dashboard_components/main_dashboard/MainDashboard";
 import MainChat from "../chat_components/main_chat/MainChat";
 import DirectMessage from "../chat_components/direct_message/DirectMessage";
 import socket from "../Socket/Socket";
