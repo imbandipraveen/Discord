@@ -1,5 +1,5 @@
 import React from "react";
-import topnavcss from "./top_nav.module.css";
+import topnavcss from "./topNav.module.css";
 import TopnavChat from "../chat_components/topnav_chat/TopnavChat";
 import TopnavDashboard from "../dashboard/dashboard_components/top_nav_dashboard/TopnavDashboard";
 import { useParams } from "react-router-dom";
