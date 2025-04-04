@@ -14,8 +14,8 @@ import {
 } from "../../../Redux/options_slice";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-function TopnavDashboard({ button_status }) {
-  const { pending, all_friends } = button_status;
+function TopnavDashboard({ buttonStatus }) {
+  const { pending, all_friends } = buttonStatus;
   const dispatch = useDispatch();
 
   function change_option_value(option_number, option_name, status, text) {

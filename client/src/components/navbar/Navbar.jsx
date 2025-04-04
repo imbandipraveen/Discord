@@ -24,7 +24,7 @@ const {
   server_img_7,
   server_input,
   discord_logo_3,
-} = require("../../images");
+} = require("../../images/index");
 
 function Navbar({ new_req_recieved, user_cred }) {
   const dispatch = useDispatch();
@@ -57,6 +57,7 @@ function Navbar({ new_req_recieved, user_cred }) {
     { text: "Artists & Creators", image: server_img_6 },
     { text: "Local Community", image: server_img_7 },
   ];
+  console.log(template, "template");
   const [server_details, setserver_details] = useState({
     name: `${username}'s server`,
     type: "",

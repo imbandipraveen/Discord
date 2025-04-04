@@ -49,7 +49,7 @@ function MainDashboard({ userRelations }) {
     blocked_wumpus,
     add_friend_wumpus,
   ];
-  const [image, setimage] = useState(images_arr[0]);
+  const [image, setImage] = useState(images_arr[0]);
   const [Alert, setAlert] = useState({ style: "none", message: "none" });
   const [isLoading, setIsLoading] = useState(false); // Loading state for the button
 
@@ -92,10 +92,10 @@ function MainDashboard({ userRelations }) {
   }, [userRelations, option_check]);
 
   useEffect(() => {
-    setimage(images_arr[option_check]);
+    setImage(images_arr[option_check]);
   }, [option_check]);
 
-  const button_clicked = async (message, friend_data) => {
+  const buttonClicked = async (message, friend_data) => {
     // Handle Message button click
     if (message === "Message") {
       startDM(friend_data.id);
@@ -202,7 +202,7 @@ function MainDashboard({ userRelations }) {
       <div
         className={main_dashboardcss.item_3_comps_wrap}
         onClick={() => {
-          button_clicked(message, friend_data);
+          buttonClicked(message, friend_data);
         }}
       >
         <div className={main_dashboardcss.item_3_comps}>
@@ -214,7 +214,7 @@ function MainDashboard({ userRelations }) {
     );
   }
 
-  const add_friend = async (e) => {
+  const addFriend = async (e) => {
     e.preventDefault();
 
     // Show Alert immediately after clicking the button
@@ -261,7 +261,7 @@ function MainDashboard({ userRelations }) {
     }
   }, [input]);
 
-  function handle_input(e) {
+  function handleInput(e) {
     setinput(e.target.value);
     setAlert({ ...Alert, style: "none" });
     let current_key = e.nativeEvent.data;
@@ -317,13 +317,13 @@ function MainDashboard({ userRelations }) {
                     className={main_dashboardcss.add_friend_comps}
                   >
                     <input
-                      onChange={handle_input}
+                      onChange={handleInput}
                       value={input}
                       type="text"
                       placeholder="Enter a Username#0000"
                     />
                     <button
-                      onClick={add_friend}
+                      onClick={addFriend}
                       disabled={button_state || isLoading} // Disable when loading
                       id={main_dashboardcss.add_friend_3_button}
                     >
