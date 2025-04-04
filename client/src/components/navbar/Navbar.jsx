@@ -99,7 +99,7 @@ function Navbar({ user_cred, newRequestReceived }) {
       }),
     });
     const data = await res.json();
-    if (data.status == 200) {
+    if (data.status === 200) {
       handleClose();
       newRequestReceived(1);
     }
@@ -312,7 +312,7 @@ function Navbar({ user_cred, newRequestReceived }) {
                 });
               }}
             >
-              {submit_button.create_button_state == false ? (
+              {submit_button.create_button_state === false ? (
                 <>Create</>
               ) : (
                 <>
@@ -386,7 +386,7 @@ function Navbar({ user_cred, newRequestReceived }) {
                     <div
                       className={`${navbarcss.middle}  ${navbarcss.server_middle}`}
                     >
-                      {elem.server_pic == "" ? (
+                      {elem.server_pic === "" ? (
                         <>{elem.server_name[0]}</>
                       ) : (
                         <img src={elem.server_pic} alt="" />
@@ -421,11 +421,11 @@ function Navbar({ user_cred, newRequestReceived }) {
           onHide={handleClose}
           centered
         >
-          {current_modal == 1 ? (
+          {current_modal === 1 ? (
             <>{first_modal()}</>
           ) : (
             <>
-              {current_modal == 2 ? (
+              {current_modal === 2 ? (
                 <>{second_modal()}</>
               ) : (
                 <>{third_modal()}</>
