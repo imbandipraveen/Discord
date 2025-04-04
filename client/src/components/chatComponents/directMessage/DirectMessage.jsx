@@ -9,7 +9,7 @@ import InboxIcon from "@mui/icons-material/Inbox";
 import HelpIcon from "@mui/icons-material/Help";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import jwt from "jwt-decode";
-import { uploadFileToS3 } from "../../aws-s3-storage-blob";
+import { uploadFileToS3 } from "../../storage/aws-s3-storage-blob";
 import EmojiPickerButton from "../emojiPicker/EmojiPickerButton";
 import Picker from "emoji-picker-react";
 import config from "../../../config/config";
