@@ -444,7 +444,7 @@ exports.updateProfilePic = async (req, res) => {
         profile_pic: profilePicUrl, // Use updated profile picture URL
         email: updatedUser.email,
       },
-      config.jwtSecret
+      config.jwtSecret,
       { expiresIn: config.jwtAccessExpiration }
     );
 
@@ -479,7 +479,7 @@ exports.refreshToken = async (req, res) => {
         profile_pic: user.profile_pic,
         email: user.email,
       },
-      config.jwtSecret
+      config.jwtSecret,
       { expiresIn: config.jwtAccessExpiration }
     );
 

@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { server_members } from "../../../Redux/current_page";
 import config from "../../../../config/config";
 
-function Rightnav_chat() {
+function RightnavChat() {
   const all_users = useSelector((state) => state.current_page.members);
   const currentUserId = useSelector((state) => state.user_info.id);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -51,6 +51,7 @@ function Rightnav_chat() {
           if (user.user_id !== userId) {
             return user;
           }
+          return "";
         });
         dispatch(server_members(updatedData));
       }
@@ -145,4 +146,4 @@ function Rightnav_chat() {
   );
 }
 
-export default Rightnav_chat;
+export default RightnavChat;

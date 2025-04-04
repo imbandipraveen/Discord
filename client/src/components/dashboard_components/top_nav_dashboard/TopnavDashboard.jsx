@@ -2,7 +2,6 @@ import React from "react";
 import topnav_dashboardcss from "../top_nav_dashboard/topnav_dashboard.module.css";
 import friends_icon from "../../../images/friends.svg";
 import InboxIcon from "@mui/icons-material/Inbox";
-import HelpIcon from "@mui/icons-material/Help";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
@@ -15,7 +14,7 @@ import {
 } from "../../../Redux/options_slice";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-function Topnav_dashboard({ button_status }) {
+function TopnavDashboard({ button_status }) {
   const { pending, all_friends } = button_status;
   const dispatch = useDispatch();
 
@@ -151,4 +150,4 @@ function Topnav_dashboard({ button_status }) {
   );
 }
 
-export default Topnav_dashboard;
+export default TopnavDashboard;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import valid_css from "../navbar_2_chat_valid/valid_navbar.module.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import Server_details from "../server_details/Server_details";
+import ServerDetails from "../server_details/ServerDetails";
 import { useDispatch, useSelector } from "react-redux";
 import {
   change_page_id,
@@ -20,8 +20,8 @@ import Skeleton from "@mui/material/Skeleton";
 import { update_options } from "../../../Redux/options_slice";
 import config from "../../../../config/config";
 
-function Navbar2_chat_valid() {
-  const url = config.API_BASE_URL;
+function NavbarChatValid() {
+  const url = process.env.REACT_APP_URL;
   const { server_id } = useParams();
   const Navigate = useNavigate();
 
@@ -30,8 +30,6 @@ function Navbar2_chat_valid() {
   const id = useSelector((state) => state.user_info.id);
 
   const front_end_url = config.FRONTEND_URL;
-
-  const page_id = useSelector((state) => state.current_page.page_id);
 
   // add channel modal states
   const [show, setShow] = useState(false);
@@ -44,7 +42,6 @@ function Navbar2_chat_valid() {
   // invite people modal
   const [inviteshow, setinviteshow] = useState(false);
   const handle_inviteClose = () => setinviteshow(false);
-  const handle_inviteShow = () => setinviteshow(true);
 
   // this use state is triggered when we delete a server and we set it to false so that user goes back to dashboard and it value is updated by socket for other members in the server and with the fetch request to update it for the author
   // const [server_exists, setserver_exists] = useState(true)
@@ -121,14 +118,14 @@ function Navbar2_chat_valid() {
       }),
     });
     const data = await res.json();
-    if (data.status == 200) {
+    if (data.status === 200) {
       dispatch(update_options());
       Navigate("/channels/@me");
     }
   };
 
   function change_options_visibility() {
-    if (show_options == "none") {
+    if (show_options === "none") {
       setshow_options("block");
     } else {
       setshow_options("none");
@@ -172,7 +169,7 @@ function Navbar2_chat_valid() {
       }),
     });
     const data = await res.json();
-    if (data.status == 200) {
+    if (data.status === 200) {
       server_info();
       handleClose();
     }
@@ -188,7 +185,7 @@ function Navbar2_chat_valid() {
         <div
           className={valid_css.options}
           onClick={() => {
-            if (invite_link.length == 0) {
+            if (invite_link.length === 0) {
               create_invite_link();
             }
             setinviteshow(true);
@@ -241,17 +238,17 @@ function Navbar2_chat_valid() {
           <CloseIcon fontSize="small"></CloseIcon>
         )}
       </div>
-      {server_details.length == 0 ? (
+      {server_details.length === 0 ? (
         <></>
       ) : (
         <div className={`${valid_css.category_info} ${valid_css.nav_2_parts}`}>
           {server_details.categories.map((elem, key) => {
             return (
               <div key={key}>
-                <Server_details
+                <ServerDetails
                   new_req_recieved={new_req_recieved}
                   elem={elem}
-                ></Server_details>
+                ></ServerDetails>
               </div>
             );
           })}
@@ -353,7 +350,7 @@ function Navbar2_chat_valid() {
             SEND A SERVER INVITE LINK TO A FRIEND
             <div id={valid_css.invite_link_wrap}>
               <div id={valid_css.invite_link_value}>
-                {invite_link.length == 0 ? (
+                {invite_link.length === 0 ? (
                   <Typography
                     component="div"
                     key={"caption"}
@@ -383,4 +380,4 @@ function Navbar2_chat_valid() {
   );
 }
 
-export default Navbar2_chat_valid;
+export default NavbarChatValid;

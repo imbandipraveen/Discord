@@ -25,7 +25,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import { useNavigate } from "react-router-dom";
 import config from "../../../../config/config";
 
-function Main_dashboard({ user_relations }) {
+function MainDashboard({ user_relations }) {
   const dispatch = useDispatch();
   const option_check = useSelector((state) => state.selected_option.value);
   const option_name_check = useSelector(
@@ -486,4 +486,4 @@ function Main_dashboard({ user_relations }) {
   );
 }
 
-export default Main_dashboard;
+export default MainDashboard;

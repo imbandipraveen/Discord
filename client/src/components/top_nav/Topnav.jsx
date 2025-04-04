@@ -1,14 +1,12 @@
 import React from "react";
 import topnavcss from "../top_nav/top_nav.module.css";
-import Topnav_chat from "../chat_components/topnav_chat/Topnav_chat";
-import Topnav_dashboard from "../dashboard_components/top_nav_dashboard/Topnav_dashboard";
-import { useSelector } from "react-redux";
+import Topnav_chat from "../chat_components/topnav_chat/TopnavChat";
+import Topnav_dashboard from "../dashboard_components/top_nav_dashboard/TopnavDashboard";
 import { useParams } from "react-router-dom";
 import { OverlayTrigger } from "react-bootstrap";
 import { Tooltip } from "react-bootstrap";
 
-function Top_nav({ button_status, setHideMembers }) {
-  const page_check = useSelector((state) => state.current_page.is_dashboard);
+function Topnav({ button_status, setHideMembers }) {
   const { server_id } = useParams();
 
   const tooltips = (value, props) => (
@@ -62,4 +60,4 @@ function Top_nav({ button_status, setHideMembers }) {
   );
 }
 
-export default Top_nav;
+export default Topnav;

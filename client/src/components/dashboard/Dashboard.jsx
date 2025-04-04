@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import dashboardcss from "../dashboard/dashboard.module.css";
 import Navbar from "../navbar/Navbar";
-import Navbar_2 from "../navbar_2/Navbar_2";
-import Top_nav from "../top_nav/Top_nav";
+import Navbar2 from "../navbar_2/Navbar2";
+import Topnav from "../top_nav/Topnav";
 import Main from "../main/Main";
-import Right_nav from "../right_nav/Right_nav";
+import Rightnav from "../right_nav/Rightnav";
 import jwt from "jwt-decode";
 import { useParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -167,7 +167,7 @@ function Dashboard() {
           />
         </div>
         <div className={dashboardcss.components} id={dashboardcss.component_2}>
-          <Navbar_2 />
+          <Navbar2 />
         </div>
         <div
           className={dashboardcss.components}
@@ -197,7 +197,7 @@ function Dashboard() {
         />
       </div>
       <div className={dashboardcss.components} id={dashboardcss.component_2}>
-        <Navbar_2 />
+        <Navbar2 />
       </div>
       {server_exists === false && server_id !== "@me" && !isDM ? (
         <div
@@ -220,7 +220,7 @@ function Dashboard() {
             className={dashboardcss.components}
             id={dashboardcss.component_3}
           >
-            <Top_nav
+            <Topnav
               button_status={{
                 pending: status.pending_status,
                 all_friends: status.all_friends_status,
@@ -246,7 +246,7 @@ function Dashboard() {
             id={dashboardcss.component_5}
           >
             {!hideMembers ? (
-              <Right_nav />
+              <Rightnav />
             ) : (
               <div style={{ backgroundColor: "#36393f", height: "100%" }}></div>
             )}

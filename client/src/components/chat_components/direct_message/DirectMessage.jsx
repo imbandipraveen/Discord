@@ -113,8 +113,6 @@ function DirectMessage({ friendId }) {
       setMessages(msgs || []);
     };
 
-    const roomId = [userId, friendId].sort().join("_");
-
     socket.off("receive_dm").on("receive_dm", receiveHandler);
     socket.off("dm_history").on("dm_history", historyHandler);
     socket.emit("join_dm", { userId, friendId });

@@ -11,8 +11,8 @@ import EmojiPickerButton from "../emojiPicker/EmojiPickerButton";
 import { useNavigate } from "react-router-dom";
 import config from "../../../../config/config";
 
-function Valid_chat() {
-  const url = config.API_BASE_URL;
+function ValidChat() {
+  const url = process.env.REACT_APP_URL;
   const { server_id } = useParams();
   const chatEndRef = useRef(null); // 🔹 Create a ref for the chat end
 
@@ -155,14 +155,8 @@ function Valid_chat() {
 
   useEffect(() => {
     if (latest_message) {
-      const {
-        message,
-        timestamp,
-        sender_name,
-        sender_tag,
-        sender_pic,
-        sender_id,
-      } = latest_message.message_data;
+      const { message, timestamp, sender_name, sender_pic, sender_id } =
+        latest_message.message_data;
 
       // Ensure profile_pic is a string and not undefined
       const userProfilePic =
@@ -314,7 +308,6 @@ function Valid_chat() {
               width: "fit-content",
               padding: "8px",
               cursor: "pointer",
-              color: "black",
               transition: "color 0.2s",
               color: "white",
             }}
@@ -420,4 +413,4 @@ function Valid_chat() {
   );
 }
 
-export default Valid_chat;
+export default ValidChat;
