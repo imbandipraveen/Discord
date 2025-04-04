@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import valid_chat_css from "../valid_main_chat/valid_chat_css.module.css";
+import valid_chat_css from "./validChat.module.css";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import TagIcon from "@mui/icons-material/Tag";
 import socket from "../../Socket/Socket";

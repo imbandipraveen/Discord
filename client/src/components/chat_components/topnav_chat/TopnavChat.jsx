@@ -1,5 +1,5 @@
 import React from "react";
-import topnav_chatcss from "../topnav_chat/topnav_chat.module.css";
+import topnav_chatcss from "./topnavChat.module.css";
 import TagIcon from "@mui/icons-material/Tag";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PushPinIcon from "@mui/icons-material/PushPin";

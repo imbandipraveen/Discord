@@ -1,5 +1,5 @@
 import React from "react";
-import invalid_chat_css from "../invalid_main_chat/invalid_chat_css.module.css";
+import invalid_chat_css from "./invalidChat.module.css";
 import invalid_chat_image from "../../../images/invalid_server.svg";
 
 function InvalidChat() {

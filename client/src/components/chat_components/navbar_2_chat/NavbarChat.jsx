@@ -1,5 +1,5 @@
 import React from "react";
-import navbar2_chatcss from "../navbar_2_chat/navbar2_chatcss.module.css";
+import navbar2_chatcss from "./navbarChat.module.css";
 import { useSelector } from "react-redux";
 import ValidNavbar from "../navbar_2_chat_valid/NavbarChatValid";
 import Loading from "../../pages/Loading";
