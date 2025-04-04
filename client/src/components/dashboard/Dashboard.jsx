@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import dashboardcss from "../dashboard/dashboard.module.css";
+import dashboardcss from "./css/dashboard.module.css";
 import Navbar from "../navbar/Navbar";
 import Navbar2 from "../navbar/Navbar2";
 import Topnav from "../navbar/Topnav";

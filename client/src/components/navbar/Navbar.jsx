@@ -1,5 +1,5 @@
 import React from "react";
-import navbarcss from "../navbar/navbar.module.css";
+import navbarcss from "./css/navbar.module.css";
 import AddIcon from "@mui/icons-material/Add";
 import Modal from "react-bootstrap/Modal";
 import CloseIcon from "@mui/icons-material/Close";

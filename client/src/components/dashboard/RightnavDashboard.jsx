@@ -1,5 +1,5 @@
 import React from "react";
-import rightnav_dashboardcss from "./rightNavDashboard.module.css";
+import rightnav_dashboardcss from "./css/rightNavDashboard.module.css";
 
 function RightnavDashboard() {
   return (

@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import navbar_chat_css from "./navbarDashboard2.module.css";
-import person_icon from "../../../../images/friends.svg";
+import navbar_chat_css from "./css/navbarDashboard2.module.css";
+import person_icon from "./../../images/friends.svg";
 import AddIcon from "@mui/icons-material/Add";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import offline_icon from "../../../../images/offline_status.svg";
+import offline_icon from "../../images/offline_status.svg";
 import { useSelector } from "react-redux";
 import Modal from "react-bootstrap/Modal";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
-import config from "../../../../config/config";
+import config from "../../config/config";
 
 function NavbarDashboard() {
   const profile_pic = useSelector((state) => state.user_info.profile_pic);

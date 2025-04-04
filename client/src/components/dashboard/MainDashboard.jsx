@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import main_dashboardcss from "./mainDashboard.module.css";
+import main_dashboardcss from "./css/mainDashboard.module.css";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -10,16 +10,16 @@ import { useDispatch, useSelector } from "react-redux";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
-import { update_options } from "../../../../Redux/options_slice";
-import socket from "../../../Socket/Socket";
+import { update_options } from "../../Redux/options_slice";
+import socket from "../Socket/Socket";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import BlockIcon from "@mui/icons-material/Block";
 import { useNavigate } from "react-router-dom";
-import config from "../../../../config/config";
-import { online, friends_2, pending, blocked } from "../../../../images/index";
+import config from "../../config/config";
+import { online, friends_2, pending, blocked } from "./../../images/index";
 
 function MainDashboard({ userRelations }) {
   const dispatch = useDispatch();

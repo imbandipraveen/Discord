@@ -1,8 +1,8 @@
 import React from "react";
-import topnavcss from "./topNav.module.css";
+import topnavcss from "./css/topNav.module.css";
 import TopnavChat from "../chat_components/topnav_chat/TopnavChat";
-import TopnavDashboard from "../dashboard/dashboard_components/top_nav_dashboard/TopnavDashboard";
 import { useParams } from "react-router-dom";
+import TopnavDashboard from "../dashboard/TopnavDashboard";
 function Topnav({ buttonStatus, setHideMembers }) {
   const { server_id } = useParams();
 
