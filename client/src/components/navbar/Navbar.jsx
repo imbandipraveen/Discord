@@ -14,7 +14,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import { server_role } from "../../Redux/current_page";
 import config from "../../config/config";
 import { uploadFileToS3 } from "../aws-s3-storage-blob";
-const {
+import {
   server_img_1,
   server_img_2,
   server_img_3,
@@ -24,9 +24,9 @@ const {
   server_img_7,
   server_input,
   discord_logo_3,
-} = require("../../images/index");
+} from "../../images";
 
-function Navbar({ new_req_recieved, user_cred }) {
+function Navbar({ user_cred, newRequestReceived }) {
   const dispatch = useDispatch();
   const location = useLocation();
   const currentPath = location.pathname.split("/")[2]; // Get the current server ID from URL
@@ -102,7 +102,7 @@ function Navbar({ new_req_recieved, user_cred }) {
     const data = await res.json();
     if (data.status == 200) {
       handleClose();
-      new_req_recieved(1);
+      newRequestReceived(1);
     }
   };
 
@@ -119,7 +119,7 @@ function Navbar({ new_req_recieved, user_cred }) {
         <div id={navbarcss.new_server}>
           <div id={navbarcss.server_heading} className={navbarcss.components}>
             {" "}
-            Create a servert
+            Create a server
           </div>
           <div
             id={navbarcss.server_sub_heading}
