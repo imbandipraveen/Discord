@@ -2,8 +2,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 // const { connectDB } = require("./config/database");
-const { connectDB } = require("./Config/database");
-const { setupSocket } = require("./Config/socket");
+const { connectDB } = require("./config/database");
+const { setupSocket } = require("./config/socket");
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
@@ -12,9 +12,10 @@ const serverRoutes = require("./routes/serverRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const inviteRoutes = require("./routes/inviteRoutes");
 const directMessageRoutes = require("./routes/directMessageRoutes");
+const config = require("./config/config");
 
 const app = express();
-const port = process.env.PORT || 3080;
+const port = config.port || 3080;
 
 // Middleware
 app.use(cors());

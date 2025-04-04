@@ -8,6 +8,7 @@ const {
   validateUsername,
 } = require("../utils/validation");
 const bcrypt = require("bcrypt");
+const config = require("../config/config");
 
 exports.signup = async (req, res) => {
   try {
@@ -73,9 +74,9 @@ exports.signup = async (req, res) => {
       username,
       tag,
       email,
-      password : hashedPassword,
+      password: hashedPassword,
       dob,
-      profile_pic: process.env.default_profile_pic,
+      profile_pic: config.defaultProfile,
       authorized: false,
       verification: [
         {
@@ -172,7 +173,7 @@ exports.signin = async (req, res) => {
         tag: user.tag,
         profile_pic: user.profile_pic,
       },
-      process.env.JWT_SECRET
+      config.jwtSecret
     );
 
     res.status(201).json({

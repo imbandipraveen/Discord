@@ -3,6 +3,7 @@ const Username = require("../models/Username");
 const { generateTag } = require("../utils/helpers");
 const DirectMessage = require("../models/DirectMessage");
 const jwt = require("jsonwebtoken");
+const config = require("../config/config");
 
 exports.getUserRelations = async (req, res) => {
   try {
@@ -443,8 +444,8 @@ exports.updateProfilePic = async (req, res) => {
         profile_pic: profilePicUrl, // Use updated profile picture URL
         email: updatedUser.email,
       },
-      process.env.JWT_SECRET,
-      { expiresIn: "30d" }
+      config.jwtSecret
+      { expiresIn: config.jwtAccessExpiration }
     );
 
     res.status(200).json({
@@ -478,8 +479,8 @@ exports.refreshToken = async (req, res) => {
         profile_pic: user.profile_pic,
         email: user.email,
       },
-      process.env.JWT_SECRET,
-      { expiresIn: "30d" }
+      config.jwtSecret
+      { expiresIn: config.jwtAccessExpiration }
     );
 
     res.status(200).json({

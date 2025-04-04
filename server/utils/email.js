@@ -1,16 +1,17 @@
 const nodemailer = require("nodemailer");
+const config = require("../config/config");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   auth: {
-    user: process.env.user,
-    pass: process.env.password,
+    user: config.user,
+    pass: config.password,
   },
 });
 
 exports.sendVerificationEmail = async (otp, email, username) => {
   const mailOptions = {
-    from: process.env.user,
+    from: config.user,
     to: email,
     subject: "Email for Verification",
     text: `Hello ${username}
