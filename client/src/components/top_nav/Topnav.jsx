@@ -7,7 +7,7 @@ import { OverlayTrigger } from "react-bootstrap";
 import { Tooltip } from "react-bootstrap";
 import LogoutIcon from "@mui/icons-material/Logout";
 import GroupIcon from "@mui/icons-material/Group";
-function Topnav({ button_status, setHideMembers }) {
+function Topnav({ buttonStatus, setHideMembers }) {
   const { server_id } = useParams();
 
   const tooltips = (value, props) => (
@@ -53,7 +53,7 @@ function Topnav({ button_status, setHideMembers }) {
   return (
     <div id={topnavcss.main}>
       {server_id === "@me" ? (
-        <TopnavDashboard button_status={button_status}></TopnavDashboard>
+        <TopnavDashboard buttonStatus={buttonStatus}></TopnavDashboard>
       ) : (
         <>
           <TopnavChat setHideMembers={setHideMembers} />

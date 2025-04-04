@@ -57,7 +57,6 @@ function Navbar({ user_cred, newRequestReceived }) {
     { text: "Artists & Creators", image: server_img_6 },
     { text: "Local Community", image: server_img_7 },
   ];
-  console.log(template, "template");
   const [server_details, setserver_details] = useState({
     name: `${username}'s server`,
     type: "",

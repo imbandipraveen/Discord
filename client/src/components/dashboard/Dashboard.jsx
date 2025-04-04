@@ -221,7 +221,7 @@ function Dashboard() {
             id={dashboardcss.component_3}
           >
             <Topnav
-              button_status={{
+              buttonStatus={{
                 pending: status.pending_status,
                 all_friends: status.all_friends_status,
               }}
