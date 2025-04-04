@@ -15,7 +15,7 @@ import {
   option_user_id,
 } from "../../Redux/user_creds_slice";
 import { server_existence } from "../../Redux/current_page";
-import DirectMessage from "../chatComponents/direct_message/DirectMessage";
+import DirectMessage from "../chatComponents/directMessage/DirectMessage";
 import config from "../../config/config";
 
 function Dashboard() {

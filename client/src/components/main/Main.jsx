@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import MainDashboard from "../dashboard/MainDashboard";
-import MainChat from "../chatComponents/main_chat/MainChat";
-import DirectMessage from "../chatComponents/direct_message/DirectMessage";
+import MainChat from "../chatComponents/mainChat/MainChat";
+import DirectMessage from "../chatComponents/directMessage/DirectMessage";
 import socket from "../Socket/Socket";
 import { update_options } from "../../Redux/options_slice";
 import { useDispatch, useSelector } from "react-redux";

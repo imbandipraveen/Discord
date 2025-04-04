@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import valid_css from "./validNavbar.module.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import ServerDetails from "../server_details/ServerDetails";
+import ServerDetails from "../serverDetails/ServerDetails";
 import { useDispatch, useSelector } from "react-redux";
 import {
   change_page_id,

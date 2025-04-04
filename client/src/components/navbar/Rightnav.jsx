@@ -1,7 +1,7 @@
 import React from "react";
 import rightcss from "./css/rightNav.module.css";
 import { useParams } from "react-router-dom";
-import RightnavChat from "../chatComponents/rightnav_chat/RightnavChat";
+import RightnavChat from "../chatComponents/rightnavChat/RightnavChat";
 import RightnavDashboard from "../dashboard/RightnavDashboard";
 
 function Rightnav() {
