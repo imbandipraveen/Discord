@@ -10,7 +10,7 @@ import Modal from "react-bootstrap/Modal";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
-import config from "../../../../config/config";
+import config from "../../../config/config";
 
 function NavbarDashboard() {
   const profile_pic = useSelector((state) => state.user_info.profile_pic);

@@ -16,7 +16,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import plane from "../../images/plane.png";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import config from "../../../config/config";
+import config from "../../config/config";
 
 function Register() {
   const navigate = useNavigate();

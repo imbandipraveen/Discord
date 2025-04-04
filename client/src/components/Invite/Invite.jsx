@@ -6,7 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import invalid_link_image from "../../images/invalid_invite.svg";
 import jwt from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import config from "../../../config/config";
+import config from "../../config/config";
 
 function Invite() {
   // had to use token here because redux get the values when dashboard component runs and it doesnt run when this route is fired

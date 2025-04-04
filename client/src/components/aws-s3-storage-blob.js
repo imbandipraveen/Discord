@@ -4,7 +4,7 @@ import {
   ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import { v4 } from "uuid";
-import config from "../../config/config";
+import config from "../config/config";
 
 const bucketName = config.S3.BUCKET_NAME;
 const region = config.S3.REGION;

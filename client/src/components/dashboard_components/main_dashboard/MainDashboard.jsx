@@ -23,7 +23,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import BlockIcon from "@mui/icons-material/Block";
 import { useNavigate } from "react-router-dom";
-import config from "../../../../config/config";
+import config from "../../../config/config";
 
 function MainDashboard({ user_relations }) {
   const dispatch = useDispatch();

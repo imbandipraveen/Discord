@@ -3,7 +3,7 @@ import rightnav_chatcss from "../rightnav_chat/rightnav_chat.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { server_members } from "../../../Redux/current_page";
-import config from "../../../../config/config";
+import config from "../../../config/config";
 
 function RightnavChat() {
   const all_users = useSelector((state) => state.current_page.members);

@@ -12,7 +12,7 @@ import jwt from "jwt-decode";
 import { uploadFileToS3 } from "../../aws-s3-storage-blob";
 import EmojiPickerButton from "../emojiPicker/EmojiPickerButton";
 import Picker from "emoji-picker-react";
-import config from "../../../../config/config";
+import config from "../../../config/config";
 
 function DirectMessage({ friendId }) {
   const [message, setMessage] = useState({ content: "", contentType: "text" });

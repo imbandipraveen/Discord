@@ -16,7 +16,7 @@ import {
 } from "../../Redux/user_creds_slice";
 import { server_existence } from "../../Redux/current_page";
 import DirectMessage from "../chat_components/direct_message/DirectMessage";
-import config from "../../../config/config";
+import config from "../../config/config";
 
 function Dashboard() {
   const [hideMembers, setHideMembers] = useState(false);

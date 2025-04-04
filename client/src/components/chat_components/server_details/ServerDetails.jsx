@@ -10,7 +10,7 @@ import { change_page_id, change_page_name } from "../../../Redux/current_page";
 import Modal from "react-bootstrap/Modal";
 import Radio from "@mui/material/Radio";
 import { useParams } from "react-router-dom";
-import config from "../../../../config/config";
+import config from "../../../config/config";
 
 function ServerDetails({ new_req_recieved, elem }) {
   const dispatch = useDispatch();
