@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import Loading from "../../Loading_page/Loading";
+import Loading from "../../pages/Loading";
 import InvalidChat from "../invalid_main_chat/InvalidChat";
 import ValidChat from "../valid_main_chat/ValidChat";
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import invitecss from "../Invite/invite.module.css";
+import invitecss from "./invite.module.css";
 import logo from "../../images/discord_logo_3.png";
 import { useParams } from "react-router-dom";
 import CircularProgress from "@mui/material/CircularProgress";

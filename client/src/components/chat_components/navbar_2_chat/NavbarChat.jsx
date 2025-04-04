@@ -2,7 +2,7 @@ import React from "react";
 import navbar2_chatcss from "../navbar_2_chat/navbar2_chatcss.module.css";
 import { useSelector } from "react-redux";
 import ValidNavbar from "../navbar_2_chat_valid/NavbarChatValid";
-import Loading from "../../Loading_page/Loading";
+import Loading from "../../pages/Loading";
 
 function NavbarChat() {
   // redux value to check if user is in the particular server or not

@@ -3,7 +3,7 @@ import Register from "./components/auth/Register";
 import Dashboard from "./components/dashboard/Dashboard";
 import Auth from "./components/auth/Auth";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Invite from "./components/Invite/Invite";
+import Invite from "./components/pages/Invite";
 
 function App() {
   return (

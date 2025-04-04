@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import Login from "./Login";
 import { useState } from "react";
-import Loading from "../Loading_page/Loading";
+import Loading from "../pages/Loading";
 import config from "../../config/config";
 
 const Auth = (props) => {
