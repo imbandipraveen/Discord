@@ -31,9 +31,12 @@ const setupSocket = (server) => {
     socket.on(
       "send_req",
       (receiver_id, sender_id, sender_profile_pic, sender_name) => {
-        socket
-          .to(receiver_id)
-          .emit("recieve_req", { sender_name, sender_profile_pic, sender_id });
+        console.log(`Sending friend request to ${receiver_id}`);
+        socket.to(receiver_id).emit("recieve_req", {
+          sender_name,
+          sender_profile_pic,
+          sender_id,
+        });
       }
     );
 

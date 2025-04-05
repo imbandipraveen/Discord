@@ -1,5 +1,5 @@
-import React from "react";
-import topnav_dashboardcss from "./css/topNavDashboard.module.css";
+import React, { useState } from "react";
+import topNavDashboardCss from "./css/topNavDashboard.module.css";
 import friends_icon from "../../images/friends.svg";
 import InboxIcon from "@mui/icons-material/Inbox";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
@@ -17,8 +17,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 function TopnavDashboard({ buttonStatus }) {
   const { pending, all_friends } = buttonStatus;
   const dispatch = useDispatch();
+  const [selectedOption, setSelectedOption] = useState("");
 
-  function change_option_value(option_number, option_name, status, text) {
+  function changeOptionValue(option_number, option_name, status, text) {
     dispatch(change_option(option_number));
     dispatch(change_option_name(option_name));
     dispatch(option_status(status));
@@ -28,7 +29,7 @@ function TopnavDashboard({ buttonStatus }) {
   function buttons(message, Icon) {
     return (
       <div
-        className={topnav_dashboardcss.right_part_icons}
+        className={topNavDashboardCss.right_part_icons}
         onClick={() => {
           if (message === "Logout") {
             localStorage.clear();
@@ -51,12 +52,12 @@ function TopnavDashboard({ buttonStatus }) {
   return (
     <>
       <div
-        className={topnav_dashboardcss.top_nav_comps}
-        id={topnav_dashboardcss.left_part_wrap}
+        className={topNavDashboardCss.top_nav_comps}
+        id={topNavDashboardCss.left_part_wrap}
       >
-        <div id={topnav_dashboardcss.left_part}>
+        <div id={topNavDashboardCss.left_part}>
           <img
-            className={topnav_dashboardcss.top_nav_images}
+            className={topNavDashboardCss.top_nav_images}
             src={friends_icon}
             alt=""
           />
@@ -64,70 +65,86 @@ function TopnavDashboard({ buttonStatus }) {
         </div>
       </div>
       <div
-        className={topnav_dashboardcss.right_nav_comps}
-        id={topnav_dashboardcss.middle_part}
+        className={topNavDashboardCss.right_nav_comps}
+        id={topNavDashboardCss.middle_part}
       >
         <div
-          className={topnav_dashboardcss.middle_part_comps}
-          id={topnav_dashboardcss.middle_part_item_1}
+          className={topNavDashboardCss.middle_part_comps}
+          id={topNavDashboardCss.middle_part_item_1}
+          style={{
+            backgroundColor: `${selectedOption === "online" ? "#4b4d52" : ""}`,
+          }}
           onClick={() => {
-            change_option_value(
+            changeOptionValue(
               0,
               "ONLINE",
               false,
               "No one's around to play with Wumpus."
             );
+            setSelectedOption("online");
           }}
         >
           Online
         </div>
         <div
-          className={topnav_dashboardcss.middle_part_comps}
-          id={topnav_dashboardcss.middle_part_item_2}
+          className={topNavDashboardCss.middle_part_comps}
+          id={topNavDashboardCss.middle_part_item_2}
+          style={{
+            backgroundColor: `${selectedOption === "all" ? "#4b4d52" : ""}`,
+          }}
           onClick={() => {
-            change_option_value(
+            changeOptionValue(
               1,
               "ALL FRIENDS",
               all_friends,
               "Wumpus is waiting on friends. You don't have to, though!"
             );
+            setSelectedOption("all");
           }}
         >
           All
         </div>
         <div
-          className={topnav_dashboardcss.middle_part_comps}
-          id={topnav_dashboardcss.middle_part_item_3}
+          className={topNavDashboardCss.middle_part_comps}
+          id={topNavDashboardCss.middle_part_item_3}
+          style={{
+            backgroundColor: `${selectedOption === "pending" ? "#4b4d52" : ""}`,
+          }}
           onClick={() => {
-            change_option_value(
+            changeOptionValue(
               2,
               "PENDING",
               pending,
               "There are no pending friend requests. Here's Wumpus for now."
             );
+            setSelectedOption("pending");
           }}
         >
           Pending
         </div>
         <div
-          className={topnav_dashboardcss.middle_part_comps}
-          id={topnav_dashboardcss.middle_part_item_4}
+          className={topNavDashboardCss.middle_part_comps}
+          id={topNavDashboardCss.middle_part_item_4}
+          style={{
+            backgroundColor: `${selectedOption === "blocked" ? "#4b4d52" : ""}`,
+          }}
           onClick={() => {
-            change_option_value(
+            changeOptionValue(
               3,
               "BLOCKED",
               true,
               "You can't unblock the Wumpus."
             );
+            setSelectedOption("blocked");
           }}
         >
           Blocked
         </div>
         <div
-          className={topnav_dashboardcss.middle_part_comps}
-          id={topnav_dashboardcss.middle_part_item_5}
+          className={topNavDashboardCss.middle_part_comps}
+          id={topNavDashboardCss.middle_part_item_5}
           onClick={() => {
-            change_option_value(
+            changeOptionValue(
               4,
               "ADD FRIENDS",
               false,
@@ -139,8 +156,8 @@ function TopnavDashboard({ buttonStatus }) {
         </div>
       </div>
       <div
-        className={topnav_dashboardcss.top_nav_comps}
-        id={topnav_dashboardcss.right_part}
+        className={topNavDashboardCss.top_nav_comps}
+        id={topNavDashboardCss.right_part}
       >
         {buttons("New Group DM", ChatBubbleIcon)}
         {buttons("Inbox", InboxIcon)}

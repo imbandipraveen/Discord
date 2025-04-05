@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import config from "../../config/config";
 import { online, friends_2, pending, blocked } from "./../../images/index";
 
-function MainDashboard({ userRelations }) {
+function MainDashboard() {
   const dispatch = useDispatch();
   const option_check = useSelector((state) => state.selected_option.value);
   const option_name_check = useSelector(
@@ -33,11 +33,11 @@ function MainDashboard({ userRelations }) {
   // User details from redux
   const username = useSelector((state) => state.user_info.username);
   const profile_pic = useSelector((state) => state.user_info.profile_pic);
-  const id = useSelector((state) => state.user_info.id);
-
-  const [button_state, setbutton_state] = useState(true);
-  const [option_data, setoption_data] = useState([]);
-  const [input, setinput] = useState("");
+  const userRelations = useSelector((state) => state.user_info);
+  const id = userRelations.id;
+  const [buttonState, setButtonState] = useState(true);
+  const [optionData, setOptionData] = useState([]);
+  const [input, setInput] = useState("");
   const images_arr = [online, pending, blocked, friends_2];
   const [image, setImage] = useState(images_arr[0]);
   const [Alert, setAlert] = useState({ style: "none", message: "none" });
@@ -49,8 +49,8 @@ function MainDashboard({ userRelations }) {
   const open = Boolean(anchorEl);
 
   // Destructure userRelations properly
-  const incoming_reqs = userRelations?.incoming_reqs || [];
-  const outgoing_reqs = userRelations?.outgoing_reqs || [];
+  const incoming_reqs = userRelations?.incomingRequests || [];
+  const outgoing_reqs = userRelations?.outgoingRequests || [];
   const friends = userRelations?.friends || [];
   const blocked_users = userRelations?.blocked_users || [];
   const pending_reqs = [...incoming_reqs, ...outgoing_reqs];
@@ -69,15 +69,16 @@ function MainDashboard({ userRelations }) {
 
   useEffect(() => {
     if (option_check === 2) {
-      setoption_data(pending_reqs);
+      console.log(pending_reqs, "pendingRequests");
+      setOptionData(pending_reqs);
     } else if (option_check === 1) {
-      setoption_data(friends);
+      setOptionData(friends);
     } else if (option_check === 3) {
-      setoption_data(blocked_users);
+      setOptionData(blocked_users);
     } else if (option_check === 4) {
-      setoption_data([]); // For add friend section
+      setOptionData([]); // For add friend section
     } else {
-      setoption_data([]); // For online section
+      setOptionData([]); // For online section
     }
   }, [userRelations, option_check]);
 
@@ -218,10 +219,12 @@ function MainDashboard({ userRelations }) {
       },
       body: JSON.stringify({
         friend: input,
+        message: "sent-request",
       }),
     });
 
     const data = await res.json();
+    console.log(data);
     setAlert({ style: "flex", message: "Friend Request Sent" });
     setIsLoading(false); // Re-enable button after operation
 
@@ -236,6 +239,14 @@ function MainDashboard({ userRelations }) {
 
       if (data.status === 201 || data.status === 200) {
         dispatch(update_options());
+        console.log(
+          "Action Dispatched",
+          data.receiver_id,
+          id,
+          profile_pic,
+          username
+        );
+
         socket.emit("send_req", data.receiver_id, id, profile_pic, username);
       }
     } else if (data.status === 400) {
@@ -245,14 +256,14 @@ function MainDashboard({ userRelations }) {
 
   useEffect(() => {
     if (input.length >= 1) {
-      setbutton_state(false);
+      setButtonState(false);
     } else {
-      setbutton_state(true);
+      setButtonState(true);
     }
   }, [input]);
 
   function handleInput(e) {
-    setinput(e.target.value);
+    setInput(e.target.value);
     setAlert({ ...Alert, style: "none" });
     let current_key = e.nativeEvent.data;
     let input_size = input.length;
@@ -262,7 +273,7 @@ function MainDashboard({ userRelations }) {
       /[0-9]/.test(current_key) === false &&
       current_key != null
     ) {
-      setinput(input);
+      setInput(input);
     } else if (
       (input[input_size - 5] === "#" &&
         /[a-zA-z0-9]/.test(current_key) === true &&
@@ -271,7 +282,7 @@ function MainDashboard({ userRelations }) {
         /[^a-zA-z0-9]/.test(current_key) === true &&
         current_key != null)
     ) {
-      setinput(input);
+      setInput(input);
     }
   }
 
@@ -314,7 +325,7 @@ function MainDashboard({ userRelations }) {
                     />
                     <button
                       onClick={addFriend}
-                      disabled={button_state || isLoading} // Disable when loading
+                      disabled={buttonState || isLoading} // Disable when loading
                       id={main_dashboardcss.add_friend_3_button}
                     >
                       {isLoading ? "Sending..." : "Send Friend Request"}{" "}
@@ -358,11 +369,11 @@ function MainDashboard({ userRelations }) {
 
           <div id={main_dashboardcss.online_users_count_wrap}>
             <div id={main_dashboardcss.online_users_count}>
-              {option_name_check}-{option_data.length}
+              {option_name_check}-{optionData.length}
             </div>
           </div>
-          {option_data && option_data.length > 0 ? (
-            option_data.map((elem) => {
+          {optionData && optionData.length > 0 ? (
+            optionData.map((elem) => {
               return (
                 <div key={elem.id} id={main_dashboardcss.online_users_wrap}>
                   <div className={main_dashboardcss.online_users}>

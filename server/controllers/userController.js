@@ -89,7 +89,7 @@ exports.addFriend = async (req, res) => {
   try {
     const userId = req.user.id;
     const { friend, friend_data, message } = req.body;
-
+    console.log("frinedData", friend, "=>", friend_data, message);
     // Handle friend request actions (accept/cancel)
     if (friend_data && message) {
       const user = await User.findById(userId);
@@ -154,18 +154,21 @@ exports.addFriend = async (req, res) => {
 
     // Check if the friend request has already been sent
     if (check_req(user.outgoing_reqs, friendUser._id)) {
-      return res
-        .status(400)
-        .json({ message: "Friend request already sent", status: 400 });
+      return res.status(400).json({
+        message: "Friend request already sent",
+        status: 400,
+        friendUser,
+      });
     }
 
     // Check if the friend request was received
     if (check_req(friendUser.incoming_reqs, user._id)) {
       // If a friend request was already received, directly add both as friends
       await add_friend(user, friendUser);
-      return res
-        .status(200)
-        .json({ message: "Friend added successfully", status: 200 });
+      return res.status(200).json({
+        message: "Friend added successfully",
+        status: 200,
+      });
     }
 
     // Otherwise, send a friend request
@@ -198,9 +201,11 @@ exports.addFriend = async (req, res) => {
       }
     );
 
-    return res
-      .status(200)
-      .json({ message: "Friend request sent", status: 200 });
+    return res.status(200).json({
+      message: "Friend request sent",
+      status: 200,
+      receiver_id: friendUser._id,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error", status: 500 });

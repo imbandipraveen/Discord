@@ -11,10 +11,10 @@ import maincss from "./main.module.css";
 import CloseIcon from "@mui/icons-material/Close";
 import discord_logo from "../../images/discord_logo_3.png";
 
-function Main({ userRelations }) {
+function Main() {
   const dispatch = useDispatch();
-  const id = useSelector((state) => state.user_info.id);
-
+  const userInfo = useSelector((state) => state.user_info);
+  const id = userInfo.id;
   const [req_popup, setreq_popup] = useState({ state: "none", value: false });
   const [req_popup_data, setreq_popup_data] = useState({
     profile_pic: "",
@@ -86,7 +86,7 @@ function Main({ userRelations }) {
           <DirectMessage friendId={friend_id} />
         </div>
       ) : server_id === "@me" || server_id === undefined ? (
-        <MainDashboard userRelations={userRelations} />
+        <MainDashboard />
       ) : (
         <MainChat />
       )}

@@ -13,6 +13,10 @@ import {
   change_tag,
   option_profile_pic,
   option_user_id,
+  setIncomingRequests,
+  setOutgoingRequests,
+  setBlockedUsers,
+  setFriends,
 } from "../../redux/userCredsSlice";
 import { server_existence } from "../../redux/currentPage";
 import DirectMessage from "../chatComponents/directMessage/DirectMessage";
@@ -113,6 +117,11 @@ function Dashboard() {
         blocked_users,
         friends_with_messages,
       } = data;
+      dispatch(setIncomingRequests(incoming_reqs));
+      dispatch(setOutgoingRequests(outgoing_reqs));
+      dispatch(setBlockedUsers(blocked_users));
+      dispatch(setFriends(friends));
+
       let pending = incoming_reqs.length + outgoing_reqs.length;
       let status_2 = {
         pending_status: false,
@@ -205,14 +214,7 @@ function Dashboard() {
           className={dashboardcss.components}
           id={dashboardcss.component_4}
         >
-          <Main
-            userRelations={{
-              incoming_reqs: userData.incoming_reqs,
-              outgoing_reqs: userData.outgoing_reqs,
-              friends: userData.friends,
-              blocked_users: userData.blocked_users,
-            }}
-          />
+          <Main />
         </div>
       ) : (
         <>
