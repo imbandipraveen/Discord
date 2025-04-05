@@ -11,7 +11,7 @@ import { setIncomingRequests } from "./redux/userCredsSlice";
 
 function App() {
   const dispatch = useDispatch();
-  const { id, username, profile_pic } = useSelector((state) => state.user_info); // update based on your auth structure
+  const { id, username, profile_pic } = useSelector((state) => state.user_info);
   console.log(id, username, profile_pic);
 
   // Join personal room after login

@@ -69,7 +69,7 @@ function MainDashboard() {
 
   useEffect(() => {
     if (option_check === 2) {
-      console.log(pending_reqs, "pendingRequests");
+      console.log(pending_reqs, "pendingRequests", option_status);
       setOptionData(pending_reqs);
     } else if (option_check === 1) {
       setOptionData(friends);
@@ -114,6 +114,7 @@ function MainDashboard() {
     if (data.status === 200 || data.status === 404) {
       dispatch(update_options());
       if (data.status === 200) {
+        console.log("req_accepted", id, friend_data.id, username, profile_pic);
         socket.emit("req_accepted", id, friend_data.id, username, profile_pic);
       }
     }

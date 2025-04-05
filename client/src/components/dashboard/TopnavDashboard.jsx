@@ -114,7 +114,7 @@ function TopnavDashboard({ buttonStatus }) {
             changeOptionValue(
               2,
               "PENDING",
-              pending,
+              true,
               "There are no pending friend requests. Here's Wumpus for now."
             );
             setSelectedOption("pending");
