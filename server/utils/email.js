@@ -21,9 +21,9 @@ exports.sendVerificationEmail = async (otp, email, username) => {
     to: email,
     subject: "Email for Verification",
     text: `Hello ${username},
-You registered an account on Riscol - Discord Clone. Here is your OTP for verification: ${otp}
+You registered an account on RiscoL - Discord Clone. Here is your OTP for verification: ${otp}
 Kind Regards,  
-Riscol`,
+RiscoL`,
     html: htmlContent,
     category: "Email Verification",
   };
