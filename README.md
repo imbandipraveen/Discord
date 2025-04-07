@@ -2,6 +2,10 @@
 
 A feature-rich Discord clone built with React, Node.js, and MongoDB. This project replicates core Discord functionality including real-time chat, server management, user authentication, and more.
 
+## 🚀 Live Demo
+
+- Check our live demo app here [RiscoL](https://discord-clonerepo2.vercel.app)
+
 ## Features
 
 - 🔐 **Authentication System**
