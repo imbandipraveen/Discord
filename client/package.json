@@ -23,7 +23,7 @@
     "socket.io-client": "^4.5.4",
     "uuid": "^9.0.0"
   },
-  "proxy": "http://localhost:3080",
+  "proxy": "https://discord-clonerepo2.onrender.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
