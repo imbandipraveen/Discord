@@ -274,6 +274,24 @@
   border-color: white;
 }
 
+.otpStyles{
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap:7px;
+  justify-content: center;
+  color: #43b581;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.otpExpired{
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: red;
+  animation: fadeIn 0.3s ease-in;
+}
 @media only screen and (max-width: 503px) {
   .form_container {
     height: 100vh;

@@ -40,7 +40,6 @@ function Register() {
   const [emailError, setEmailError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-
   const months = [
     "January",
     "February",
@@ -55,6 +54,9 @@ function Register() {
     "November",
     "December",
   ];
+
+  const otpExpirationTime = 120;
+  const [otpSeconds, setOtpSeconds] = useState(otpExpirationTime);
 
   const url = config.API_BASE_URL;
 
@@ -72,6 +74,25 @@ function Register() {
       }
     }
   }, []);
+
+  useEffect(()=>{
+    let otpIntervalTimer;
+
+    if (otpSent && otpSeconds > 0) {
+      otpIntervalTimer = setInterval(() => {
+        setOtpSeconds((prev) => {
+          if (prev - 1 === 0) {
+            clearInterval(otpIntervalTimer);
+          }
+          return prev - 1; 
+        });
+      }, 1000);
+    } else if (otpSeconds === 0) {
+      clearInterval(otpIntervalTimer);
+    }
+  
+    return () => clearInterval(otpIntervalTimer);
+  }, [otpSent, otpSeconds]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -150,6 +171,11 @@ function Register() {
 
   const verifyReq = async (e) => {
     e.preventDefault();
+
+    if(otpSeconds === 0)
+    {
+      setOtpSeconds(otpExpirationTime);
+    }
 
     const res = await fetch(`${url}/auth/verify`, {
       method: "POST",
@@ -465,7 +491,7 @@ function Register() {
             />
             <div className={registercss.verify_button}>
               <button onClick={verifyReq} className={registercss.verify_btn}>
-                Verify
+                {otpSeconds === 0 ? <>Retry</>:<>Verify</>}
               </button>
               <button
                 onClick={() => {
@@ -477,6 +503,17 @@ function Register() {
                 Close
               </button>
             </div>
+
+            {otpSeconds>0 ? 
+            (<div className={registercss.otpStyles}>
+              <div>OTP Expires In:</div>
+              <div>{String(Math.floor(otpSeconds/60)).padStart(2, '0')}:{String(otpSeconds%60).padStart(2, '0')}</div>
+            </div>) :(
+              <div className={registercss.otpExpired}>
+                OTP Expired! Please Try Again
+              </div>
+            )
+            }
           </div>
         </div>
       </Modal>
