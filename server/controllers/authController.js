@@ -18,7 +18,11 @@ exports.signup = async (req, res) => {
     // Validate all inputs using our validation utilities
     const emailError = validateEmail(email);
     if (emailError) {
-      infoLogger.error("Signup failed due to invalid email", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signup failed due to invalid email", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(400).json({
         message: emailError,
         status: 400,
@@ -27,7 +31,11 @@ exports.signup = async (req, res) => {
 
     const passwordError = validatePassword(password);
     if (passwordError) {
-      infoLogger.error("Signup failed due to invalid password", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signup failed due to invalid password", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(400).json({
         message: passwordError,
         status: 400,
@@ -38,7 +46,11 @@ exports.signup = async (req, res) => {
 
     const usernameError = validateUsername(username);
     if (usernameError) {
-      infoLogger.error("Signup failed due to invalid username", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signup failed due to invalid username", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(400).json({
         message: usernameError,
         status: 400,
@@ -46,7 +58,11 @@ exports.signup = async (req, res) => {
     }
 
     if (!dob) {
-      infoLogger.error("Signup failed due to missing date of birth", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signup failed due to missing date of birth", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(400).json({
         message: "Date of birth is required",
         status: 400,
@@ -56,7 +72,11 @@ exports.signup = async (req, res) => {
     // Check if email exists
     const existingUser = await User.findOne({ email });
     if (existingUser && existingUser.authorized) {
-      infoLogger.error("Signup failed - email already exists", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signup failed - email already exists", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(400).json({
         message: "Email already exists",
         status: 400,
@@ -66,7 +86,11 @@ exports.signup = async (req, res) => {
     // Check if username exists
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
-      infoLogger.error("Signup failed - username already exists", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signup failed - username already exists", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(400).json({
         message: "Username already exists",
         status: 400,
@@ -96,7 +120,11 @@ exports.signup = async (req, res) => {
     await user.save();
     await sendVerificationEmail(otp, email, username);
 
-    infoLogger.info("User created successfully", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+    infoLogger.info("User created successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      email,
+    });
 
     res.status(201).json({
       message: "User created successfully",
@@ -104,7 +132,12 @@ exports.signup = async (req, res) => {
     });
   } catch (error) {
     console.error("Signup error:", error);
-    infoLogger.error("Signup error", { reqMethod: req.method, reqUrl: req.originalUrl, message: error.message, stack: error.stack });
+    infoLogger.error("Signup error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      message: error.message,
+      stack: error.stack,
+    });
 
     if (error.code === 11000) {
       // MongoDB duplicate key error
@@ -135,7 +168,11 @@ exports.signin = async (req, res) => {
     // Validate inputs
     const emailError = validateEmail(email);
     if (emailError) {
-      infoLogger.error("Signin failed due to invalid email", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signin failed due to invalid email", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(400).json({
         error: emailError,
         status: 400,
@@ -144,7 +181,11 @@ exports.signin = async (req, res) => {
 
     const passwordError = validatePassword(password);
     if (passwordError) {
-      infoLogger.error("Signin failed due to invalid password", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signin failed due to invalid password", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(400).json({
         error: passwordError,
         status: 400,
@@ -155,7 +196,11 @@ exports.signin = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      infoLogger.error("Signin failed - user not found", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signin failed - user not found", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(442).json({
         error: "Invalid username or password",
         status: 442,
@@ -165,7 +210,11 @@ exports.signin = async (req, res) => {
     // Verify password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      infoLogger.error("Signin failed - invalid credentials", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signin failed - invalid credentials", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(400).json({
         success: false,
         message: "Invalid Credentials",
@@ -174,7 +223,11 @@ exports.signin = async (req, res) => {
 
     // Check if user is authorized (email verified)
     if (!user.authorized) {
-      infoLogger.error("Signin failed - user not authorized", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Signin failed - user not authorized", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(422).json({
         error: "You are not verified yet",
         status: 422,
@@ -192,7 +245,11 @@ exports.signin = async (req, res) => {
       config.jwtSecret
     );
 
-    infoLogger.info("User signed in successfully", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+    infoLogger.info("User signed in successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      email,
+    });
 
     res.status(201).json({
       message: "You are verified",
@@ -201,7 +258,12 @@ exports.signin = async (req, res) => {
     });
   } catch (error) {
     console.error("Signin error:", error);
-    infoLogger.error("Signin error", { reqMethod: req.method, reqUrl: req.originalUrl, message: error.message, stack: error.stack});
+    infoLogger.error("Signin error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      message: error.message,
+      stack: error.stack,
+    });
 
     res.status(500).json({
       error: "Internal server error",
@@ -217,7 +279,11 @@ exports.verify = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      infoLogger.error("Verification failed - user not found", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Verification failed - user not found", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(404).json({
         error: "User not found",
         status: 404,
@@ -246,7 +312,11 @@ exports.verify = async (req, res) => {
 
       await sendVerificationEmail(newOTP, email, user.username);
 
-      infoLogger.info("OTP expired, new OTP sent", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.info("OTP expired, new OTP sent", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
 
       return res.status(442).json({
         error: "OTP expired, new OTP sent",
@@ -259,14 +329,38 @@ exports.verify = async (req, res) => {
       // Update user authorization status
       await User.findOneAndUpdate({ email }, { authorized: true });
 
-      infoLogger.info("User successfully verified", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.info("User successfully verified", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+          tag: user.tag,
+          profile_pic: user.profile_pic,
+        },
+        config.jwtSecret
+      );
+
+      infoLogger.info("User signed in successfully", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
 
       res.status(201).json({
         message: "Congrats you are verified now",
         status: 201,
+        token,
       });
     } else {
-      infoLogger.error("Verification failed - incorrect OTP", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Verification failed - incorrect OTP", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       res.status(432).json({
         error: "Incorrect password",
         status: 432,
@@ -274,7 +368,12 @@ exports.verify = async (req, res) => {
     }
   } catch (error) {
     console.error("Verification error:", error);
-    infoLogger.error("Verification error", { reqMethod: req.method, reqUrl: req.originalUrl, message: error.message, stack: error.stack });
+    infoLogger.error("Verification error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      message: error.message,
+      stack: error.stack,
+    });
 
     res.status(500).json({
       error: "Internal server error",
@@ -291,7 +390,11 @@ exports.resendOTP = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      infoLogger.error("Resend OTP failed - user not found", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+      infoLogger.error("Resend OTP failed - user not found", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email,
+      });
       return res.status(404).json({
         error: "User not found",
         status: 404,
@@ -314,7 +417,11 @@ exports.resendOTP = async (req, res) => {
 
     await sendVerificationEmail(newOTP, email, user.username);
 
-    infoLogger.info("New OTP sent successfully", { reqMethod: req.method, reqUrl: req.originalUrl, email });
+    infoLogger.info("New OTP sent successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      email,
+    });
 
     res.status(200).json({
       message: "New OTP sent successfully",
@@ -322,7 +429,12 @@ exports.resendOTP = async (req, res) => {
     });
   } catch (error) {
     console.error("Resend OTP error:", error);
-    infoLogger.error("Resend OTP error", { reqMethod: req.method, reqUrl: req.originalUrl, message: error.message, stack: error.stack });
+    infoLogger.error("Resend OTP error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      message: error.message,
+      stack: error.stack,
+    });
 
     res.status(500).json({
       error: "Internal server error",

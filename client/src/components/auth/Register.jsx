@@ -159,8 +159,10 @@ function Register() {
 
     const data = await res.json();
 
-    if (data.status === 201) navigate("/");
-    else if (data.status === 432) setError("Incorrect OTP. Try again.");
+    if (data.status === 201) {
+      localStorage.setItem("token", data.token);
+      navigate("/channels/@me");
+    } else if (data.status === 432) setError("Incorrect OTP. Try again.");
     else if (data.status === 442)
       setError("OTP expired. A new OTP has been sent.");
   };
