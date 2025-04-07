@@ -9,10 +9,11 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import { useSelector } from "react-redux";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useNavigate } from "react-router-dom";
 
 function TopnavChat({ setHideMembers }) {
   const channel_name = useSelector((state) => state.current_page.page_name);
-
+  const navigate = useNavigate();
   function buttons(message, Icon) {
     return (
       <div
@@ -34,6 +35,7 @@ function TopnavChat({ setHideMembers }) {
               // TODO: Implement pinned messages
               break;
             case "Inbox":
+              navigate("/channels/@me");
               break;
             default:
           }

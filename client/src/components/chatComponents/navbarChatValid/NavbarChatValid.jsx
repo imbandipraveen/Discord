@@ -24,6 +24,7 @@ function NavbarChatValid() {
   const url = config.API_BASE_URL;
   const { server_id } = useParams();
   const Navigate = useNavigate();
+  const [copy, setCopy] = useState(false);
 
   // user details from redux
   const username = useSelector((state) => state.user_info.username);
@@ -348,8 +349,8 @@ function NavbarChatValid() {
             id={valid_css.invite_bottom_part}
           >
             SEND A SERVER INVITE LINK TO A FRIEND
-            <div id={valid_css.inviteLink_wrap}>
-              <div id={valid_css.inviteLink_value}>
+            <div id={valid_css.invite_link_wrap}>
+              <div id={valid_css.invite_link_value} style={{ color: "white" }}>
                 {inviteLink.length === 0 ? (
                   <Typography
                     component="div"
@@ -367,9 +368,10 @@ function NavbarChatValid() {
                   id={valid_css.copy_button}
                   onClick={() => {
                     navigator.clipboard.writeText(inviteLink);
+                    setCopy(true);
                   }}
                 >
-                  Copy
+                  {copy ? "copied" : "copy"}
                 </button>
               </div>
             </div>

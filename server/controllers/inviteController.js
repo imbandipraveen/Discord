@@ -3,6 +3,7 @@ const User = require("../models/User");
 const Server = require("../models/Server");
 const { generateInviteCode } = require("../utils/helpers");
 const { validateInviteData } = require("../utils/validation");
+const infoLogger = require("../utils/logger");
 
 exports.createInviteLink = async (req, res) => {
   try {
@@ -22,7 +23,7 @@ exports.createInviteLink = async (req, res) => {
         reqUrl: req.originalUrl,
         server_id,
         inviter_id,
-        error: validationError
+        error: validationError,
       });
 
       return res.status(400).json({
@@ -47,7 +48,7 @@ exports.createInviteLink = async (req, res) => {
         reqUrl: req.originalUrl,
         server_id,
         inviter_id,
-        invite_code: invite.invite_code
+        invite_code: invite.invite_code,
       });
 
       return res.json({
@@ -88,7 +89,7 @@ exports.createInviteLink = async (req, res) => {
       reqUrl: req.originalUrl,
       server_id,
       inviter_id,
-      invite_code
+      invite_code,
     });
 
     res.json({
@@ -102,7 +103,7 @@ exports.createInviteLink = async (req, res) => {
       server_id: req.body?.server_id,
       inviter_id: req.user?.id,
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     res.status(500).json({
@@ -122,7 +123,7 @@ exports.getInviteLinkInfo = async (req, res) => {
       infoLogger.error("Invite link not found", {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
-        invite_link
+        invite_link,
       });
       return res.json({ status: 404 });
     }
@@ -134,7 +135,7 @@ exports.getInviteLinkInfo = async (req, res) => {
       reqMethod: req.method,
       reqUrl: req.originalUrl,
       invite_link,
-      server_id
+      server_id,
     });
 
     res.json({
@@ -151,7 +152,7 @@ exports.getInviteLinkInfo = async (req, res) => {
       reqUrl: req.originalUrl,
       invite_link: req.body?.invite_link,
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     res.status(500).json({
@@ -178,7 +179,7 @@ exports.acceptInvite = async (req, res) => {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
         user_id: id,
-        server_id
+        server_id,
       });
       return res.json({ status: 403 });
     }
@@ -213,18 +214,18 @@ exports.acceptInvite = async (req, res) => {
       reqUrl: req.originalUrl,
       user_id: id,
       server_id,
-      inviter_id: server_details.invite_details.inviter_id
+      inviter_id: server_details.invite_details.inviter_id,
     });
 
     res.json({ status: 200 });
   } catch (error) {
-     infoLogger.error("Accept invite error", {
+    infoLogger.error("Accept invite error", {
       reqMethod: req.method,
       reqUrl: req.originalUrl,
       user_id: req.body?.user_details?.id,
       server_id: req.body?.server_details?.invite_details?.server_id,
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     res.status(500).json({

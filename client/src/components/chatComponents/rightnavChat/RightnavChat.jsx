@@ -34,6 +34,7 @@ function RightnavChat() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+  // /api/servers/changeRole
   const handleEdit = async (userId, operation) => {
     try {
       let server = await fetch(`${config.API_BASE_URL}/servers/remove`, {
@@ -59,6 +60,36 @@ function RightnavChat() {
       console.log(err);
     }
   };
+  const handleChangeRole = async (userId) => {
+    try {
+      let server = await fetch(`${config.API_BASE_URL}/servers/changeRole`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          server_id: serverId,
+        }),
+      });
+      if (server.status === 200) {
+        let updatedData = allUsers.map((user) => {
+          if (user.user_id === userId) {
+            return {
+              ...user,
+              user_role: user.user_role === "admin" ? "member" : "admin",
+            };
+          }
+          return user;
+        });
+
+        console.log(updatedData);
+        dispatch(server_members(updatedData));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div className={rightnav_chatcss.main_wrap}>
       <div className={rightnav_chatcss.main}>
@@ -75,6 +106,7 @@ function RightnavChat() {
                   setShowRoles(elem.user_id);
                 }}
               >
+                {console.log(elem)}
                 {showRoles === elem.user_id &&
                   isAuthorized &&
                   elem.user_id !== currentUserId &&
@@ -123,8 +155,13 @@ function RightnavChat() {
                         onMouseLeave={(e) =>
                           (e.target.style.background = "transparent")
                         }
+                        onClick={() => {
+                          handleChangeRole(elem.user_id);
+                        }}
                       >
-                        Change Role
+                        {elem.user_role === "admin"
+                          ? "Remove admin role"
+                          : "Make admin"}
                       </div>
                     </div>
                   )}

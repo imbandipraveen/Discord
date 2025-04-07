@@ -61,7 +61,7 @@ exports.createServer = async (req, res) => {
       reqUrl: req.originalUrl,
       server_id: savedServer._id,
       server_name: name,
-      creator_id: userId
+      creator_id: userId,
     });
 
     res.status(200).json({
@@ -75,7 +75,7 @@ exports.createServer = async (req, res) => {
       reqUrl: req.originalUrl,
       user_id: req.user?.id,
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     res.status(500).json({
@@ -84,7 +84,45 @@ exports.createServer = async (req, res) => {
     });
   }
 };
+exports.changeRole = async (req, res) => {
+  try {
+    const { user_id, server_id } = req.body;
+    const serverData = await Server.findById(server_id);
+    serverData.users = serverData.users.map((user) => {
+      if (user.user_id === user_id) {
+        user.user_role = user.user_role === "admin" ? "member" : "admin";
+      }
+      return user;
+    });
+    console.log(serverData);
+    await serverData.save();
+    infoLogger.info("User Role Changed", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id,
+      removed_user_id: user_id,
+    });
 
+    res.status(200).json({
+      status: 200,
+      message: "user Role Changed",
+    });
+  } catch (err) {
+    infoLogger.error("Error removing user from server", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id: req.body?.server_id,
+      user_id: req.body?.user_id,
+      message: err.message,
+      stack: err.stack,
+    });
+
+    res.status(500).json({
+      status: 500,
+      message: "Server error",
+    });
+  }
+};
 exports.getServerInfo = async (req, res) => {
   try {
     const { server_id } = req.body;
@@ -101,7 +139,7 @@ exports.getServerInfo = async (req, res) => {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
         user_id: userId,
-        server_id
+        server_id,
       });
 
       return res.status(403).json({
@@ -116,7 +154,7 @@ exports.getServerInfo = async (req, res) => {
       reqMethod: req.method,
       reqUrl: req.originalUrl,
       server_id,
-      user_id: userId
+      user_id: userId,
     });
 
     res.json(server);
@@ -127,7 +165,7 @@ exports.getServerInfo = async (req, res) => {
       server_id: req.body?.server_id,
       user_id: req.user?.id,
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     res.status(500).json({
@@ -147,7 +185,7 @@ exports.addNewChannel = async (req, res) => {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
         server_id,
-        category_id
+        category_id,
       });
 
       return res.status(400).json({
@@ -178,7 +216,7 @@ exports.addNewChannel = async (req, res) => {
         server_id,
         category_id,
         channel_name,
-        channel_type
+        channel_type,
       });
       res.json({ status: 200 });
     } else {
@@ -186,7 +224,7 @@ exports.addNewChannel = async (req, res) => {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
         server_id,
-        category_id
+        category_id,
       });
       res.status(404).json({
         status: 404,
@@ -200,7 +238,7 @@ exports.addNewChannel = async (req, res) => {
       server_id: req.body?.server_id,
       category_id: req.body?.category_id,
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     res.status(500).json({
@@ -216,11 +254,10 @@ exports.addNewCategory = async (req, res) => {
 
     // Validate input
     if (!category_name || !server_id) {
-
       infoLogger.error("Missing required fields for category creation", {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
-        server_id
+        server_id,
       });
 
       return res.status(400).json({
@@ -246,7 +283,7 @@ exports.addNewCategory = async (req, res) => {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
         server_id,
-        category_name
+        category_name,
       });
 
       res.json({ status: 200 });
@@ -254,7 +291,7 @@ exports.addNewCategory = async (req, res) => {
       infoLogger.error("Server not found for category creation", {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
-        server_id
+        server_id,
       });
 
       res.status(404).json({
@@ -268,7 +305,7 @@ exports.addNewCategory = async (req, res) => {
       reqUrl: req.originalUrl,
       server_id: req.body?.server_id,
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     res.status(500).json({
@@ -292,7 +329,7 @@ exports.deleteServer = async (req, res) => {
       infoLogger.error("Server not found for deletion", {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
-        server_id
+        server_id,
       });
       return res.status(404).json({
         status: 404,
@@ -311,7 +348,7 @@ exports.deleteServer = async (req, res) => {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
         server_id,
-        affected_users: userResult.modifiedCount
+        affected_users: userResult.modifiedCount,
       });
 
       res.json({ status: 200 });
@@ -319,7 +356,7 @@ exports.deleteServer = async (req, res) => {
       infoLogger.error("No users found with server during deletion", {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
-        server_id
+        server_id,
       });
 
       res.status(404).json({
@@ -333,7 +370,7 @@ exports.deleteServer = async (req, res) => {
       reqUrl: req.originalUrl,
       server_id: req.body?.server_id,
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     res.status(500).json({
@@ -345,7 +382,7 @@ exports.deleteServer = async (req, res) => {
 
 exports.removeUser = async (req, res) => {
   try {
-    const { user_id, server_id} = req.body;
+    const { user_id, server_id } = req.body;
     const serverData = await Server.findById(server_id);
     serverData.users = serverData.users.filter((user) => {
       if (user.user_id !== user_id) {
@@ -365,7 +402,7 @@ exports.removeUser = async (req, res) => {
       reqMethod: req.method,
       reqUrl: req.originalUrl,
       server_id,
-      removed_user_id: user_id
+      removed_user_id: user_id,
     });
 
     res.status(200).json({
@@ -379,7 +416,7 @@ exports.removeUser = async (req, res) => {
       server_id: req.body?.server_id,
       user_id: req.body?.user_id,
       message: err.message,
-      stack: err.stack
+      stack: err.stack,
     });
 
     res.status(500).json({
@@ -405,7 +442,7 @@ exports.leaveServer = async (req, res) => {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
         user_id,
-        server_id
+        server_id,
       });
       return res.status(404).json({
         status: 404,
@@ -424,7 +461,7 @@ exports.leaveServer = async (req, res) => {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
         user_id,
-        server_id
+        server_id,
       });
       res.json({ status: 200 });
     } else {
@@ -432,7 +469,7 @@ exports.leaveServer = async (req, res) => {
         reqMethod: req.method,
         reqUrl: req.originalUrl,
         user_id,
-        server_id
+        server_id,
       });
       res.status(404).json({
         status: 404,
@@ -446,7 +483,7 @@ exports.leaveServer = async (req, res) => {
       user_id: req.user?.id,
       server_id: req.body?.server_id,
       message: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     res.status(500).json({

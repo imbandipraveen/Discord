@@ -148,6 +148,32 @@
   margin-bottom: 8px;
   outline: none;
   margin-right: 10px;
+  transition: width 0.3s ease, padding 0.3s ease;
+}
+
+/* Medium screens (up to 1440px) */
+@media (max-width: 1440px) {
+  .messageInput {
+    width: 66%;
+  }
+}
+
+/* Tablet screens (up to 768px) */
+@media (max-width: 768px) {
+  .messageInput {
+    width: 100%;
+    font-size: 15px;
+  }
+}
+
+/* Mobile screens (up to 480px) */
+@media (max-width: 480px) {
+  .messageInput {
+    width: 100%;
+    font-size: 14px;
+    padding: 10px 12px;
+    margin-right: 0;
+  }
 }
 
 .messageInput:focus {
@@ -166,6 +192,7 @@
   cursor: pointer;
   transition: background-color 0.2s;
   height: 44px;
+  display: none;
 }
 
 .sendButton:hover {
@@ -284,6 +311,31 @@
   padding-top: 60px;
   border-left: 1px solid #202225;
   overflow-y: auto;
+  transition: width 0.3s ease, padding 0.3s ease;
+}
+
+/* Medium screens */
+@media (max-width: 1440px) {
+  .user_info_panel {
+    width: 240px;
+  }
+}
+
+/* Tablet screens */
+@media (max-width: 768px) {
+  .user_info_panel {
+    width: 200px;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 480px) {
+  .user_info_panel {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    border-left: none;
+  }
 }
 
 .user_profile {
