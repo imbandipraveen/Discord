@@ -57,7 +57,7 @@ function Navbar2() {
 
       if (imageUrl) {
         // Update in database
-        const url = config.FRONTEND_URL;
+        const url = config.API_BASE_URL;
         const response = await fetch(`${url}/users/update-profile-pic`, {
           method: "POST",
           headers: {
