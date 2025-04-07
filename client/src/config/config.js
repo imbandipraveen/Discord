@@ -1,6 +1,9 @@
 const config = {
-  API_BASE_URL: process.env.REACT_APP_URL || "http://localhost:3080/api",
-  FRONTEND_URL: process.env.REACT_APP_front_end_url || "http://localhost:3000",
+  API_BASE_URL:
+    process.env.REACT_APP_URL || "https://discord-clonerepo2.onrender.com/api",
+  FRONTEND_URL:
+    process.env.REACT_APP_front_end_url ||
+    "https://discord-clonerepo2.vercel.app",
 
   S3: {
     BUCKET_NAME: process.env.REACT_APP_S3_BUCKET_NAME,
