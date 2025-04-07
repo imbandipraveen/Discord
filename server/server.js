@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 const { setupSocket } = require("./config/socket");
 const { connectDB } = require("./connection/database");
+const morganLogger = require("morgan");
 
 // Import routes
 const authRoutes = require("./routes/authRoutes");
@@ -20,6 +21,7 @@ const port = config.port || 3080;
 app.use(cors());
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+app.use(morganLogger("dev"));
 
 // Connect to database
 connectDB();

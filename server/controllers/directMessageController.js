@@ -1,5 +1,6 @@
 const DirectMessage = require("../models/DirectMessage");
 const User = require("../models/User");
+const infoLogger = require("../utils/logger");
 
 exports.getDirectMessages = async (req, res) => {
   try {
@@ -7,9 +8,23 @@ exports.getDirectMessages = async (req, res) => {
     const messages = await DirectMessage.find({ room_id: roomId }).sort({
       timestamp: 1,
     });
+
+    infoLogger.info("Direct messages retrieved successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      roomId,
+      messageCount: messages.length
+    });
+
     res.json({ messages });
   } catch (error) {
-    console.error("Error retrieving direct messages:", error);
+    infoLogger.error("Error retrieving direct messages", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      roomId: req.params.roomId,
+      message: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -73,9 +88,23 @@ exports.getRecentConversations = async (req, res) => {
       })
     );
 
+    infoLogger.info("Recent conversations retrieved successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      userId,
+      conversationCount: conversations.length
+    });
+
     res.json({ conversations });
   } catch (error) {
-    console.error("Error retrieving recent conversations:", error);
+    infoLogger.error("Error retrieving recent conversations", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      userId: req.user?.id,
+      message: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -90,9 +119,26 @@ exports.markMessagesAsRead = async (req, res) => {
       { $set: { read: true } }
     );
 
+    infoLogger.info("Messages marked as read successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      userId,
+      friendId,
+      roomId,
+      modifiedCount: result.modifiedCount
+    });
+
     res.json({ success: true });
   } catch (error) {
-    console.error("Error marking messages as read:", error);
+    infoLogger.error("Error marking messages as read", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      userId: req.body?.userId,
+      friendId: req.body?.friendId,
+      message: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -104,8 +150,19 @@ exports.getUserById = async (req, res) => {
     const userData = await User.findById(userId);
 
     if (!userData) {
+      infoLogger.error("User not found", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        userId
+      });
       return res.status(404).json({ message: "User not found", status: 404 });
     }
+
+    infoLogger.info("User details retrieved successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      userId
+    });
 
     // Return only necessary user details
     res.status(200).json({
@@ -115,7 +172,14 @@ exports.getUserById = async (req, res) => {
       tag: userData.tag,
     });
   } catch (error) {
-    console.error("Error fetching user details:", error);
+    infoLogger.error("Error fetching user details", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      userId: req.params?.userId,
+      message: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({ message: "Server error", status: 500 });
   }
 };

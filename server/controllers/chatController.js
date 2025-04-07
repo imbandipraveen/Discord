@@ -1,4 +1,5 @@
 const Chat = require("../models/Chat");
+const infoLogger = require("../utils/logger");
 
 exports.storeMessage = async (req, res) => {
   try {
@@ -14,6 +15,12 @@ exports.storeMessage = async (req, res) => {
     const chat = await Chat.findOne({ server_id });
 
     if (!chat) {
+      infoLogger.error("Chat not found", { 
+        reqMethod: req.method, 
+        reqUrl: req.originalUrl, 
+        server_id,
+        channel_id 
+      });
       return res.status(404).json({
         status: 404,
         message: "Chat not found",
@@ -40,6 +47,7 @@ exports.storeMessage = async (req, res) => {
         { "channels.channel_id": channel_id },
         { $push: { "channels.$.chat_details": messageData } }
       );
+      infoLogger.info("Message added to existing channel", { reqMethod: req.method, reqUrl: req.originalUrl, server_id, channel_id });
     } else {
       await Chat.updateOne(
         { server_id },
@@ -53,10 +61,25 @@ exports.storeMessage = async (req, res) => {
           },
         }
       );
+      infoLogger.info("Message added to new channel", { 
+        reqMethod: req.method, 
+        reqUrl: req.originalUrl, 
+        server_id, 
+        channel_id, 
+        channel_name 
+      });
     }
 
     res.status(200).json({ status: 200 });
   } catch (error) {
+
+    infoLogger.error("Error storing message", { 
+      reqMethod: req.method, 
+      reqUrl: req.originalUrl, 
+      message: error.message, 
+      stack: error.stack
+    });
+
     res.status(500).json({
       status: 500,
       message: "Server error",
@@ -70,6 +93,12 @@ exports.getMessages = async (req, res) => {
 
     // Validate input
     if (!channel_id || !server_id) {
+      infoLogger.info("Missing Channel ID or Server ID", { 
+        reqMethod: req.method, 
+        reqUrl: req.originalUrl, 
+        channel_id, 
+        server_id 
+      });
       return res.status(400).json({
         status: 400,
         message: "Channel ID and Server ID are required",
@@ -98,8 +127,21 @@ exports.getMessages = async (req, res) => {
 
     // Check if chat exists and has channels
     if (!chat || !chat[0] || !chat[0].channels) {
+      infoLogger.info("No messages found for channel", { 
+        reqMethod: req.method, 
+        reqUrl: req.originalUrl, 
+        server_id, 
+        channel_id 
+      });
       return res.json({ chats: [] });
     }
+
+    infoLogger.info("Messages retrieved", { 
+      reqMethod: req.method, 
+      reqUrl: req.originalUrl, 
+      server_id, 
+      channel_id 
+    });
 
     // If channel exists, return its chat details
     if (chat[0].channels.length > 0) {
@@ -110,7 +152,12 @@ exports.getMessages = async (req, res) => {
       res.json({ chats: [] });
     }
   } catch (error) {
-    console.error("Get messages error:", error);
+      infoLogger.error("Error retrieving messages", { 
+        reqMethod: req.method, 
+        reqUrl: req.originalUrl, 
+        message: error.message, 
+        stack: error.stack 
+      });
     res.status(500).json({
       status: 500,
       message: "Server error",

@@ -3,6 +3,7 @@ const User = require("../models/User");
 const Chat = require("../models/Chat");
 const mongoose = require("mongoose");
 const Server = require("../models/Server");
+const infoLogger = require("../utils/logger");
 
 exports.createServer = async (req, res) => {
   try {
@@ -55,12 +56,28 @@ exports.createServer = async (req, res) => {
       },
     });
 
+    infoLogger.info("Server created successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id: savedServer._id,
+      server_name: name,
+      creator_id: userId
+    });
+
     res.status(200).json({
       status: 200,
       message: "Server Created",
       server: savedServer,
     });
   } catch (error) {
+    infoLogger.error("Server creation failed", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      message: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({
       status: 500,
       message: "Something went wrong",
@@ -80,6 +97,13 @@ exports.getServerInfo = async (req, res) => {
     });
 
     if (!user) {
+      infoLogger.error("Unauthorized server access attempt", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId,
+        server_id
+      });
+
       return res.status(403).json({
         status: 403,
         message: "Not authorized",
@@ -87,8 +111,25 @@ exports.getServerInfo = async (req, res) => {
     }
 
     const server = await Server.findById(server_id);
+
+    infoLogger.info("Server info retrieved", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id,
+      user_id: userId
+    });
+
     res.json(server);
   } catch (error) {
+    infoLogger.error("Error getting server info", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id: req.body?.server_id,
+      user_id: req.user?.id,
+      message: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({
       status: 500,
       message: "Server error",
@@ -102,6 +143,13 @@ exports.addNewChannel = async (req, res) => {
 
     // Validate input
     if (!channel_name || !channel_type || !category_id || !server_id) {
+      infoLogger.error("Missing required fields for channel creation", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        server_id,
+        category_id
+      });
+
       return res.status(400).json({
         status: 400,
         message: "Missing required fields",
@@ -124,15 +172,37 @@ exports.addNewChannel = async (req, res) => {
     );
 
     if (result.modifiedCount > 0) {
+      infoLogger.info("New channel added successfully", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        server_id,
+        category_id,
+        channel_name,
+        channel_type
+      });
       res.json({ status: 200 });
     } else {
+      infoLogger.error("Server or category not found for channel creation", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        server_id,
+        category_id
+      });
       res.status(404).json({
         status: 404,
         message: "Server or category not found",
       });
     }
   } catch (error) {
-    console.error("Add channel error:", error);
+    infoLogger.error("Add channel error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id: req.body?.server_id,
+      category_id: req.body?.category_id,
+      message: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({
       status: 500,
       message: "Server error",
@@ -146,6 +216,13 @@ exports.addNewCategory = async (req, res) => {
 
     // Validate input
     if (!category_name || !server_id) {
+
+      infoLogger.error("Missing required fields for category creation", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        server_id
+      });
+
       return res.status(400).json({
         status: 400,
         message: "Missing required fields",
@@ -165,15 +242,35 @@ exports.addNewCategory = async (req, res) => {
     );
 
     if (result.modifiedCount > 0) {
+      infoLogger.info("New category added successfully", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        server_id,
+        category_name
+      });
+
       res.json({ status: 200 });
     } else {
+      infoLogger.error("Server not found for category creation", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        server_id
+      });
+
       res.status(404).json({
         status: 404,
         message: "Server not found",
       });
     }
   } catch (error) {
-    console.error("Add category error:", error);
+    infoLogger.error("Add category error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id: req.body?.server_id,
+      message: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({
       status: 500,
       message: "Server error",
@@ -192,6 +289,11 @@ exports.deleteServer = async (req, res) => {
     );
 
     if (serverResult.modifiedCount === 0) {
+      infoLogger.error("Server not found for deletion", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        server_id
+      });
       return res.status(404).json({
         status: 404,
         message: "Server not found",
@@ -205,15 +307,35 @@ exports.deleteServer = async (req, res) => {
     );
 
     if (userResult.modifiedCount > 0) {
+      infoLogger.info("Server deleted successfully", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        server_id,
+        affected_users: userResult.modifiedCount
+      });
+
       res.json({ status: 200 });
     } else {
+      infoLogger.error("No users found with server during deletion", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        server_id
+      });
+
       res.status(404).json({
         status: 404,
         message: "No users found with this server",
       });
     }
   } catch (error) {
-    console.error("Delete server error:", error);
+    infoLogger.error("Delete server error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id: req.body?.server_id,
+      message: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({
       status: 500,
       message: "Server error",
@@ -238,11 +360,28 @@ exports.removeUser = async (req, res) => {
     );
     console.log(userData, "userData");
     await userData.save();
+
+    infoLogger.info("User removed from server successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id,
+      removed_user_id: user_id
+    });
+
     res.status(200).json({
       status: 200,
       message: "user deleted from server",
     });
   } catch (err) {
+    infoLogger.error("Error removing user from server", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      server_id: req.body?.server_id,
+      user_id: req.body?.user_id,
+      message: err.message,
+      stack: err.stack
+    });
+
     res.status(500).json({
       status: 500,
       message: "Server error",
@@ -262,6 +401,12 @@ exports.leaveServer = async (req, res) => {
     );
 
     if (userResult.modifiedCount === 0) {
+      infoLogger.error("Server not found in user's list when leaving", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id,
+        server_id
+      });
       return res.status(404).json({
         status: 404,
         message: "Server not found in user's list",
@@ -275,15 +420,35 @@ exports.leaveServer = async (req, res) => {
     );
 
     if (serverResult.modifiedCount > 0) {
+      infoLogger.info("User left server successfully", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id,
+        server_id
+      });
       res.json({ status: 200 });
     } else {
+      infoLogger.error("User not found in server when leaving", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id,
+        server_id
+      });
       res.status(404).json({
         status: 404,
         message: "User not found in server",
       });
     }
   } catch (error) {
-    console.error("Leave server error:", error);
+    infoLogger.error("Leave server error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      server_id: req.body?.server_id,
+      message: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({
       status: 500,
       message: "Server error",

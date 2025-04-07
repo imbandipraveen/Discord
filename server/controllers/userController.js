@@ -4,6 +4,7 @@ const { generateTag } = require("../utils/helpers");
 const DirectMessage = require("../models/DirectMessage");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
+const infoLogger = require("../utils/logger");
 
 exports.getUserRelations = async (req, res) => {
   try {
@@ -13,6 +14,11 @@ exports.getUserRelations = async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
+      infoLogger.error("User not found when getting relations", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId
+      });
       return res.status(404).json({ message: "User not found" });
     }
 
@@ -71,6 +77,15 @@ exports.getUserRelations = async (req, res) => {
       return timestampB - timestampA;
     });
 
+    infoLogger.info("User relations retrieved successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: userId,
+      friend_count: user.friends.length,
+      incoming_req_count: user.incoming_reqs.length,
+      outgoing_req_count: user.outgoing_reqs.length
+    });
+
     res.json({
       incoming_reqs: user.incoming_reqs,
       outgoing_reqs: user.outgoing_reqs,
@@ -80,7 +95,13 @@ exports.getUserRelations = async (req, res) => {
       servers: user.servers,
     });
   } catch (error) {
-    console.error("Error getting user relations:", error);
+     infoLogger.error("Error getting user relations", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -96,12 +117,25 @@ exports.addFriend = async (req, res) => {
       const friendUser = await User.findById(friend_data.id);
 
       if (!user || !friendUser) {
+        infoLogger.error("User not found when processing friend request", {
+          reqMethod: req.method,
+          reqUrl: req.originalUrl,
+          user_id: userId,
+          friend_id: friend_data?.id,
+          action: message
+        });
         return res.status(404).json({ message: "User not found", status: 404 });
       }
 
       if (message === "Accept") {
         // Add both users as friends
         await add_friend(user, friendUser);
+        infoLogger.info("Friend request accepted", {
+          reqMethod: req.method,
+          reqUrl: req.originalUrl,
+          user_id: userId,
+          friend_id: friend_data.id
+        });
         return res
           .status(200)
           .json({ message: "Friend request accepted", status: 200 });
@@ -115,6 +149,15 @@ exports.addFriend = async (req, res) => {
           { _id: friend_data.id },
           { $pull: { outgoing_reqs: { id: userId } } }
         );
+
+        infoLogger.info("Friend request cancelled", {
+          reqMethod: req.method,
+          reqUrl: req.originalUrl,
+          user_id: userId,
+          friend_id: friend_data.id,
+          action: message
+        });
+
         return res
           .status(200)
           .json({ message: "Friend request cancelled", status: 200 });
@@ -123,12 +166,23 @@ exports.addFriend = async (req, res) => {
 
     // Handle new friend request
     if (!friend) {
+      infoLogger.error("Invalid friend input format", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId
+      });
       return res.status(400).json({ message: "Invalid Input", status: 400 });
     }
 
     // Validate friend input format
     const hashIndex = friend.indexOf("#");
     if (hashIndex === -1) {
+      infoLogger.error("Invalid friend input format (missing tag)", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId,
+        friend_input: friend
+      });
       return res.status(400).json({ message: "Invalid Input", status: 400 });
     }
 
@@ -138,22 +192,46 @@ exports.addFriend = async (req, res) => {
     // Find the friend user in the database
     const friendUser = await User.findOne({ username: name, tag: userTag });
     if (!friendUser) {
+      infoLogger.error("Friend user not found", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId,
+        searched_username: name,
+        searched_tag: userTag
+      });
       return res.status(404).json({ message: "User Not Found", status: 404 });
     }
 
     // Fetch the logged-in user
     const user = await User.findById(userId);
     if (!user) {
+      infoLogger.error("Current user not found", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId
+      });
       return res.status(404).json({ message: "User Not Found", status: 404 });
     }
 
     // Check if users are already friends
     if (check_req(user.friends, friendUser._id)) {
+      infoLogger.error("Already friends", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId,
+        friend_id: friendUser._id
+      });
       return res.status(400).json({ message: "Already friends", status: 400 });
     }
 
     // Check if the friend request has already been sent
     if (check_req(user.outgoing_reqs, friendUser._id)) {
+      infoLogger.error("Friend request already sent", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId,
+        friend_id: friendUser._id
+      });
       return res.status(400).json({
         message: "Friend request already sent",
         status: 400,
@@ -165,6 +243,14 @@ exports.addFriend = async (req, res) => {
     if (check_req(friendUser.incoming_reqs, user._id)) {
       // If a friend request was already received, directly add both as friends
       await add_friend(user, friendUser);
+
+      infoLogger.info("Friend added (reciprocal request)", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId,
+        friend_id: friendUser._id
+      });
+
       return res.status(200).json({
         message: "Friend added successfully",
         status: 200,
@@ -201,13 +287,28 @@ exports.addFriend = async (req, res) => {
       }
     );
 
+    infoLogger.info("Friend request sent", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: userId,
+      friend_id: friendUser._id
+    });
+
     return res.status(200).json({
       message: "Friend request sent",
       status: 200,
       receiver_id: friendUser._id,
     });
   } catch (error) {
-    console.error(error);
+
+    infoLogger.error("Add friend error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      error: error.message,
+      stack: error.stack
+    });
+
     return res.status(500).json({ message: "Server error", status: 500 });
   }
 };
@@ -227,11 +328,25 @@ exports.removeFriend = async (req, res) => {
       { $pull: { friends: { id: userId } } }
     );
 
+    infoLogger.info("Friend removed successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: userId,
+      removed_friend_id: friend_id
+    });
+
     res
       .status(200)
       .json({ message: "Friend removed successfully", status: 200 });
   } catch (error) {
-    console.error("Remove friend error:", error);
+    infoLogger.error("Remove friend error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      friend_id: req.body?.friend_id,
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ message: "Server error", status: 500 });
   }
 };
@@ -246,6 +361,12 @@ exports.blockUser = async (req, res) => {
     // Get the friend's details
     const friend = await User.findById(friend_id);
     if (!friend) {
+      infoLogger.error("User to block not found", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId,
+        friend_id
+      });
       return res.status(404).json({ message: "User not found", status: 404 });
     }
 
@@ -284,9 +405,25 @@ exports.blockUser = async (req, res) => {
     const updatedUser = await User.findById(userId);
     console.log("Updated user blocked array:", updatedUser.blocked);
 
+    infoLogger.info("User blocked successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: userId,
+      blocked_user_id: friend_id
+    });
+
     res.status(200).json({ message: "User blocked successfully", status: 200 });
   } catch (error) {
-    console.error("Block user error:", error);
+    
+    infoLogger.error("Block user error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      friend_id: req.body?.friend_id,
+      error: error.message,
+      stack: error.stack
+    });
+
     res.status(500).json({ message: "Server error", status: 500 });
   }
 };
@@ -299,6 +436,12 @@ exports.unblockUser = async (req, res) => {
     // Get the friend's details
     const friend = await User.findById(friend_id);
     if (!friend) {
+      infoLogger.error("User to unblock not found", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId,
+        friend_id
+      });
       return res.status(404).json({ message: "User not found", status: 404 });
     }
 
@@ -333,11 +476,25 @@ exports.unblockUser = async (req, res) => {
       }
     );
 
+    infoLogger.info("User unblocked successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: userId,
+      unblocked_user_id: friend_id
+    });
+
     res
       .status(200)
       .json({ message: "User unblocked successfully", status: 200 });
   } catch (error) {
-    console.error("Unblock user error:", error);
+    infoLogger.error("Unblock user error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      friend_id: req.body?.friend_id,
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ message: "Server error", status: 500 });
   }
 };
@@ -385,11 +542,31 @@ exports.deleteUser = async (req, res) => {
     let { email } = req.body;
     console.log(req.body, "Req.body from delete");
     let data = await User.deleteOne({ email });
+    
     if (data) {
+      infoLogger.info("User deleted successfully", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        email
+      });
       return res.status(200).send({ message: "user removed" });
     }
+
+    infoLogger.error("User not found for deletion", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      email
+    });
+
     return res.status(400).send({ message: "try Again" });
   } catch (err) {
+    infoLogger.error("Delete user error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      email: req.body?.email,
+      error: err.message,
+      stack: err.stack
+    });
     return res.status(500).send({ message: err.message });
   }
 };
@@ -400,6 +577,11 @@ exports.updateProfilePic = async (req, res) => {
     const { profilePicUrl } = req.body;
 
     if (!profilePicUrl) {
+      infoLogger.error("Profile picture URL missing", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId
+      });
       return res
         .status(400)
         .json({ message: "Profile picture URL is required", status: 400 });
@@ -413,6 +595,11 @@ exports.updateProfilePic = async (req, res) => {
     );
 
     if (!updatedUser) {
+      infoLogger.error("User not found when updating profile picture", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId
+      });
       return res.status(404).json({ message: "User not found", status: 404 });
     }
 
@@ -453,6 +640,12 @@ exports.updateProfilePic = async (req, res) => {
       { expiresIn: config.jwtAccessExpiration }
     );
 
+    infoLogger.info("Profile picture updated successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: userId
+    });
+
     res.status(200).json({
       message: "Profile picture updated successfully",
       status: 200,
@@ -460,7 +653,13 @@ exports.updateProfilePic = async (req, res) => {
       token: token,
     });
   } catch (error) {
-    console.error("Update profile picture error:", error);
+    infoLogger.error("Update profile picture error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ message: "Server error", status: 500 });
   }
 };
@@ -472,6 +671,11 @@ exports.refreshToken = async (req, res) => {
     // Get the latest user data from the database
     const user = await User.findById(userId);
     if (!user) {
+      infoLogger.error("User not found when refreshing token", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId
+      });
       return res.status(404).json({ message: "User not found", status: 404 });
     }
 
@@ -488,13 +692,25 @@ exports.refreshToken = async (req, res) => {
       { expiresIn: config.jwtAccessExpiration }
     );
 
+    infoLogger.info("Token refreshed successfully", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: userId
+    });
+
     res.status(200).json({
       message: "Token refreshed successfully",
       status: 200,
       token: token,
     });
   } catch (error) {
-    console.error("Token refresh error:", error);
+    infoLogger.error("Token refresh error", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ message: "Server error", status: 500 });
   }
 };
@@ -505,6 +721,11 @@ exports.searchUsers = async (req, res) => {
     const userId = req.user.id;
 
     if (!q) {
+      infoLogger.error("Search query missing", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId
+      });
       return res.status(400).json({ message: "Search query is required" });
     }
 
@@ -519,9 +740,24 @@ exports.searchUsers = async (req, res) => {
       .select("username tag profile_pic id")
       .limit(10);
 
+      infoLogger.info("User search completed", {
+        reqMethod: req.method,
+        reqUrl: req.originalUrl,
+        user_id: userId,
+        search_query: q,
+        result_count: users.length
+      });
+
     res.json({ users });
   } catch (error) {
-    console.error("Error searching users:", error);
+    infoLogger.error("Error searching users", {
+      reqMethod: req.method,
+      reqUrl: req.originalUrl,
+      user_id: req.user?.id,
+      search_query: req.query?.q,
+      error: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ message: "Server error" });
   }
 };
